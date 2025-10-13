@@ -3,14 +3,14 @@ package com.swd392.BatterySwapStation.application.common;
 import lombok.Data;
 
 @Data
-public class ApiResponse<T> {
+public class ErrorResponse {
+    private String code;
     private String message;
-    private T data;
     private long timestamp;
 
-    public ApiResponse(String message, T data) {
+    public ErrorResponse(String code, String message) {
+        this.code = code;
         this.message = message;
-        this.data = data;
         this.timestamp = System.currentTimeMillis();
     }
 }
