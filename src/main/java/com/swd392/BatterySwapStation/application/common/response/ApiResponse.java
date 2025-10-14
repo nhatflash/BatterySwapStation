@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.application.common;
+package com.swd392.BatterySwapStation.application.common.response;
 
 import lombok.Data;
 

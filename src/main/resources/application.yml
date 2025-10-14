@@ -32,3 +32,7 @@ logging:
     com.swd392.BatterySwapStation: debug
     org.springframework.web: debug
 
+jwt:
+  secret: fksldjfuewrujweifdsferwetewqfsrewrtydsfsadgwerokjilgweyhklvjiosdjriowejtfjkweljrklwhrewjklg
+  access-token-expiration: 900000
+  refresh-token-expiration: 604800000
