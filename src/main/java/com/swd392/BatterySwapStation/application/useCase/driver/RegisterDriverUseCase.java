@@ -1,20 +1,20 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.model.RegisterDriverCommand;
+import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
-import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RegisterDriverUseCase implements IUseCase<RegisterDriverRequest, RegisterDriverResponse> {
+public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, User> {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -26,13 +26,12 @@ public class RegisterDriverUseCase implements IUseCase<RegisterDriverRequest, Re
     }
 
     @Override
-    public RegisterDriverResponse execute(RegisterDriverRequest request) {
+    public User execute(RegisterDriverCommand request) {
         checkValidRequest(request);
-        var driver = createDriver(request);
-        return ResponseMapper.toRegisterDriverResponse(driver);
+        return createDriver(request);
     }
 
-    private void checkValidRequest(RegisterDriverRequest request) {
+    private void checkValidRequest(RegisterDriverCommand request) {
         if (userService.isEmailExists(request.getEmail())) {
             throw new IllegalArgumentException("Email already exists!");
         }
@@ -48,7 +47,7 @@ public class RegisterDriverUseCase implements IUseCase<RegisterDriverRequest, Re
     }
 
 
-    private User createDriver(RegisterDriverRequest request) {
+    private User createDriver(RegisterDriverCommand request) {
         User user = User.builder()
                 .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))

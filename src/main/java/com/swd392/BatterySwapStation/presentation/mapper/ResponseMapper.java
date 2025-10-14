@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.application.common.mapper;
+package com.swd392.BatterySwapStation.presentation.mapper;
 
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
@@ -17,10 +17,9 @@ public class ResponseMapper {
                 .build();
     }
 
-    public static LoginResponse toLoginResponse(String accessToken, String refreshToken) {
+    public static LoginResponse toLoginResponse(String accessToken) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 }

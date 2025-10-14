@@ -1,24 +1,23 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.model.LoginCommand;
+import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
 import com.swd392.BatterySwapStation.infrastructure.security.session.RedisSessionService;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.LoginRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
-public class LoginUseCase implements IUseCase<LoginRequest, LoginResponse> {
+public class LoginUseCase implements IUseCase<LoginCommand, String> {
 
     private final AuthenticationManager authenticationManager;
 
@@ -39,7 +38,7 @@ public class LoginUseCase implements IUseCase<LoginRequest, LoginResponse> {
     }
 
     @Override
-    public LoginResponse execute(LoginRequest request) {
+    public String execute(LoginCommand request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword())
@@ -50,10 +49,10 @@ public class LoginUseCase implements IUseCase<LoginRequest, LoginResponse> {
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         storeUserSession(accessToken, refreshToken, user);
 
-        return ResponseMapper.toLoginResponse(accessToken, refreshToken);
+        return accessToken;
     }
 
-    private User retrieveUserFromLogin(LoginRequest request) {
+    private User retrieveUserFromLogin(LoginCommand request) {
         User user = userService.getUserByEmail(request.getEmail());
         if (user == null) throw new UsernameNotFoundException("User not found.");
         user.setLastLogin(LocalDateTime.now());
