@@ -1,7 +1,8 @@
-package com.swd392.BatterySwapStation.infrastructure.security.user;
+package com.swd392.BatterySwapStation.infrastructure.service;
 
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.repository.UserRepository;
+import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import jakarta.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

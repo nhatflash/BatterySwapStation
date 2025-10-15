@@ -2,32 +2,49 @@ package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.LoginCommand;
+import com.swd392.BatterySwapStation.application.model.LogoutCommand;
 import com.swd392.BatterySwapStation.application.model.RegisterDriverCommand;
 import com.swd392.BatterySwapStation.application.useCase.authentication.LoginUseCase;
+import com.swd392.BatterySwapStation.application.useCase.authentication.LogoutAllUseCase;
+import com.swd392.BatterySwapStation.application.useCase.authentication.LogoutUseCase;
 import com.swd392.BatterySwapStation.application.useCase.driver.RegisterDriverUseCase;
+import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
+import com.swd392.BatterySwapStation.infrastructure.service.TokenService;
 import com.swd392.BatterySwapStation.presentation.dto.request.LoginRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {
 
     private final RegisterDriverUseCase registerDriverUseCase;
     private final LoginUseCase loginUseCase;
+    private final TokenService tokenService;
+    private final LogoutUseCase logoutUseCase;
+    private final LogoutAllUseCase logoutAllUseCase;
 
     public AuthenticationController(RegisterDriverUseCase registerDriverUseCase,
-                                    LoginUseCase loginUseCase) {
+                                    LoginUseCase loginUseCase,
+                                    TokenService tokenService,
+                                    LogoutUseCase logoutUseCase,
+                                    LogoutAllUseCase logoutAllUseCase) {
         this.registerDriverUseCase = registerDriverUseCase;
         this.loginUseCase = loginUseCase;
+        this.tokenService = tokenService;
+        this.logoutUseCase = logoutUseCase;
+        this.logoutAllUseCase = logoutAllUseCase;
     }
 
     @PostMapping("/register")
@@ -56,5 +73,34 @@ public class AuthenticationController {
         var accessToken = loginUseCase.execute(command);
         var response = ResponseMapper.toLoginResponse(accessToken);
         return ResponseEntity.ok(new ApiResponse<>("Login successfully.", response));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<String>> refreshAccessToken(@RequestBody String refreshToken) {
+        var response = tokenService.refreshAccessToken(refreshToken);
+        return ResponseEntity.ok(new ApiResponse<>("Refresh token successfully.", response));
+    }
+
+
+    @PostMapping("/logout")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader("Authorization") String token,
+                                                      @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) throw new UsernameNotFoundException("User not found.");
+        String accessToken = token.substring(7);
+        var command = LogoutCommand.builder()
+                        .accessToken(accessToken)
+                        .userId(userDetails.getUserId())
+                        .build();
+        logoutUseCase.execute(command);
+        return ResponseEntity.ok(new ApiResponse<>("Logout successfully.", null));
+    }
+
+    @PostMapping("/logout-all")
+    @Operation(security = @SecurityRequirement(name = "bearerAuth"))
+    public ResponseEntity<ApiResponse<String>> logoutAll(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) throw new UsernameNotFoundException("User not found.");
+        logoutAllUseCase.execute(userDetails.getUserId());
+        return ResponseEntity.ok(new ApiResponse<>("Logout all successfully.", null));
     }
 }

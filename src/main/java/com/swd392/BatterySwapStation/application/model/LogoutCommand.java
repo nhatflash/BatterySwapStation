@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.infrastructure.security.session;
+package com.swd392.BatterySwapStation.application.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SessionData {
+public class LogoutCommand {
+    private String accessToken;
     private UUID userId;
-    private String role;
-    private Long expiresAt;
 }

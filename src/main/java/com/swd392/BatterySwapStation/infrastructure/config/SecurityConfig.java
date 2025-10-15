@@ -2,7 +2,7 @@ package com.swd392.BatterySwapStation.infrastructure.config;
 
 import com.swd392.BatterySwapStation.infrastructure.security.JwtAuthenticationFilter;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtAuthenticationEntryPoint;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetailsService;
+import com.swd392.BatterySwapStation.infrastructure.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

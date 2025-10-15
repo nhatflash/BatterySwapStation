@@ -1,5 +1,6 @@
-package com.swd392.BatterySwapStation.infrastructure.security.session;
+package com.swd392.BatterySwapStation.infrastructure.service;
 
+import com.swd392.BatterySwapStation.infrastructure.security.session.SessionData;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

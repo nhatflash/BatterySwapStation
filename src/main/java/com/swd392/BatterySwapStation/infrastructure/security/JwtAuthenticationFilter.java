@@ -1,9 +1,9 @@
 package com.swd392.BatterySwapStation.infrastructure.security;
 
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
-import com.swd392.BatterySwapStation.infrastructure.security.session.RedisSessionService;
+import com.swd392.BatterySwapStation.infrastructure.service.RedisSessionService;
 import com.swd392.BatterySwapStation.infrastructure.security.session.SessionData;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetailsService;
+import com.swd392.BatterySwapStation.infrastructure.service.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
