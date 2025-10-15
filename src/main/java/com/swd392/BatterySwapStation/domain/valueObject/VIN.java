@@ -3,9 +3,11 @@ package com.swd392.BatterySwapStation.domain.valueObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 @EqualsAndHashCode
 @Embeddable
+@Getter
 public class VIN {
 
     @Column(nullable = false, unique = true, name = "vin", length = 17)

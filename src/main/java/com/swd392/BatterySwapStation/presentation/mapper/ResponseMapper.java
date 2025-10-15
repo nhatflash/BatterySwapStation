@@ -1,8 +1,10 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
+import com.swd392.BatterySwapStation.presentation.dto.response.RegisterVehicleResponse;
 
 public class ResponseMapper {
 
@@ -20,6 +22,19 @@ public class ResponseMapper {
     public static LoginResponse toLoginResponse(String accessToken) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
+                .build();
+    }
+
+    public static RegisterVehicleResponse toRegisterVehicleResponse(Vehicle vehicle) {
+        return RegisterVehicleResponse.builder()
+                .vehicleId(vehicle.getId())
+                .vin(vehicle.getVin().getValue())
+                .make(vehicle.getMake())
+                .model(vehicle.getModel())
+                .year(vehicle.getYear())
+                .licensePlate(vehicle.getLicensePlate())
+                .batteryType(vehicle.getBatteryType().getValue())
+                .driverId(vehicle.getDriver().getId())
                 .build();
     }
 }
