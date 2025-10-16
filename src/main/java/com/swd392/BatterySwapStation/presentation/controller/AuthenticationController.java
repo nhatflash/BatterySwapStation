@@ -12,6 +12,7 @@ import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDeta
 import com.swd392.BatterySwapStation.infrastructure.service.TokenService;
 import com.swd392.BatterySwapStation.presentation.dto.request.LoginRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequest;
+import com.swd392.BatterySwapStation.presentation.dto.request.TokenRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
@@ -70,14 +71,16 @@ public class AuthenticationController {
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .build();
-        var accessToken = loginUseCase.execute(command);
-        var response = ResponseMapper.toLoginResponse(accessToken);
+        var tokens = loginUseCase.execute(command);
+        String accessToken = tokens.get("accessToken");
+        String refreshToken = tokens.get("refreshToken");
+        var response = ResponseMapper.toLoginResponse(accessToken, refreshToken);
         return ResponseEntity.ok(new ApiResponse<>("Login successfully.", response));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<ApiResponse<String>> refreshAccessToken(@RequestBody String refreshToken) {
-        var response = tokenService.refreshAccessToken(refreshToken);
+    public ResponseEntity<ApiResponse<String>> refreshAccessToken(@RequestBody TokenRequest request) {
+        var response = tokenService.refreshAccessToken(request.getRefreshToken());
         return ResponseEntity.ok(new ApiResponse<>("Refresh token successfully.", response));
     }
 

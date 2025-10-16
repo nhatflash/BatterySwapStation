@@ -12,9 +12,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class LoginUseCase implements IUseCase<LoginCommand, String> {
+public class LoginUseCase implements IUseCase<LoginCommand, Map<String, String>> {
 
     private final AuthenticationManager authenticationManager;
 
@@ -35,7 +37,7 @@ public class LoginUseCase implements IUseCase<LoginCommand, String> {
     }
 
     @Override
-    public String execute(LoginCommand request) {
+    public Map<String, String> execute(LoginCommand request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword())
@@ -46,7 +48,12 @@ public class LoginUseCase implements IUseCase<LoginCommand, String> {
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         storeUserSession(accessToken, refreshToken, user);
 
-        return accessToken;
+        return new HashMap<>() {
+            {
+                put("accessToken", accessToken);
+                put("refreshToken", refreshToken);
+            }
+        };
     }
 
     private User retrieveUserFromLogin(LoginCommand request) {

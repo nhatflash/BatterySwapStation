@@ -21,9 +21,10 @@ public class ResponseMapper {
                 .build();
     }
 
-    public static LoginResponse toLoginResponse(String accessToken) {
+    public static LoginResponse toLoginResponse(String accessToken, String refreshToken) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .build();
     }
 

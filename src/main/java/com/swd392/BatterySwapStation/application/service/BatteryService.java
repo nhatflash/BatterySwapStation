@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BatteryService {
@@ -24,6 +25,11 @@ public class BatteryService {
     public boolean existsByBatteryType(String batteryType) {
         BatteryType type = new BatteryType(batteryType);
         return batteryModelRepository.existsByType(type);
+    }
+
+    public BatteryModel findByModelId(UUID modelId) {
+        return batteryModelRepository.findById(modelId)
+                .orElseThrow(() -> new IllegalArgumentException("Battery model not found"));
     }
 
     public List<BatteryModel> findAllModels(int page) {
