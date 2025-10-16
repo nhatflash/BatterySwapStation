@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterVehicleResponse {
+public class VehicleResponse {
     private UUID vehicleId;
     private String vin;
     private String make;

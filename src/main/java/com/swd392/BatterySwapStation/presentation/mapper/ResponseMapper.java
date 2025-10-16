@@ -4,7 +4,7 @@ import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.RegisterVehicleResponse;
+import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 
 public class ResponseMapper {
 
@@ -25,8 +25,8 @@ public class ResponseMapper {
                 .build();
     }
 
-    public static RegisterVehicleResponse toRegisterVehicleResponse(Vehicle vehicle) {
-        return RegisterVehicleResponse.builder()
+    public static VehicleResponse toVehicleResponse(Vehicle vehicle) {
+        return VehicleResponse.builder()
                 .vehicleId(vehicle.getId())
                 .vin(vehicle.getVin().getValue())
                 .make(vehicle.getMake())

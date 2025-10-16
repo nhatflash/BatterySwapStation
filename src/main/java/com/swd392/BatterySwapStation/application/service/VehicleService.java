@@ -1,9 +1,16 @@
 package com.swd392.BatterySwapStation.application.service;
 
+import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
+import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import com.swd392.BatterySwapStation.domain.repository.VehicleRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
+import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class VehicleService {
@@ -21,6 +28,10 @@ public class VehicleService {
 
     public boolean existsByLicensePlate(String licensePlate) {
         return vehicleRepository.existsByLicensePlate(licensePlate);
+    }
+
+    public List<Vehicle> retrieveUserVehicles(User driver) {
+        return vehicleRepository.findByDriver(driver);
     }
 
     public Vehicle saveVehicle(Vehicle vehicle) {
