@@ -2,6 +2,7 @@ package com.swd392.BatterySwapStation.application.exception;
 
 import com.swd392.BatterySwapStation.application.common.response.ErrorResponse;
 import com.swd392.BatterySwapStation.application.common.response.ValidationErrorResponse;
+import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -37,6 +38,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(UsernameNotFoundException e) {
         var error = new ErrorResponse("USER_NOT_FOUND", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException e) {
+        var error = new ErrorResponse("NOT_FOUND", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 

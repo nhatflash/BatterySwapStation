@@ -30,7 +30,10 @@ public class DateStringMapper {
     private static final List<String> timePatterns = List.of(
             "HH:mm:ss",
             "HH.mm.ss",
-            "HHmmss"
+            "HHmmss",
+            "HH:mm",
+            "HH.mm",
+            "HHmm"
     );
 
     public static LocalDate getLocalDate(String dateString) {
