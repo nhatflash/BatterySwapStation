@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.service;
 
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.domain.enums.UserRole;
+import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,5 +42,12 @@ public class UserService {
 
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    // ============ Find User by Name and Role ===============
+    public User getUserByEmailAndRole(String email, UserRole role) {
+        return userRepository.findByEmail(email)
+                .filter(u -> u.getRole() == role)
+                .orElseThrow(() -> new RuntimeException("User not found or not a STAFF"));
     }
 }

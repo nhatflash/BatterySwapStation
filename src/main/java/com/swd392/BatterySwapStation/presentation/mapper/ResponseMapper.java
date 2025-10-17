@@ -1,10 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
-import com.swd392.BatterySwapStation.domain.entity.Station;
-import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
-import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.presentation.dto.response.*;
-import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
@@ -94,6 +91,18 @@ public class ResponseMapper {
         return ChangeStationStatusResponse.builder()
                 .stationId(station.getId())
                 .newStatus(station.getStatus())
+                .build();
+    }
+
+    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
+
+        return StationStaffResponse.builder()
+                .staffId(staff.getStaffId())
+                .stationId(staff.getStation().getId())
+                .stationName(staff.getStation().getName())
+                .salary(staff.getSalary().getAmount())
+                .status(staff.getStatus())
+                .attachedAt(staff.getAttachedAt())
                 .build();
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -20,27 +21,28 @@ public class UpdateStationUseCase implements IUseCase<UpdateStationCommand, Stat
     @Override
     public Station execute(UpdateStationCommand request) {
         var station = stationService.getByStationID(request.getStationId());
+        if (station == null) return null;
 
-        // ✅ Convert time strings safely (avoid repeated parsing)
-        LocalTime openingTime = DateStringMapper.getLocalTime(request.getOpeningTime());
-        LocalTime closingTime = DateStringMapper.getLocalTime(request.getClosingTime());
+        LocalTime openingTime = request.getOpeningTime() != null
+                ? DateStringMapper.getLocalTime(request.getOpeningTime())
+                : null;
+        LocalTime closingTime = request.getClosingTime() != null
+                ? DateStringMapper.getLocalTime(request.getClosingTime())
+                : null;
 
-        if (station != null) {
-            // Update station info here
-            station.setName(!request.getName().isEmpty() ? request.getName() : station.getName());
-            station.setAddress(!request.getAddress().isEmpty() ? request.getAddress() : station.getAddress());
-            station.setTotalCapacity(request.getTotalCapacity() != null ? request.getTotalCapacity() : station.getTotalCapacity());
-            station.setTotalSwapBays(request.getTotalSwapBays() != null ? request.getTotalSwapBays() : station.getTotalSwapBays());
-            station.setOpeningTime(openingTime != null ? openingTime : station.getOpeningTime());
-            station.setClosingTime(closingTime != null ? closingTime : station.getClosingTime());
-            station.setContactPhone(!request.getContactPhone().isEmpty() ? request.getContactPhone() : station.getContactPhone());
-            station.setContactEmail(!request.getContactEmail().isEmpty() ? request.getContactEmail() : station.getContactEmail());
-            station.setDescription(!request.getDescription().isEmpty() ? request.getDescription() : station.getDescription());
-            station.setImageUrl(!request.getImageUrl().isEmpty() ? request.getImageUrl() : station.getImageUrl());
 
-            return stationService.saveStation(station);
-        } else {
-            return null;
-        }
+        station.setName(Optional.ofNullable(request.getName()).filter(s -> !s.isBlank()).orElse(station.getName()));
+        station.setAddress(Optional.ofNullable(request.getAddress()).filter(s -> !s.isBlank()).orElse(station.getAddress()));
+        station.setTotalCapacity(Optional.ofNullable(request.getTotalCapacity()).orElse(station.getTotalCapacity()));
+        station.setTotalSwapBays(Optional.ofNullable(request.getTotalSwapBays()).orElse(station.getTotalSwapBays()));
+        station.setOpeningTime(openingTime != null ? openingTime : station.getOpeningTime());
+        station.setClosingTime(closingTime != null ? closingTime : station.getClosingTime());
+        station.setContactPhone(Optional.ofNullable(request.getContactPhone()).filter(s -> !s.isBlank()).orElse(station.getContactPhone()));
+        station.setContactEmail(Optional.ofNullable(request.getContactEmail()).filter(s -> !s.isBlank()).orElse(station.getContactEmail()));
+        station.setDescription(Optional.ofNullable(request.getDescription()).filter(s -> !s.isBlank()).orElse(station.getDescription()));
+        station.setImageUrl(Optional.ofNullable(request.getImageUrl()).filter(s -> !s.isBlank()).orElse(station.getImageUrl()));
+        station.setStatus(Optional.ofNullable(request.getStatus()).orElse(station.getStatus()));
+
+        return stationService.saveStation(station);
     }
 }

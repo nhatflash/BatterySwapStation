@@ -13,8 +13,6 @@ public class CreateStationResponse {
     String stationId;
     String name;
     String address;
-    Double latitude;
-    Double longitude;
     Integer totalCapacity;
     Integer totalSwapBays;
     StationStatus status;

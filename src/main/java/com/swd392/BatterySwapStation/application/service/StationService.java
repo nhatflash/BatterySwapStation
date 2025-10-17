@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.StationRepository;
 import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,15 +17,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class StationService {
 
 
     private final StationRepository stationRepository;
 
-
-    public StationService(StationRepository stationRepository) {
-        this.stationRepository = stationRepository;
-    }
 
     public Station getByStationID (UUID StationId){
         return stationRepository.findById(StationId)
@@ -43,6 +41,11 @@ public class StationService {
     // Get all stations
     public List<Station> getAllStations() {
         return stationRepository.findAll();
+    }
+    // Get StationByName
+    public Station getStationByName(String name) {
+        return stationRepository.findByName(name)
+                .orElseThrow(() -> new NotFoundException("Station not found with name: " + name));
     }
 
 }

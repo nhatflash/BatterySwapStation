@@ -13,38 +13,17 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateStationRequest {
-
-
     String name;
-
-
     String address;
-
-
     @Min(value = 1, message = "Please enter the number of participants again!!! ")
     Integer totalCapacity;
-
-
     StationStatus status;
-
-
     @Min(value = 1, message = "Please enter the number of participants again!!! ")
     Integer totalSwapBays;
-
     String openingTime;
-
-
     String closingTime;
-
-
     String contactPhone;
-
-
     String contactEmail;
-
-
     String description;
-
-
     String imageUrl;
 }
