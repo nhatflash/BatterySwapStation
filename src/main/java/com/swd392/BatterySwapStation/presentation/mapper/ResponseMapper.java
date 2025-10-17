@@ -105,4 +105,21 @@ public class ResponseMapper {
                 .attachedAt(staff.getAttachedAt())
                 .build();
     }
+
+    public static BatteryResponse mapToBatteryResponse(Battery battery) {
+        return BatteryResponse.builder()
+                .batteryId(battery.getId())
+                .serialNumber(battery.getSerialNumber())
+                .type(battery.getModel().getType().getValue())
+                .capacityKwh(battery.getCapacityKwh())
+                .status(battery.getStatus())
+                .currentStationName(battery.getCurrentStation().getName())
+                .currentChargePercentage(battery.getCurrentChargePercentage())
+                .totalChargeCycles(battery.getTotalChargeCycles())
+                .lastMaintenanceDate(battery.getLastMaintenanceDate())
+                .totalSwapCount(battery.getTotalSwapCount())
+                .manufactureDate(battery.getManufactureDate())
+                .warrantyExpiryDate(battery.getWarrantyExpiryDate())
+                .build();
+    }
 }
