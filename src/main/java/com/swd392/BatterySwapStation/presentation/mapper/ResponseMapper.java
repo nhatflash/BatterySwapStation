@@ -1,8 +1,14 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
 import com.swd392.BatterySwapStation.domain.entity.Station;
+import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.presentation.dto.response.*;
+import com.swd392.BatterySwapStation.domain.entity.Vehicle;
+import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
+import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
+import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
+import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 
 public class ResponseMapper {
 
@@ -17,9 +23,37 @@ public class ResponseMapper {
                 .build();
     }
 
-    public static LoginResponse toLoginResponse(String accessToken) {
+    public static LoginResponse toLoginResponse(String accessToken, String refreshToken) {
         return LoginResponse.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public static VehicleResponse toVehicleResponse(Vehicle vehicle) {
+        return VehicleResponse.builder()
+                .vehicleId(vehicle.getId())
+                .vin(vehicle.getVin().getValue())
+                .make(vehicle.getMake())
+                .model(vehicle.getModel())
+                .year(vehicle.getYear())
+                .licensePlate(vehicle.getLicensePlate())
+                .batteryType(vehicle.getBatteryType().getValue())
+                .driverId(vehicle.getDriver().getId())
+                .build();
+    }
+
+    public static BatteryModelResponse toBatteryModelResponse(BatteryModel model) {
+        return BatteryModelResponse.builder()
+                .modelId(model.getId())
+                .type(model.getType().getValue())
+                .manufacturer(model.getManufacturer())
+                .chemistry(model.getChemistry())
+                .weightKg(model.getWeightKg())
+                .warrantyMonths(model.getWarrantyMonths())
+                .maxChargePowerKwh(model.getMaxChargePowerKwh())
+                .minSohThreshold(model.getMinSohThreshold())
+                .compatibleVehicles(model.getCompatibleVehicles())
                 .build();
     }
 

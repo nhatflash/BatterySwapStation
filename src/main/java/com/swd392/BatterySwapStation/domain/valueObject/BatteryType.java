@@ -3,11 +3,13 @@ package com.swd392.BatterySwapStation.domain.valueObject;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.regex.Pattern;
 
 @Embeddable
 @EqualsAndHashCode
+@Getter
 public class BatteryType {
 
     @Column(nullable = false, length = 20, name = "battery_type")
