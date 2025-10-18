@@ -108,4 +108,39 @@ public class ResponseMapper {
                 .attachedAt(staff.getAttachedAt())
                 .build();
     }
+
+    public static BatteryResponse mapToBatteryResponse(Battery battery) {
+        return BatteryResponse.builder()
+                .batteryId(battery.getId())
+                .serialNumber(battery.getSerialNumber())
+                .type(battery.getModel().getType().getValue())
+                .capacityKwh(battery.getCapacityKwh())
+                .status(battery.getStatus())
+                .currentStationName(battery.getCurrentStation().getName())
+                .currentChargePercentage(battery.getCurrentChargePercentage())
+                .totalChargeCycles(battery.getTotalChargeCycles())
+                .lastMaintenanceDate(battery.getLastMaintenanceDate())
+                .totalSwapCount(battery.getTotalSwapCount())
+                .manufactureDate(battery.getManufactureDate())
+                .warrantyExpiryDate(battery.getWarrantyExpiryDate())
+                .notes(battery.getNotes())
+                .rentalPrice(battery.getRentalPrice().getAmount())
+                .build();
+    }
+
+    public static UserResponse mapToUserResponse(User user) {
+        return UserResponse.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .identityNumber(user.getIdentityNumber())
+                .dateOfBirth(user.getDateOfBirth())
+                .avatarUrl(user.getAvatarUrl())
+                .role(user.getRole())
+                .status(user.getStatus())
+                .lastLogin(user.getLastLogin())
+                .build();
+    }
 }
