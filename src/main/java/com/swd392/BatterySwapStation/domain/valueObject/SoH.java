@@ -42,7 +42,7 @@ public class SoH {
         return this.percentage.compareTo(BigDecimal.valueOf(50)) < 0;
     }
 
-    public SoH degrate(BigDecimal degradationRate) {
+    public SoH degrade(BigDecimal degradationRate) {
         BigDecimal newPercentage = this.percentage.subtract(degradationRate);
         return new SoH(newPercentage.max(BigDecimal.ZERO));
     }
