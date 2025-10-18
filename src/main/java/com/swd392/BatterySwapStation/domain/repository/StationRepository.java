@@ -13,4 +13,5 @@ import java.util.UUID;
 public interface StationRepository extends JpaRepository<Station, UUID> {
     List<Station> findByStatus(StationStatus status);
     Optional<Station> findByName(String name);
+    boolean existsByName(String name);
 }

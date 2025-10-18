@@ -1,12 +1,15 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
+import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.presentation.dto.response.*;
 import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class ResponseMapper {
 
     public static RegisterDriverResponse toRegisterDriverResponse(User user) {
@@ -94,10 +97,12 @@ public class ResponseMapper {
                 .build();
     }
 
-    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
+    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff, UserService userService) {
 
+        var user = userService.getUserById(staff.getStaffId());
         return StationStaffResponse.builder()
                 .staffId(staff.getStaffId())
+                .staffEmail(user.getEmail())
                 .stationId(staff.getStation().getId())
                 .stationName(staff.getStation().getName())
                 .salary(staff.getSalary().getAmount())

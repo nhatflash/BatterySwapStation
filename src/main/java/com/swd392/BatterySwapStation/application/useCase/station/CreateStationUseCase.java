@@ -2,7 +2,6 @@ package com.swd392.BatterySwapStation.application.useCase.station;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.model.CreateStationCommand;
-import com.swd392.BatterySwapStation.application.service.GeocodingServiceOSM;
 import com.swd392.BatterySwapStation.application.service.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
@@ -11,17 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-
 @Service
 @Slf4j
 public class CreateStationUseCase implements IUseCase<CreateStationCommand, Station> {
 
     @Autowired
     StationService stationService;
-
-    @Autowired
-    GeocodingServiceOSM geocodingServiceOSM;
 
     @Override
     public Station execute(CreateStationCommand request) {
@@ -40,6 +34,9 @@ public class CreateStationUseCase implements IUseCase<CreateStationCommand, Stat
                 .description(request.getDescription())
                 .imageUrl(request.getImageUrl())
                 .build();
+        if (stationService.existsByName(request.getName())) {
+            throw new IllegalArgumentException("Station with name " + request.getName() + " already exists.");
+        }
 
         return stationService.saveStation(newStation);
     }

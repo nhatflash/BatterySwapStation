@@ -48,4 +48,8 @@ public class StationService {
                 .orElseThrow(() -> new NotFoundException("Station not found with name: " + name));
     }
 
+    public boolean existsByName(String name) {
+        return stationRepository.existsByName(name);
+    }
+
 }
