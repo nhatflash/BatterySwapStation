@@ -33,4 +33,7 @@ public class AddNewBatteryRequest {
     private String warrantyExpiryDate;
 
     private String notes;
+
+    @NotNull(message = "Battery rental price is required.")
+    private BigDecimal rentalPrice;
 }

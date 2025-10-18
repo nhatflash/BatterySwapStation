@@ -120,6 +120,8 @@ public class ResponseMapper {
                 .totalSwapCount(battery.getTotalSwapCount())
                 .manufactureDate(battery.getManufactureDate())
                 .warrantyExpiryDate(battery.getWarrantyExpiryDate())
+                .notes(battery.getNotes())
+                .rentalPrice(battery.getRentalPrice().getAmount())
                 .build();
     }
 

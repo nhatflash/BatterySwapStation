@@ -25,7 +25,13 @@ public class Station extends BaseEntity {
     private String address;
 
     @Column(nullable = false)
+    private Integer currentCapacity;
+
+    @Column(nullable = false)
     private Integer totalCapacity;
+
+    @Column(nullable = false)
+    public Integer idleSwapBays;
 
     @Column(nullable = false)
     private Integer totalSwapBays;

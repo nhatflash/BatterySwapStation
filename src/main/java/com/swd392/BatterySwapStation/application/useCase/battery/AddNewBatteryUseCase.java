@@ -9,6 +9,7 @@ import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
+import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -54,6 +55,7 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
                 .manufactureDate(DateStringMapper.getLocalDate(request.getManufactureDate()))
                 .warrantyExpiryDate(DateStringMapper.getLocalDate(request.getWarrantyExpiryDate()))
                 .notes(request.getNotes())
+                .rentalPrice(new Money(request.getRentalPrice()))
                 .build();
         return batteryService.saveBattery(newBattery);
     }

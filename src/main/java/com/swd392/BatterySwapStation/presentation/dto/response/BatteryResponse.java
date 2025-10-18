@@ -29,4 +29,5 @@ public class BatteryResponse {
     private LocalDate manufactureDate;
     private LocalDate warrantyExpiryDate;
     private String notes;
+    private BigDecimal rentalPrice;
 }
