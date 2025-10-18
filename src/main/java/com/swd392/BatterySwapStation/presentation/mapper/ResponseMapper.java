@@ -97,12 +97,10 @@ public class ResponseMapper {
                 .build();
     }
 
-    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff, UserService userService) {
+    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
 
-        var user = userService.getUserById(staff.getStaffId());
         return StationStaffResponse.builder()
                 .staffId(staff.getStaffId())
-                .staffEmail(user.getEmail())
                 .stationId(staff.getStation().getId())
                 .stationName(staff.getStation().getName())
                 .salary(staff.getSalary().getAmount())
