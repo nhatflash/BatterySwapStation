@@ -2,6 +2,7 @@ package com.swd392.BatterySwapStation.domain.entity;
 
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,6 +40,11 @@ public class Battery extends BaseEntity {
 
     @Column(nullable = false)
     private Integer totalChargeCycles;
+
+    @AttributeOverrides({
+            @AttributeOverride(name = "percentage", column = @Column(name = "state_of_health", precision = 5, scale = 2, nullable = false))
+    })
+    private SoH stateOfHealth;
 
     public LocalDateTime lastMaintenanceDate;
 

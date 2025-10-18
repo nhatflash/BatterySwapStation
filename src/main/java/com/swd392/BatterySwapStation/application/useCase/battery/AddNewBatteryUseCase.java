@@ -10,6 +10,7 @@ import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
 
     private Station getValidStationForBatteryAdding(UUID stationId) {
         Station station = stationService.getByStationID(stationId);
+        if (station.getCurrentCapacity() >= station.getTotalCapacity()) {
+            throw new IllegalArgumentException("Battery capacity exceeded on this station. Cannot add more battery now.");
+        }
         // later will be added like capacity checking
         return station;
     }
@@ -52,6 +56,7 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
                 .currentChargePercentage(BigDecimal.valueOf(100.00))
                 .totalChargeCycles(0)
                 .totalSwapCount(0)
+                .stateOfHealth(new SoH(BigDecimal.valueOf(100.00)))
                 .manufactureDate(DateStringMapper.getLocalDate(request.getManufactureDate()))
                 .warrantyExpiryDate(DateStringMapper.getLocalDate(request.getWarrantyExpiryDate()))
                 .notes(request.getNotes())
