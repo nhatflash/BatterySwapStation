@@ -25,6 +25,11 @@ spring:
           max-active: 8
           max-idle: 8
           min-idle: 0
+  task:
+    scheduling:
+      pool:
+        size: 5
+      thread-name-prefix: scheduler-
 
 logging:
   level:
@@ -36,3 +41,5 @@ jwt:
   secret: fksldjfuewrujweifdsferwetewqfsrewrtydsfsadgwerokjilgweyhklvjiosdjriowejtfjkweljrklwhrewjklg
   access-token-expiration: 900000
   refresh-token-expiration: 604800000
+
+

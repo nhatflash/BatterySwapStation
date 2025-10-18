@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @OpenAPIDefinition(
         info = @Info(title = "EV Battery Swap Station API", version = "v1")
@@ -17,6 +18,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         bearerFormat = "JWT"
 )
 @SpringBootApplication
+@EnableScheduling
 public class BatterySwapStationApplication {
 
 	public static void main(String[] args) {

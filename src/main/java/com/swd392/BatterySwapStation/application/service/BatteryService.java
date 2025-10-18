@@ -5,6 +5,7 @@ import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.BatteryModelRepository;
 import com.swd392.BatterySwapStation.domain.repository.BatteryRepository;
+import com.swd392.BatterySwapStation.domain.repository.StationRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,13 +20,16 @@ public class BatteryService {
 
     private final BatteryModelRepository batteryModelRepository;
     private final BatteryRepository batteryRepository;
+    private final StationRepository stationRepository;
 
     private static final int LIST_SIZE = 10;
 
     public BatteryService(BatteryModelRepository batteryModelRepository,
-                          BatteryRepository batteryRepository) {
+                          BatteryRepository batteryRepository,
+                          StationRepository stationRepository) {
         this.batteryModelRepository = batteryModelRepository;
         this.batteryRepository = batteryRepository;
+        this.stationRepository = stationRepository;
     }
 
     public boolean existsByBatteryType(String batteryType) {
@@ -53,6 +57,12 @@ public class BatteryService {
     public BatteryModel findByModelId(UUID modelId) {
         return batteryModelRepository.findById(modelId)
                 .orElseThrow(() -> new NotFoundException("Battery model not found"));
+    }
+
+    public List<Battery> findByCurrentStation(UUID stationId) {
+        var station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new NotFoundException("Station not found"));
+        return batteryRepository.findByCurrentStation(station);
     }
 
     public List<BatteryModel> findAllModels(int page) {

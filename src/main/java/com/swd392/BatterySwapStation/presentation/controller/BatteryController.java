@@ -124,4 +124,5 @@ public class BatteryController {
         var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
         return ResponseEntity.ok(new ApiResponse<>("Batteries retrieved successfully", response));
     }
+
 }
