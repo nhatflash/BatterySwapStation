@@ -39,6 +39,17 @@ public class BatteryService {
                 .orElseThrow(() -> new NotFoundException("Battery model not found"));
     }
 
+    public Battery findByBatteryId(UUID batteryId) {
+        return batteryRepository.findById(batteryId)
+                .orElseThrow(() -> new NotFoundException("Battery not found"));
+    }
+
+    public List<Battery> findAllBatteries(int page) {
+        if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
+        Pageable pageable = PageRequest.of(page, LIST_SIZE);
+        return batteryRepository.findAll(pageable).getContent();
+    }
+
     public BatteryModel findByModelId(UUID modelId) {
         return batteryModelRepository.findById(modelId)
                 .orElseThrow(() -> new NotFoundException("Battery model not found"));

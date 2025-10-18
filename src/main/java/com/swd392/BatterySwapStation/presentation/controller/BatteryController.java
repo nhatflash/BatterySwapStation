@@ -5,10 +5,7 @@ import com.swd392.BatterySwapStation.application.model.AddNewBatteryCommand;
 import com.swd392.BatterySwapStation.application.model.DefineBatteryModelCommand;
 import com.swd392.BatterySwapStation.application.model.UpdateBatteryModelCommand;
 import com.swd392.BatterySwapStation.application.service.BatteryService;
-import com.swd392.BatterySwapStation.application.useCase.battery.AddNewBatteryUseCase;
-import com.swd392.BatterySwapStation.application.useCase.battery.DefineBatteryModelUseCase;
-import com.swd392.BatterySwapStation.application.useCase.battery.RetrieveAllModelsUseCase;
-import com.swd392.BatterySwapStation.application.useCase.battery.UpdateBatteryModelUseCase;
+import com.swd392.BatterySwapStation.application.useCase.battery.*;
 import com.swd392.BatterySwapStation.presentation.dto.request.AddNewBatteryRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.DefineBatteryModelRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateBatteryModelRequest;
@@ -34,15 +31,21 @@ public class BatteryController {
     private final RetrieveAllModelsUseCase retrieveAllModelsUseCase;
     private final UpdateBatteryModelUseCase updateBatteryModelUseCase;
     private final AddNewBatteryUseCase addNewBatteryUseCase;
+    private final RetrieveBatteryDetailsUseCase retrieveBatteryDetailsUseCase;
+    private final RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase;
 
     public BatteryController(DefineBatteryModelUseCase defineBatteryModelUseCase,
                              RetrieveAllModelsUseCase retrieveAllModelsUseCase,
                              UpdateBatteryModelUseCase updateBatteryModelUseCase,
-                             AddNewBatteryUseCase addNewBatteryUseCase) {
+                             AddNewBatteryUseCase addNewBatteryUseCase,
+                             RetrieveBatteryDetailsUseCase retrieveBatteryDetailsUseCase,
+                             RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase) {
         this.defineBatteryModelUseCase = defineBatteryModelUseCase;
         this.retrieveAllModelsUseCase = retrieveAllModelsUseCase;
         this.updateBatteryModelUseCase = updateBatteryModelUseCase;
         this.addNewBatteryUseCase = addNewBatteryUseCase;
+        this.retrieveBatteryDetailsUseCase = retrieveBatteryDetailsUseCase;
+        this.retrieveAllBatteriesUseCase = retrieveAllBatteriesUseCase;
     }
 
     @PostMapping("/model")
@@ -106,5 +109,19 @@ public class BatteryController {
         var newBattery = addNewBatteryUseCase.execute(command);
         var response = ResponseMapper.mapToBatteryResponse(newBattery);
         return ResponseEntity.ok(new ApiResponse<>("New battery added successfully", response));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<BatteryResponse>> retrieveBatteryDetails(@RequestParam UUID batteryId) {
+        var battery = retrieveBatteryDetailsUseCase.execute(batteryId);
+        var response = ResponseMapper.mapToBatteryResponse(battery);
+        return ResponseEntity.ok(new ApiResponse<>("Battery details retrieved successfully", response));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<ApiResponse<List<BatteryResponse>>> retrieveAllBatteries(@RequestParam Integer page) {
+        var batteries = retrieveAllBatteriesUseCase.execute(page);
+        var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
+        return ResponseEntity.ok(new ApiResponse<>("Batteries retrieved successfully", response));
     }
 }
