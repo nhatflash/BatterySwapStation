@@ -105,6 +105,7 @@ public class BatteryController {
                 .manufactureDate(request.getManufactureDate())
                 .warrantyExpiryDate(request.getWarrantyExpiryDate())
                 .notes(request.getNotes())
+                .rentalPrice(request.getRentalPrice())
                 .build();
         var newBattery = addNewBatteryUseCase.execute(command);
         var response = ResponseMapper.mapToBatteryResponse(newBattery);
