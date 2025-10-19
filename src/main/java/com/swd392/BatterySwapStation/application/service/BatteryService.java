@@ -50,7 +50,7 @@ public class BatteryService {
 
     public List<Battery> findAllBatteries(int page) {
         if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
-        Pageable pageable = PageRequest.of(page, LIST_SIZE);
+        Pageable pageable = PageRequest.of(page - 1, LIST_SIZE);
         return batteryRepository.findAll(pageable).getContent();
     }
 
@@ -67,7 +67,7 @@ public class BatteryService {
 
     public List<BatteryModel> findAllModels(int page) {
         if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
-        Pageable pageable = PageRequest.of(page, LIST_SIZE);
+        Pageable pageable = PageRequest.of(page - 1, LIST_SIZE);
         return batteryModelRepository.findAll(pageable).getContent();
     }
 
