@@ -14,6 +14,8 @@ public class CreateStationResponse {
     String name;
     String address;
     Integer totalCapacity;
+    Integer currentCapacity;
+    Integer idleSwapBays;
     Integer totalSwapBays;
     StationStatus status;
     String openingTime;

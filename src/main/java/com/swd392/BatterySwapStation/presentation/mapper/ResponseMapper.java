@@ -64,6 +64,8 @@ public class ResponseMapper {
                 .address(station.getAddress())
                 .totalCapacity(station.getTotalCapacity())
                 .totalSwapBays(station.getTotalSwapBays())
+                .currentCapacity(station.getCurrentCapacity())
+                .idleSwapBays(station.getIdleSwapBays())
                 .status(station.getStatus())
                 .openingTime(station.getOpeningTime().toString())
                 .closingTime(station.getClosingTime().toString())
