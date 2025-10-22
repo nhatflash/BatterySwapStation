@@ -4,13 +4,18 @@ import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.UserRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class UserService {
+
+    private static final int PAGE_SIZE = 10;
 
     private final UserRepository userRepository;
 
@@ -38,6 +43,20 @@ public class UserService {
     public User getUserById(UUID id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    }
+
+    public List<User> getAllUsers(int page) {
+        if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
+        int pageIndex = page - 1;
+        Pageable pageable = PageRequest.of(pageIndex, PAGE_SIZE);
+        return userRepository.findAll(pageable).getContent();
+    }
+
+    public List<User> getUsersByRole(int page, UserRole role) {
+        if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
+        int pageIndex = page - 1;
+        Pageable pageable = PageRequest.of(pageIndex, PAGE_SIZE);
+        return userRepository.findUsersByRole(pageable, role).getContent();
     }
 
     public User saveUser(User user) {
