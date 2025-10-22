@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
-import com.swd392.BatterySwapStation.application.common.shared.SwappedBattery;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -22,7 +21,11 @@ public class CreateScheduledBatterySwapRequest {
     @NotBlank(message = "Station Id is required.")
     private UUID stationId;
 
-    private List<SwappedBattery> swappedBatteries;
+    @NotBlank(message = "Battery type is required.")
+    private String batteryType;
+
+    @NotNull(message = "Quantity is required.")
+    private Integer quantity;
 
     @NotBlank(message = "Scheduled time is required.")
     private String scheduledTime;

@@ -27,7 +27,8 @@ public class SwapTransactionController {
         var command = CreateScheduledBatterySwapCommand.builder()
                 .driverId(userDetails.getUserId())
                 .vehicleId(request.getVehicleId())
-                .swappedBatteries(request.getSwappedBatteries())
+                .batteryType(request.getBatteryType())
+                .quantity(request.getQuantity())
                 .scheduledTime(request.getScheduledTime())
                 .build();
 

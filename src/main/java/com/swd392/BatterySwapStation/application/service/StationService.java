@@ -52,4 +52,8 @@ public class StationService {
         return stationRepository.existsByName(name);
     }
 
+    public boolean isStationOperational(Station station) {
+        return station.getStatus().equals(StationStatus.OPERATIONAL);
+    }
+
 }

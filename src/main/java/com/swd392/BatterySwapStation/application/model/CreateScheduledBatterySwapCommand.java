@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.application.model;
 
-import com.swd392.BatterySwapStation.application.common.shared.SwappedBattery;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +16,8 @@ public class CreateScheduledBatterySwapCommand {
     private UUID driverId;
     private UUID vehicleId;
     private UUID stationId;
-    private List<SwappedBattery> swappedBatteries;
+    private String batteryType;
+    private Integer quantity;
     private String scheduledTime;
     private String notes;
 }
