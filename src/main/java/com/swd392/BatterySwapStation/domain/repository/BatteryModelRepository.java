@@ -17,4 +17,5 @@ public interface BatteryModelRepository extends JpaRepository<BatteryModel, UUID
 
     @Override
     Page<BatteryModel> findAll(Pageable pageable);
+
 }

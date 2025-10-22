@@ -65,6 +65,14 @@ public class BatteryService {
         return batteryRepository.findByCurrentStation(station);
     }
 
+    public int countByCurrentStationAndModel(UUID stationId, String batteryType) {
+        var station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new NotFoundException("Station not found"));
+        var model = batteryModelRepository.findByType(new BatteryType(batteryType))
+                .orElseThrow(() -> new NotFoundException("Battery model not found"));
+        return batteryRepository.countByCurrentStationAndModel(station, model);
+    }
+
     public List<BatteryModel> findAllModels(int page) {
         if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
         Pageable pageable = PageRequest.of(page - 1, LIST_SIZE);

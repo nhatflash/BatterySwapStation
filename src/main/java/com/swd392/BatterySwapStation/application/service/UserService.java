@@ -69,4 +69,8 @@ public class UserService {
                 .filter(u -> u.getRole() == role)
                 .orElseThrow(() -> new RuntimeException("User not found or not a STAFF"));
     }
+
+    public boolean isCorrectRole(User user, UserRole role) {
+        return user.getRole().equals(role);
+    }
 }

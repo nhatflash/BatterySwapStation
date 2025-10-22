@@ -9,6 +9,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -32,7 +33,7 @@ public class Battery extends BaseEntity {
     private BatteryStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "current_station_id", nullable = false)
+    @JoinColumn(name = "current_station_id")
     public Station currentStation;
 
     @Column(precision = 5, scale = 2)
@@ -64,4 +65,10 @@ public class Battery extends BaseEntity {
             @AttributeOverride(name = "amount", column = @Column(name = "rental_price"))
     })
     private Money rentalPrice;
+
+    @ManyToMany(mappedBy = "oldBatteries")
+    private Set<SwapTransaction> attachedTransactions;
+
+    @ManyToMany(mappedBy = "newBatteries")
+    private Set<SwapTransaction> returnedTransactions;
 }
