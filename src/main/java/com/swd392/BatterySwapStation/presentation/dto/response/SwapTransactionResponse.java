@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,14 +18,14 @@ import java.util.List;
 @AllArgsConstructor
 public class SwapTransactionResponse {
 
+    private UUID transactionId;
     private String code;
 
-    private String driverId;
-    private String vehicleId;
-    private String stationId;
-    private List<String> oldBatteryIds;
-    private List<String> newBatteryIds;
-    private String confirmedStaffId;
+    private UUID driverId;
+    private UUID vehicleId;
+    private UUID stationId;
+    private List<BatteryTransactionResponse> batteryTransactionResponses;
+    private UUID confirmedStaffId;
     private LocalDateTime scheduledTime;
     private LocalDateTime arrivalTime;
     private LocalDateTime swapStartTime;

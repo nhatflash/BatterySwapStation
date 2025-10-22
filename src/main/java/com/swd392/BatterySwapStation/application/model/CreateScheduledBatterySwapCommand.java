@@ -16,8 +16,6 @@ public class CreateScheduledBatterySwapCommand {
     private UUID driverId;
     private UUID vehicleId;
     private UUID stationId;
-    private String batteryType;
-    private Integer quantity;
     private String scheduledTime;
     private String notes;
 }

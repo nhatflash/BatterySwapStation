@@ -66,9 +66,4 @@ public class Battery extends BaseEntity {
     })
     private Money rentalPrice;
 
-    @ManyToMany(mappedBy = "oldBatteries")
-    private Set<SwapTransaction> attachedTransactions;
-
-    @ManyToMany(mappedBy = "newBatteries")
-    private Set<SwapTransaction> returnedTransactions;
 }

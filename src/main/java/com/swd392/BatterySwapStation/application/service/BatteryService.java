@@ -2,6 +2,7 @@ package com.swd392.BatterySwapStation.application.service;
 
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
+import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.BatteryModelRepository;
 import com.swd392.BatterySwapStation.domain.repository.BatteryRepository;
@@ -60,18 +61,23 @@ public class BatteryService {
     }
 
     public List<Battery> findByCurrentStation(UUID stationId) {
-        var station = stationRepository.findById(stationId)
-                .orElseThrow(() -> new NotFoundException("Station not found"));
+        var station = getStationById(stationId);
         return batteryRepository.findByCurrentStation(station);
     }
 
     public int countByCurrentStationAndModel(UUID stationId, String batteryType) {
-        var station = stationRepository.findById(stationId)
-                .orElseThrow(() -> new NotFoundException("Station not found"));
-        var model = batteryModelRepository.findByType(new BatteryType(batteryType))
-                .orElseThrow(() -> new NotFoundException("Battery model not found"));
+        var station = getStationById(stationId);
+        var model = findByBatteryType(batteryType);
         return batteryRepository.countByCurrentStationAndModel(station, model);
     }
+
+
+    public List<Battery> findByCurrentStationAndModel(UUID stationId, String batteryType) {
+        var station = getStationById(stationId);
+        var model = findByBatteryType(batteryType);
+        return batteryRepository.findByCurrentStationAndModel(station, model);
+    }
+
 
     public List<BatteryModel> findAllModels(int page) {
         if (page < 1) throw new IllegalArgumentException("Request page must be equal or greater than 1.");
@@ -81,6 +87,11 @@ public class BatteryService {
 
     public BatteryModel saveBatteryModel(BatteryModel batteryModel) {
         return batteryModelRepository.save(batteryModel);
+    }
+
+    private Station getStationById(UUID stationId) {
+        return stationRepository.findById(stationId)
+                .orElseThrow(() -> new NotFoundException("Station not found"));
     }
 
     public Battery saveBattery(Battery battery) {

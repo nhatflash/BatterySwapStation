@@ -20,4 +20,5 @@ public class RegisterVehicleCommand {
     private Integer year;
     private String licensePlate;
     private String batteryType;
+    private Integer batteryCapacity;
 }

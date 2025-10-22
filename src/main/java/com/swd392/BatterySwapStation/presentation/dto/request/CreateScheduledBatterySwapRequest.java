@@ -16,16 +16,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateScheduledBatterySwapRequest {
+    @NotBlank(message = "Vehicle Id is required.")
     private UUID vehicleId;
 
     @NotBlank(message = "Station Id is required.")
     private UUID stationId;
-
-    @NotBlank(message = "Battery type is required.")
-    private String batteryType;
-
-    @NotNull(message = "Quantity is required.")
-    private Integer quantity;
 
     @NotBlank(message = "Scheduled time is required.")
     private String scheduledTime;

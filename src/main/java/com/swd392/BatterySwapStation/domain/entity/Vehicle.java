@@ -41,6 +41,9 @@ public class Vehicle extends BaseEntity{
     private BatteryType batteryType;
 
     @Column(nullable = false)
+    private Integer batteryCapacity;
+
+    @Column(nullable = false)
     private Boolean isActive = true;
 
     @ManyToOne(fetch = FetchType.LAZY)

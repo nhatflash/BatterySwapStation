@@ -9,6 +9,9 @@ import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverRes
 import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 import lombok.RequiredArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 public class ResponseMapper {
 
@@ -143,6 +146,32 @@ public class ResponseMapper {
                 .role(user.getRole())
                 .status(user.getStatus())
                 .lastLogin(user.getLastLogin())
+                .build();
+    }
+
+    public static SwapTransactionResponse mapToSwapTransactionResponse(SwapTransaction transaction) {
+        List<BatteryTransactionResponse> responses = new ArrayList<>();
+        for (var btr : transaction.getBatteryTransactions()) {
+            responses.add(new BatteryTransactionResponse(btr.getOldBattery().getId(), btr.getNewBattery().getId()));
+        }
+        return SwapTransactionResponse.builder()
+                .transactionId(transaction.getId())
+                .code(transaction.getCode())
+                .driverId(transaction.getDriver().getId())
+                .vehicleId(transaction.getVehicle().getId())
+                .stationId(transaction.getStation().getId())
+                .batteryTransactionResponses(responses)
+                .confirmedStaffId(transaction.getConfirmedBy().getId())
+                .scheduledTime(transaction.getScheduledTime())
+                .arrivalTime(transaction.getArrivalTime())
+                .swapStartTime(transaction.getSwapStartTime())
+                .swapEndTime(transaction.getSwapEndTime())
+                .status(transaction.getStatus())
+                .type(transaction.getType())
+                .swapPrice(transaction.getSwapPrice().getAmount())
+                .notes(transaction.getNotes())
+                .driverRating(transaction.getDriverRating())
+                .driverFeedback(transaction.getDriverFeedback())
                 .build();
     }
 }

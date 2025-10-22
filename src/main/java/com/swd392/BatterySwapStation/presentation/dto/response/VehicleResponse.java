@@ -19,5 +19,6 @@ public class VehicleResponse {
     private int year;
     private String licensePlate;
     private String batteryType;
+    private int batteryCapacity;
     private UUID driverId;
 }

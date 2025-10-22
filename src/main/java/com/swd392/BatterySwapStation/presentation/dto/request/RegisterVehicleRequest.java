@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,8 @@ public class RegisterVehicleRequest {
 
     @NotBlank(message = "Model is required.")
     private String model;
+
+    @Min(value = 2000, message = "Year must be greater than 2000.")
     private Integer year;
 
     @NotBlank(message = "License plate is required.")
@@ -27,4 +30,8 @@ public class RegisterVehicleRequest {
 
     @NotBlank(message = "Battery type is required.")
     private String batteryType;
+
+    @NotBlank(message = "Battery capacity is required.")
+    @Min(value = 1, message = "Battery capacity must be greater than 0.")
+    private Integer batteryCapacity;
 }

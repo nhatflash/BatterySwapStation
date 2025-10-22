@@ -32,25 +32,12 @@ public class SwapTransaction extends BaseEntity {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
+    @OneToMany(mappedBy = "swapTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<BatteryTransaction> batteryTransactions = new HashSet<>();
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "station_id", nullable = false)
     private Station station;
-
-    @ManyToMany
-    @JoinTable(
-            name = "old_battery_transaction",
-            joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "old_battery_id")
-    )
-    private Set<Battery> oldBatteries = new HashSet<>();
-
-    @ManyToMany
-    @JoinTable(
-            name = "new_battery_transaction",
-            joinColumns = @JoinColumn(name = "transaction_id"),
-            inverseJoinColumns = @JoinColumn(name = "new_battery_id")
-    )
-    private Set<Battery> newBatteries = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "confirmed_staff_id")
@@ -80,6 +67,7 @@ public class SwapTransaction extends BaseEntity {
 
     private Integer driverRating;
 
+    @Column(length = 1000)
     private String driverFeedback;
 
 }

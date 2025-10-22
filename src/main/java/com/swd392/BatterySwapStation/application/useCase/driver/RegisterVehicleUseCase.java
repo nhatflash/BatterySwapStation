@@ -47,6 +47,7 @@ public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, 
                 .year(request.getYear())
                 .licensePlate(request.getLicensePlate())
                 .batteryType(new BatteryType(request.getBatteryType()))
+                .batteryCapacity(request.getBatteryCapacity())
                 .isActive(true)
                 .driver(driver)
                 .build();

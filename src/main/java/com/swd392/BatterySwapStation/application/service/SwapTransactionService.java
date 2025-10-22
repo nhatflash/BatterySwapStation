@@ -26,7 +26,8 @@ public class SwapTransactionService {
     public SwapTransaction createScheduledTransaction(User driver,
                                                       Vehicle vehicle,
                                                       Station station,
-                                                      LocalDateTime scheduledTime) {
+                                                      LocalDateTime scheduledTime,
+                                                      String notes) {
         return SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
@@ -35,6 +36,7 @@ public class SwapTransactionService {
                 .scheduledTime(scheduledTime)
                 .status(TransactionStatus.SCHEDULED)
                 .type(SwapType.SCHEDULED)
+                .notes(notes)
                 .build();
     }
 
@@ -50,6 +52,8 @@ public class SwapTransactionService {
                 .type(SwapType.WALK_IN)
                 .build();
     }
+
+
 
 
     public SwapTransaction saveSwapTransaction(SwapTransaction swapTransaction) {
