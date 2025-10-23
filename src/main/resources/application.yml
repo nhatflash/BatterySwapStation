@@ -30,6 +30,7 @@ spring:
         size: 5
       thread-name-prefix: scheduler-
 
+
 logging:
   level:
     org.springframework.security: debug
@@ -42,3 +43,14 @@ jwt:
   refresh-token-expiration: 604800000
 
 
+springdoc:
+  swagger-ui:
+    url: /v3/api-docs
+    config-url: /v3/api-docs/swagger-config
+    path: /swagger-ui
+
+  api-docs:
+    path: /v3/api-docs
+
+server:
+  forward-headers-strategy: framework

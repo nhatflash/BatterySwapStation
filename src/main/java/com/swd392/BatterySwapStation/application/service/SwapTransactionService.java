@@ -10,6 +10,7 @@ import com.swd392.BatterySwapStation.domain.repository.SwapTransactionRepository
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
@@ -18,6 +19,8 @@ import java.util.Random;
 public class SwapTransactionService {
 
     private final SwapTransactionRepository swapTransactionRepository;
+
+    private static final double TRANSACTION_FEE = 100000.0;
 
     public SwapTransactionService(SwapTransactionRepository swapTransactionRepository) {
         this.swapTransactionRepository = swapTransactionRepository;
@@ -28,6 +31,7 @@ public class SwapTransactionService {
                                                       Station station,
                                                       LocalDateTime scheduledTime,
                                                       String notes) {
+        int vehicleBatteryCount = vehicle.getBatteryCapacity();
         return SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
@@ -36,6 +40,7 @@ public class SwapTransactionService {
                 .scheduledTime(scheduledTime)
                 .status(TransactionStatus.SCHEDULED)
                 .type(SwapType.SCHEDULED)
+                .swapPrice(new Money(BigDecimal.valueOf(vehicleBatteryCount * TRANSACTION_FEE)))
                 .notes(notes)
                 .build();
     }
@@ -43,12 +48,14 @@ public class SwapTransactionService {
     public SwapTransaction createWalkInTransaction(User driver,
                                                    Vehicle vehicle,
                                                    Station station) {
+        int vehicleBatteryCount = vehicle.getBatteryCapacity();
         return SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
                 .vehicle(vehicle)
                 .station(station)
                 .status(TransactionStatus.CONFIRMED)
+                .swapPrice(new Money(BigDecimal.valueOf(vehicleBatteryCount * TRANSACTION_FEE)))
                 .type(SwapType.WALK_IN)
                 .build();
     }

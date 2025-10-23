@@ -42,6 +42,7 @@ public class VehicleController {
                 .year(request.getYear())
                 .licensePlate(request.getLicensePlate())
                 .batteryType(request.getBatteryType())
+                .batteryCapacity(request.getBatteryCapacity())
                 .build();
         var registeredVehicle = registerVehicleUseCase.execute(command);
         var response = ResponseMapper.toVehicleResponse(registeredVehicle);

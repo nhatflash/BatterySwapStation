@@ -150,9 +150,12 @@ public class ResponseMapper {
     }
 
     public static SwapTransactionResponse mapToSwapTransactionResponse(SwapTransaction transaction) {
-        List<BatteryTransactionResponse> responses = new ArrayList<>();
-        for (var btr : transaction.getBatteryTransactions()) {
-            responses.add(new BatteryTransactionResponse(btr.getOldBattery().getId(), btr.getNewBattery().getId()));
+        List<BatteryTransactionResponse> responses = null;
+        if (transaction.getBatteryTransactions() != null) {
+            responses = new ArrayList<>();
+            for (var btr : transaction.getBatteryTransactions()) {
+                responses.add(new BatteryTransactionResponse(btr.getOldBattery().getId(), btr.getNewBattery().getId()));
+            }
         }
         return SwapTransactionResponse.builder()
                 .transactionId(transaction.getId())
@@ -161,7 +164,7 @@ public class ResponseMapper {
                 .vehicleId(transaction.getVehicle().getId())
                 .stationId(transaction.getStation().getId())
                 .batteryTransactionResponses(responses)
-                .confirmedStaffId(transaction.getConfirmedBy().getId())
+                .confirmedStaffId(transaction.getConfirmedBy() == null ? null : transaction.getConfirmedBy().getId())
                 .scheduledTime(transaction.getScheduledTime())
                 .arrivalTime(transaction.getArrivalTime())
                 .swapStartTime(transaction.getSwapStartTime())
