@@ -24,7 +24,7 @@ public class StationStaffService {
     }
 
     public Void deleteStationStaff(StationStaff stationStaff) {
-        var user = userService.getUserById(stationStaff.getStaffId());
+        var user = userService.getUserById(stationStaff);
         if (user.getStatus() == UserStatus.ACTIVE){
             throw new IllegalStateException("Cannot delete active user with ID: " + user.getId());
         }

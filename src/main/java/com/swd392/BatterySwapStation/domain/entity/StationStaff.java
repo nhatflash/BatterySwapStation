@@ -25,8 +25,9 @@ public class StationStaff {
     @JoinColumn(name = "station_id", nullable = false)
     private Station station;
 
-    @Column(nullable = false, unique = true)
-    private UUID staffId;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "staff_id", nullable = false)
+    private User staff;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
