@@ -65,6 +65,7 @@ public class UserController {
                 .lastName(request.getLastName())
                 .identityNumber(request.getIdentityNumber())
                 .dateOfBirth(request.getDateOfBirth())
+                .gender(request.getGender())
                 .avatarUrl(request.getAvatarUrl())
                 .build();
         var updatedProfile = updateProfileUseCase.execute(command);

@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.application.model;
 
+import com.swd392.BatterySwapStation.domain.enums.Gender;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

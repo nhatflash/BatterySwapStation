@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.domain.entity;
 
+import com.swd392.BatterySwapStation.domain.enums.Gender;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
 import jakarta.persistence.*;
@@ -46,6 +47,9 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private LocalDate dateOfBirth;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     private String avatarUrl;
 

@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.application.model;
 
 
+import com.swd392.BatterySwapStation.domain.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class UpdateProfileCommand {
     private String lastName;
     private String identityNumber;
     private String dateOfBirth;
+    private Gender gender;
     private String avatarUrl;
 }
