@@ -5,6 +5,7 @@ import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.model.BatteryState;
 import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -48,7 +49,6 @@ public class BatterySimulatorService {
         }
         checkAbnormalities(state);
         return state;
-
     }
 
 
@@ -136,7 +136,7 @@ public class BatterySimulatorService {
             state.setAlertLevel("CRITICAL");
             return;
         }
-        if (state.getTemperature() < 48) {
+        if (state.getTemperature() > 48) {
             state.setAbnormal(true);
             state.setAbnormalReason("High temperature: " + state.getTemperature() + " C");
             state.setAlertLevel("WARNING");
@@ -161,6 +161,8 @@ public class BatterySimulatorService {
         }
     }
 
+
+    @Transactional
     public int simulateChargingProgress(int currentCharge) {
         if (currentCharge >= 100) {
             return 100;
@@ -169,7 +171,7 @@ public class BatterySimulatorService {
         return Math.min(100, currentCharge + increment);
     }
 
-
+    @Transactional
     public SoH simulateDegradation(Battery battery) {
         SoH currentSoH = battery.getStateOfHealth();
 

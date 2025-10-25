@@ -3,6 +3,7 @@ package com.swd392.BatterySwapStation.application.service;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.Station;
+import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.BatteryModelRepository;
 import com.swd392.BatterySwapStation.domain.repository.BatteryRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -60,6 +62,7 @@ public class BatteryService {
                 .orElseThrow(() -> new NotFoundException("Battery model not found"));
     }
 
+
     public List<Battery> findByCurrentStation(UUID stationId) {
         var station = getStationById(stationId);
         return batteryRepository.findByCurrentStation(station);
@@ -92,6 +95,14 @@ public class BatteryService {
     private Station getStationById(UUID stationId) {
         return stationRepository.findById(stationId)
                 .orElseThrow(() -> new NotFoundException("Station not found"));
+    }
+
+    public List<Battery> getByCurrentStationAndStatus(Station currentStation, BatteryStatus status, int page) {
+        if (page < 1) {
+            throw new IllegalArgumentException("Request page must be equal or greater than 1.");
+        }
+        Pageable pageable = PageRequest.of(page - 1, LIST_SIZE);
+        return batteryRepository.findByCurrentStationAndStatus(currentStation, status, pageable).getContent();
     }
 
     public Battery saveBattery(Battery battery) {

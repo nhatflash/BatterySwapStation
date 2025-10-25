@@ -51,7 +51,6 @@ public class BatteryMonitoringController {
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<BatteryState>>> getBatteryStates(@PathVariable UUID stationId) {
         var batteries = batteryService.findByCurrentStation(stationId);
-
         var response = batteries.stream()
                 .map(batterySimulatorService::simulateBatteryState)
                 .toList();

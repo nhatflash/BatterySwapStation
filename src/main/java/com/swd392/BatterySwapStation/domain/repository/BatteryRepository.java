@@ -3,6 +3,7 @@ package com.swd392.BatterySwapStation.domain.repository;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.Station;
+import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,16 @@ public interface BatteryRepository extends JpaRepository<Battery, UUID> {
     List<Battery> findByCurrentStationAndModel(Station currentStation, BatteryModel model);
 
     int countByCurrentStationAndModel(Station currentStation, BatteryModel model);
+
+    Page<Battery> findByCurrentStationAndStatus(Station currentStation, BatteryStatus status, Pageable pageable);
+
+
+//    @Query("""
+//        SELECT b FROM Battery b
+//        LEFT JOIN FETCH b.model
+//        LEFT JOIN FETCH b.currentStation
+//        WHERE b.currentStation.id = :stationId
+//""")
+//    List<Battery> findByCurrentStationWithDetails(@Param("stationId") UUID stationId);
+
 }

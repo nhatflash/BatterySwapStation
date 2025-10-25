@@ -4,8 +4,12 @@ import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.AddNewBatteryCommand;
 import com.swd392.BatterySwapStation.application.model.DefineBatteryModelCommand;
 import com.swd392.BatterySwapStation.application.model.UpdateBatteryModelCommand;
+import com.swd392.BatterySwapStation.application.model.ViewBatteryInventoryCommand;
 import com.swd392.BatterySwapStation.application.service.BatteryService;
 import com.swd392.BatterySwapStation.application.useCase.battery.*;
+import com.swd392.BatterySwapStation.application.useCase.stationStaff.ViewBatteryInventoryUseCase;
+import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
+import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.AddNewBatteryRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.DefineBatteryModelRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateBatteryModelRequest;
@@ -17,6 +21,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.executable.ValidateOnExecution;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,19 +39,22 @@ public class BatteryController {
     private final AddNewBatteryUseCase addNewBatteryUseCase;
     private final RetrieveBatteryDetailsUseCase retrieveBatteryDetailsUseCase;
     private final RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase;
+    private final ViewBatteryInventoryUseCase viewBatteryInventoryUseCase;
 
     public BatteryController(DefineBatteryModelUseCase defineBatteryModelUseCase,
                              RetrieveAllModelsUseCase retrieveAllModelsUseCase,
                              UpdateBatteryModelUseCase updateBatteryModelUseCase,
                              AddNewBatteryUseCase addNewBatteryUseCase,
                              RetrieveBatteryDetailsUseCase retrieveBatteryDetailsUseCase,
-                             RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase) {
+                             RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase,
+                             ViewBatteryInventoryUseCase viewBatteryInventoryUseCase) {
         this.defineBatteryModelUseCase = defineBatteryModelUseCase;
         this.retrieveAllModelsUseCase = retrieveAllModelsUseCase;
         this.updateBatteryModelUseCase = updateBatteryModelUseCase;
         this.addNewBatteryUseCase = addNewBatteryUseCase;
         this.retrieveBatteryDetailsUseCase = retrieveBatteryDetailsUseCase;
         this.retrieveAllBatteriesUseCase = retrieveAllBatteriesUseCase;
+        this.viewBatteryInventoryUseCase = viewBatteryInventoryUseCase;
     }
 
     @PostMapping("/model")
@@ -124,6 +133,24 @@ public class BatteryController {
         var batteries = retrieveAllBatteriesUseCase.execute(page);
         var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
         return ResponseEntity.ok(new ApiResponse<>("Batteries retrieved successfully", response));
+    }
+
+    @GetMapping("/station/{currentStationId}/status")
+    public ResponseEntity<ApiResponse<List<BatteryResponse>>> viewBatteryInventory(@PathVariable UUID currentStationId,
+                                                                                   @RequestParam BatteryStatus status,
+                                                                                   @RequestParam Integer page,
+                                                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = ViewBatteryInventoryCommand.builder()
+                .staffId(userDetails.getUserId())
+                .batteryStatus(status)
+                .pageIndex(page)
+                .build();
+        var batteries = viewBatteryInventoryUseCase.execute(command);
+        var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
+        return ResponseEntity.ok(new ApiResponse<>("Batteries with status " + status.name() + " retrieved successfully", response));
     }
 
 }

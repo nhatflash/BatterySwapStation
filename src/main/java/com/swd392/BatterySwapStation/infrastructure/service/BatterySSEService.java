@@ -6,6 +6,7 @@ import com.swd392.BatterySwapStation.infrastructure.security.sse.SSEConnectionIn
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class BatterySSEService {
 
     private final Map<UUID, CopyOnWriteArrayList<SSEConnectionInfo>> connectionsByStation = new ConcurrentHashMap<>();
 
+    @Transactional
     public SseEmitter createEmitter(UUID stationId, UUID userId) {
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
         SSEConnectionInfo connectionInfo = new SSEConnectionInfo(emitter, userId, LocalDateTime.now());
@@ -59,6 +61,8 @@ public class BatterySSEService {
         return emitter;
     }
 
+
+    @Transactional
     public void broadcastBatteryUpdate(UUID stationId, BatteryState batteryState) {
         CopyOnWriteArrayList<SSEConnectionInfo> connections = connectionsByStation.get(stationId);
 
@@ -85,6 +89,8 @@ public class BatterySSEService {
         logger.debug("Broadcast battery {} update: {} success, {} failed", batteryState.getBatteryId(), successCount, failCount);
     }
 
+
+    @Transactional
     public void broadCastAlert(UUID stationId, String level, String message, UUID batteryId) {
         CopyOnWriteArrayList<SSEConnectionInfo> connections = connectionsByStation.get(stationId);
         if (checkIfStationCollectionIsNull(connections, stationId)) {
@@ -130,6 +136,7 @@ public class BatterySSEService {
         return false;
     }
 
+    @Transactional
     public int getConnectionsCount(UUID stationId) {
         if (connectionsByStation.get(stationId) == null) {
             return 0;
@@ -137,12 +144,16 @@ public class BatterySSEService {
         return connectionsByStation.get(stationId).size();
     }
 
+
+    @Transactional
     public int getTotalConnectionsCount() {
         return connectionsByStation.values().stream()
                 .mapToInt(CopyOnWriteArrayList::size)
                 .sum();
     }
 
+
+    @Transactional
     public Map<String, Object> getConnectionStats() {
         return Map.of(
                 "totalConnections", getTotalConnectionsCount(),
