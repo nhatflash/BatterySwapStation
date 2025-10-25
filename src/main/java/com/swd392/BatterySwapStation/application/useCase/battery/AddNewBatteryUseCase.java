@@ -11,6 +11,7 @@ import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import com.swd392.BatterySwapStation.domain.valueObject.SoH;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,11 +29,15 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
     }
 
     @Override
+    @Transactional
     public Battery execute(AddNewBatteryCommand request) {
         Station currentStation = getValidStationForBatteryAdding(request.getCurrentStationId());
         BatteryModel model = batteryService.findByBatteryType(request.getType());
 
-        return addNewBattery(currentStation, model, request);
+        var newBattery =  addNewBattery(currentStation, model, request);
+        currentStation.setCurrentCapacity(currentStation.getCurrentCapacity() + 1);
+        stationService.saveStation(currentStation);
+        return newBattery;
     }
 
     private Station getValidStationForBatteryAdding(UUID stationId) {

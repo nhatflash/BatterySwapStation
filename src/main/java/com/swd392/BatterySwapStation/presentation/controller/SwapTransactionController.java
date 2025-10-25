@@ -1,9 +1,13 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.model.ConfirmScheduledSwapCommand;
 import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
+import com.swd392.BatterySwapStation.application.useCase.swapTransaction.ConfirmScheduledSwapUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.CreateScheduledBatterySwapUseCase;
+import com.swd392.BatterySwapStation.application.useCase.swapTransaction.GetAllUnconfirmedSwapsUseCase;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
+import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
@@ -13,10 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/swap")
@@ -24,10 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class SwapTransactionController {
 
     private final CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase;
+    private final ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase;
+    private final GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase;
 
-
-    public SwapTransactionController(CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase) {
+    public SwapTransactionController(CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase,
+                                     ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase,
+                                     GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase) {
         this.createScheduledBatterySwapUseCase = createScheduledBatterySwapUseCase;
+        this.confirmScheduledSwapUseCase = confirmScheduledSwapUseCase;
+        this.getAllUnconfirmedSwapsUseCase = getAllUnconfirmedSwapsUseCase;
     }
 
     @PostMapping("/scheduled")
@@ -47,5 +55,34 @@ public class SwapTransactionController {
         var transaction = createScheduledBatterySwapUseCase.execute(command);
         var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
         return ResponseEntity.ok(new ApiResponse<>("Create scheduled swap successfully.", response));
+    }
+
+
+    @PostMapping("/scheduled/confirm")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> confirmScheduledSwap(@Valid @RequestBody ConfirmScheduledSwapRequest request,
+                                                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = ConfirmScheduledSwapCommand.builder()
+                .transactionId(request.getTransactionId())
+                .staffId(userDetails.getUserId())
+                .batteryIds(request.getBatteryIds())
+                .build();
+        var transaction = confirmScheduledSwapUseCase.execute(command);
+        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        return ResponseEntity.ok(new ApiResponse<>("Confirm scheduled swap successfully.", response));
+    }
+
+    @GetMapping("/scheduled/all")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> getAllUnconfirmedSwaps(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var transactions = getAllUnconfirmedSwapsUseCase.execute(userDetails.getUserId());
+        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        return ResponseEntity.ok(new ApiResponse<>("Get all unconfirmed swaps successfully.", response));
     }
 }

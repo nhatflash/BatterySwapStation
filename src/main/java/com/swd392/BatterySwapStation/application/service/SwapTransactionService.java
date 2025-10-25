@@ -1,29 +1,35 @@
 package com.swd392.BatterySwapStation.application.service;
 
-import com.swd392.BatterySwapStation.domain.entity.Station;
-import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
-import com.swd392.BatterySwapStation.domain.entity.User;
-import com.swd392.BatterySwapStation.domain.entity.Vehicle;
+import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.SwapType;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
+import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
+import com.swd392.BatterySwapStation.domain.repository.BatteryTransactionRepository;
 import com.swd392.BatterySwapStation.domain.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class SwapTransactionService {
 
     private final SwapTransactionRepository swapTransactionRepository;
+    private final BatteryTransactionRepository batteryTransactionRepository;
 
     private static final double TRANSACTION_FEE = 100000.0;
 
-    public SwapTransactionService(SwapTransactionRepository swapTransactionRepository) {
+    public SwapTransactionService(SwapTransactionRepository swapTransactionRepository,
+                                  BatteryTransactionRepository batteryTransactionRepository) {
         this.swapTransactionRepository = swapTransactionRepository;
+        this.batteryTransactionRepository = batteryTransactionRepository;
     }
 
     public SwapTransaction createScheduledTransaction(User driver,
@@ -61,6 +67,22 @@ public class SwapTransactionService {
     }
 
 
+    public SwapTransaction getTransactionById(UUID transactionId) {
+        return swapTransactionRepository.findById(transactionId)
+                .orElseThrow(() -> new NotFoundException("Transaction not found."));
+    }
+
+    public SwapTransaction getLatestCompletedVehicleTransaction(Vehicle vehicle) {
+        return swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle).getFirst();
+    }
+
+    public Set<BatteryTransaction> getBatteryTransactionFromTransaction(SwapTransaction transaction) {
+        return batteryTransactionRepository.findAllBySwapTransaction(transaction);
+    }
+
+    public List<SwapTransaction> GetUnconfirmedSwapTransaction(Station station) {
+        return swapTransactionRepository.findAllByStation(station);
+    }
 
 
     public SwapTransaction saveSwapTransaction(SwapTransaction swapTransaction) {
