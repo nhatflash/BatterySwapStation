@@ -54,3 +54,8 @@ springdoc:
 
 server:
   forward-headers-strategy: framework
+
+vnPay:
+  vnp_TmnCode: DFAMVI8U
+  vnp_HashSecret: O0HVK10UY0KZ0HDNYGVWO59I6JD67POO
+  vnp_Url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html

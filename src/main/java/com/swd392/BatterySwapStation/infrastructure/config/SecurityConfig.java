@@ -71,6 +71,7 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/api/station/operational",
                                 "/api/station/search-nearest",
+                                "/api/payment/**",
                                 "/api/auth/**", "/").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider(customUserDetailsService, passwordEncoder()))
