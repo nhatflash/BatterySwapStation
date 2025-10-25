@@ -8,12 +8,14 @@ import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class ResponseMapper {
+
 
     public static RegisterDriverResponse toRegisterDriverResponse(User user) {
         return RegisterDriverResponse.builder()

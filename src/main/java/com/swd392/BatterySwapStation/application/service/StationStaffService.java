@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StationStaffService {
 
-    private  final StationStaffRepository stationStaffRepository;
+    private final StationStaffRepository stationStaffRepository;
     private final UserService userService;
 
 
@@ -25,7 +25,7 @@ public class StationStaffService {
 
     public Void deleteStationStaff(StationStaff stationStaff) {
         var user = userService.getUserById(stationStaff.getStaffId());
-        if (user.getStatus() == UserStatus.ACTIVE){
+        if (user.getStatus() == UserStatus.ACTIVE) {
             throw new IllegalStateException("Cannot delete active user with ID: " + user.getId());
         }
 
@@ -53,4 +53,8 @@ public class StationStaffService {
     public List<StationStaff> getAllStaff() {
         return stationStaffRepository.findAll();
     }
+    public StationStaff getStationStaffByUserId(UUID userId) {
+        return stationStaffRepository.findByStaffId(userId).orElse(null);
+    }
+
 }

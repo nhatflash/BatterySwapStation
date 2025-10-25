@@ -65,10 +65,9 @@ public class UserService {
 
     // ============ Find User by Name and Role ===============
     public User getUserByEmailAndRole(String email, UserRole role) {
-        return userRepository.findByEmail(email)
-                .filter(u -> u.getRole() == role)
-                .orElseThrow(() -> new RuntimeException("User not found or not a STAFF"));
+        return userRepository.findByEmailAndRole(email, role).orElse(null);
     }
+
 
     public boolean isCorrectRole(User user, UserRole role) {
         return user.getRole().equals(role);

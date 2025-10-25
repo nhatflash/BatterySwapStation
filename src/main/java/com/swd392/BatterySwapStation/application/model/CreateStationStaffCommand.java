@@ -19,4 +19,12 @@ public class CreateStationStaffCommand {
     private String StaffEmail;
     private EmploymentStatus status;
     private BigDecimal salary;
+    private String identityNumber;
+    private String phone;
+    private String firstName;
+    private String lastName;
+    private String dateOfBirth;
+    private String avatarUrl;
+    private String password;
+    private String confirmPassword;
 }

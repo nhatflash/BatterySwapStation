@@ -5,6 +5,7 @@ import com.swd392.BatterySwapStation.application.model.CreateStationStaffCommand
 import com.swd392.BatterySwapStation.application.model.UpdateStaffDetailCommand;
 import com.swd392.BatterySwapStation.application.useCase.stationStaff.*;
 import com.swd392.BatterySwapStation.domain.enums.EmploymentStatus;
+import com.swd392.BatterySwapStation.domain.enums.Gender;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateStationStaffRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateStaffRequest;
@@ -39,9 +40,18 @@ public class StationStaffController {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @Operation(summary = "Create Station Staff", description = "Create a new staff member for a battery swap station")
     public ResponseEntity<ApiResponse<StationStaffResponse>> createStationStaff(@Valid @RequestBody CreateStationStaffRequest request,
-                                                                                @RequestParam("status") EmploymentStatus status) {
+                                                                                @RequestParam("status") EmploymentStatus status,
+                                                                                @RequestParam("gender")Gender gender) {
         var command = CreateStationStaffCommand.builder()
                 .StaffEmail(request.getStaffEmail())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .password(request.getPassword())
+                .confirmPassword(request.getConfirmPassword())
+                .phone(request.getPhone())
+                .identityNumber(request.getIdentityNumber())
+                .dateOfBirth(request.getDateOfBirth())
+                .avatarUrl(request.getAvatarUrl())
                 .stationName(request.getStationName())
                 .salary(request.getSalary())
                 .status(status)
@@ -78,11 +88,7 @@ public class StationStaffController {
             @PathVariable UUID stationId
     ) {
         var staffList = getStationStaffListUseCase.execute(stationId);
-        var responseList = staffList.stream()
-                .map(ResponseMapper::mapToStationStaffResponse)
-                .toList();
-
-        return ResponseEntity.ok(new ApiResponse<>("Fetched staff list successfully", responseList));
+        return ResponseEntity.ok(new ApiResponse<>("Fetched staff list successfully", staffList));
     }
 
     // ======================== Delete Station Staffs =====================//
@@ -99,11 +105,8 @@ public class StationStaffController {
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @Operation(summary = "Get all staff members", description = "Retrieve a list of all staff members")
     public ResponseEntity<ApiResponse<List<StationStaffResponse>>> getAllStaffs() {
-        // Implementation goes here
-        var staffList = getAllStaffUseCase.execute(null); // Assuming null fetches all staffs
-        var responseList = staffList.stream()
-                .map(ResponseMapper::mapToStationStaffResponse)
-                .toList();
+        // UseCase đã trả List<StationStaffResponse> rồi, không cần map lại
+        var responseList = getAllStaffUseCase.execute(null);
         return ResponseEntity.ok(new ApiResponse<>("Fetched all staff members successfully.", responseList));
     }
 }

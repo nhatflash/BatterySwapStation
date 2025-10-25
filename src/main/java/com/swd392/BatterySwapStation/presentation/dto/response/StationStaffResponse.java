@@ -12,6 +12,8 @@ import java.util.UUID;
 @Builder
 public class StationStaffResponse {
     private UUID staffId;
+    private String firstName;
+    private String lastName;
     private UUID stationId;
     private String stationName;
     private EmploymentStatus status;
