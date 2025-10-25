@@ -17,6 +17,7 @@ public class DeleteStaffUseCase implements IUseCase<UUID, Void> {
     @Override
     public Void execute(UUID staffId) {
         var staff = stationStaffService.getStationStaffById(staffId);
-        return stationStaffService.deleteStationStaff(staff);
+        stationStaffService.deleteStationStaff(staff);
+        return null;
     }
 }

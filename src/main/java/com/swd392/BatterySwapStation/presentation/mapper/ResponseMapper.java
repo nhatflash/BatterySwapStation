@@ -107,7 +107,10 @@ public class ResponseMapper {
     public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
 
         return StationStaffResponse.builder()
-                .staffId(staff.getStaffId())
+                .staffId(staff.getStaff().getId())
+                .staffEmail(staff.getStaff().getEmail())
+                .firstName(staff.getStaff().getFirstName())
+                .lastName(staff.getStaff().getLastName())
                 .stationId(staff.getStation().getId())
                 .stationName(staff.getStation().getName())
                 .salary(staff.getSalary().getAmount())

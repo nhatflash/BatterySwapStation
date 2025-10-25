@@ -10,7 +10,9 @@ import java.util.UUID;
 
 @Repository
 public interface StationStaffRepository extends JpaRepository<StationStaff, Long> {
-    Optional<StationStaff> findByStaffId(UUID staffId);
-    boolean existsByStaffId(UUID staffId);
+    Optional<StationStaff> findByStaff_Id(UUID userId);
+
+    boolean existsByStaff_Id(UUID userId);
+
     List<StationStaff> findByStation_Id(UUID stationId);
 }

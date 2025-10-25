@@ -77,7 +77,7 @@ public class CreateStaffUseCase implements IUseCase<CreateStationStaffCommand, S
 
         // --- Tạo station staff ---
         StationStaff newStaff = StationStaff.builder()
-                .staffId(staffUser.getId())
+                .staff(staffUser)
                 .station(station)
                 .status(request.getStatus())
                 .salary(new Money(request.getSalary()))

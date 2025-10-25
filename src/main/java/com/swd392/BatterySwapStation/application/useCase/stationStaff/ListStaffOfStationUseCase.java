@@ -27,10 +27,11 @@ public class ListStaffOfStationUseCase implements IUseCase<UUID, List<StationSta
         }
 
         return stationStaffs.stream().map(staff -> {
-            var user = userService.getUserById(staff.getStaffId());
+            var user = userService.getUserById(staff.getStaff().getId());
             return StationStaffResponse.builder()
-                    .staffId(staff.getStaffId())
+                    .staffId(staff.getStaff().getId())
                     .firstName(user.getFirstName())
+                    .staffEmail(user.getEmail())
                     .lastName(user.getLastName())
                     .stationId(staff.getStation().getId())
                     .stationName(staff.getStation().getName())

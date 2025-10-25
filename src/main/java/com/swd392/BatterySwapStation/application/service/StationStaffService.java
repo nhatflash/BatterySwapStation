@@ -1,7 +1,6 @@
 package com.swd392.BatterySwapStation.application.service;
 
 import com.swd392.BatterySwapStation.domain.entity.StationStaff;
-import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.domain.repository.StationStaffRepository;
@@ -19,12 +18,15 @@ public class StationStaffService {
     private final UserService userService;
 
 
+    // Lưu StationStaff
     public StationStaff saveStationStaff(StationStaff stationStaff) {
         return stationStaffRepository.save(stationStaff);
     }
 
-    public Void deleteStationStaff(StationStaff stationStaff) {
-        var user = userService.getUserById(stationStaff.getStaffId());
+    //  Xóa StationStaff (và đổi status của User sang DELETED nếu không ACTIVE)
+    public void deleteStationStaff(StationStaff stationStaff) {
+        var user = userService.getUserById(stationStaff.getStaff().getId());
+
         if (user.getStatus() == UserStatus.ACTIVE) {
             throw new IllegalStateException("Cannot delete active user with ID: " + user.getId());
         }
@@ -33,28 +35,37 @@ public class StationStaffService {
         userService.saveUser(user);
 
         stationStaffRepository.delete(stationStaff);
-
-        return null;
     }
 
-    public StationStaff getStationStaffById(UUID staffId) {
-        return stationStaffRepository.findByStaffId(staffId)
-                .orElseThrow(() -> new NotFoundException("Station staff not found with ID: " + staffId));
+
+    //  Tìm nhân viên trạm theo UUID của User (staff_id)
+    public StationStaff getStationStaffById(UUID userId) {
+        return stationStaffRepository.findByStaff_Id(userId)
+                .orElseThrow(() -> new NotFoundException("Station staff not found with User ID: " + userId));
     }
 
-    public boolean existsByStaffId(UUID staffId) {
-        return stationStaffRepository.existsByStaffId(staffId);
+    //  Kiểm tra tồn tại theo UserId
+    public boolean existsByStaffId(UUID userId) {
+        return stationStaffRepository.existsByStaff_Id(userId);
     }
 
+    //  Lấy danh sách nhân viên theo Station
     public List<StationStaff> getStaffByStationId(UUID stationId) {
-        return stationStaffRepository.findByStation_Id(stationId);
+        var staffList = stationStaffRepository.findByStation_Id(stationId);
+        if (staffList.isEmpty()) {
+            throw new NotFoundException("No staff found for Station ID: " + stationId);
+        }
+        return staffList;
     }
 
+
+    // Lấy toàn bộ nhân viên
     public List<StationStaff> getAllStaff() {
         return stationStaffRepository.findAll();
     }
-    public StationStaff getStationStaffByUserId(UUID userId) {
-        return stationStaffRepository.findByStaffId(userId).orElse(null);
-    }
 
+    // Lấy nhân viên theo UserId (nếu không cần exception)
+    public StationStaff getStationStaffByUserId(UUID userId) {
+        return stationStaffRepository.findByStaff_Id(userId).orElse(null);
+    }
 }

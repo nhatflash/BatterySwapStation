@@ -21,7 +21,7 @@ public class Battery extends BaseEntity {
 
     private String serialNumber;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "model_id", nullable = false)
     private BatteryModel model;
 
@@ -32,7 +32,7 @@ public class Battery extends BaseEntity {
     @Column(nullable = false)
     private BatteryStatus status;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "current_station_id")
     public Station currentStation;
 

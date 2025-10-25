@@ -22,11 +22,12 @@ public class ListAllStaffUseCase implements IUseCase<Void, List<StationStaffResp
         var staffs = stationStaffService.getAllStaff();
 
         return staffs.stream().map(staff -> {
-            var user = userService.getUserById(staff.getStaffId());
+            var user = userService.getUserById(staff.getStaff().getId());
             return StationStaffResponse.builder()
-                    .staffId(staff.getStaffId())
+                    .staffId(staff.getStaff().getId())
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
+                    .staffEmail(user.getEmail())
                     .stationId(staff.getStation().getId())
                     .stationName(staff.getStation().getName())
                     .status(staff.getStatus())
