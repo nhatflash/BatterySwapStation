@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,10 +40,11 @@ public class BatteryMonitoringScheduler {
     private final Map<UUID, Integer> chargingProcess = new ConcurrentHashMap<>();
 
 
+    @Transactional(readOnly = true)
     @Scheduled(fixedRate = 5000)
     public void updateAndBroadCastBatteryStates() {
         try {
-            List<Battery> batteries = batteryRepository.findAll();
+            List<Battery> batteries = batteryRepository.findAllWithDetails();
 
             Map<UUID, List<Battery>> batteriesByStation = batteries.stream()
                     .collect(Collectors.groupingBy(b -> b.getCurrentStation().getId()));
@@ -75,10 +77,11 @@ public class BatteryMonitoringScheduler {
     }
 
 
+    @Transactional(readOnly = true)
     @Scheduled(fixedRate = 600000)
     public void simulateBatteryDegradation() {
         try {
-            List<Battery> batteries = batteryRepository.findAll();
+            List<Battery> batteries = batteryRepository.findAllWithDetails();
             int updatedCount = 0;
 
             for (Battery battery : batteries) {

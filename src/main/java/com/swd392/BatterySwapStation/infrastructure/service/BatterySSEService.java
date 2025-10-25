@@ -31,7 +31,7 @@ public class BatterySSEService {
 
     private final Map<UUID, CopyOnWriteArrayList<SSEConnectionInfo>> connectionsByStation = new ConcurrentHashMap<>();
 
-    @Transactional
+
     public SseEmitter createEmitter(UUID stationId, UUID userId) {
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
         SSEConnectionInfo connectionInfo = new SSEConnectionInfo(emitter, userId, LocalDateTime.now());

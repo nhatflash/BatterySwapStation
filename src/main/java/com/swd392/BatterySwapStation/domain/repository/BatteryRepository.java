@@ -31,13 +31,19 @@ public interface BatteryRepository extends JpaRepository<Battery, UUID> {
 
     Page<Battery> findByCurrentStationAndStatus(Station currentStation, BatteryStatus status, Pageable pageable);
 
+    @Query("""
+        SELECT b FROM Battery b
+        JOIN FETCH b.model
+        JOIN FETCH b.currentStation
+""")
+    List<Battery> findAllWithDetails();
 
-//    @Query("""
-//        SELECT b FROM Battery b
-//        LEFT JOIN FETCH b.model
-//        LEFT JOIN FETCH b.currentStation
-//        WHERE b.currentStation.id = :stationId
-//""")
-//    List<Battery> findByCurrentStationWithDetails(@Param("stationId") UUID stationId);
+    @Query("""
+        SELECT b FROM Battery b
+        LEFT JOIN FETCH b.model
+        LEFT JOIN FETCH b.currentStation
+        WHERE b.currentStation.id = :stationId
+""")
+    List<Battery> findByCurrentStationWithDetails(@Param("stationId") UUID stationId);
 
 }
