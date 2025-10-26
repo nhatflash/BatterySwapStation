@@ -16,4 +16,6 @@ public interface SwapTransactionRepository extends JpaRepository<SwapTransaction
     List<SwapTransaction> findAllByVehicleOrderByIdDesc(Vehicle vehicle, TransactionStatus status);
 
     List<SwapTransaction> findAllByStation(Station station);
+
+    boolean existsSwapTransactionById(UUID transactionId);
 }

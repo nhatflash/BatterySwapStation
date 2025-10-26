@@ -72,6 +72,7 @@ public class SecurityConfig {
                                 "/api/station/operational",
                                 "/api/station/search-nearest",
                                 "/api/payment/**",
+                                "/vnpay-ipn",
                                 "/api/auth/**", "/").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider(customUserDetailsService, passwordEncoder()))

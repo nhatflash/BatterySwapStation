@@ -5,6 +5,7 @@ import com.swd392.BatterySwapStation.application.model.ProcessPaymentCommand;
 import com.swd392.BatterySwapStation.application.service.PaymentService;
 import com.swd392.BatterySwapStation.application.useCase.payment.ProcessPaymentUseCase;
 import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
+import com.swd392.BatterySwapStation.infrastructure.service.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,16 +16,17 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/payment")
 public class PaymentController {
 
     private final ProcessPaymentUseCase processPaymentUseCase;
+    private final VnPayService vnPayService;
 
-    public PaymentController(ProcessPaymentUseCase processPaymentUseCase) {
+    public PaymentController(ProcessPaymentUseCase processPaymentUseCase, VnPayService vnPayService) {
         this.processPaymentUseCase = processPaymentUseCase;
+        this.vnPayService = vnPayService;
     }
 
-    @GetMapping("/process")
+    @GetMapping("/api/payment/process")
     public ResponseEntity<ApiResponse<String>> processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
         var command = ProcessPaymentCommand.builder()
                 .transactionId(transactionId)
@@ -33,5 +35,12 @@ public class PaymentController {
                 .build();
         var response = processPaymentUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Payment process successfully", response));
+    }
+
+
+    @GetMapping("/vnpay-ipn")
+    public ResponseEntity<ApiResponse<String>> handleIpnVnPay(HttpServletRequest request) {
+        var response = vnPayService.processIPN(request);
+        return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", response));
     }
 }
