@@ -74,7 +74,10 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
                                 .build()
                 );
             }
+            swapTransaction.setInitialSwap(false);
+            return;
         }
+        swapTransaction.setInitialSwap(true);
     }
 
 

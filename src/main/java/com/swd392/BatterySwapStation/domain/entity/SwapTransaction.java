@@ -34,6 +34,9 @@ public class SwapTransaction extends BaseEntity {
     @JoinColumn(name = "vehicle_id")
     private Vehicle vehicle;
 
+    @Column(nullable = false)
+    private boolean isInitialSwap;
+
     @OneToMany(mappedBy = "swapTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BatteryTransaction> batteryTransactions = new ArrayList<>();
 
