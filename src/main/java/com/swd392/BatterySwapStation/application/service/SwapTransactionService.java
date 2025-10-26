@@ -38,7 +38,7 @@ public class SwapTransactionService {
                                                       LocalDateTime scheduledTime,
                                                       String notes) {
         int vehicleBatteryCount = vehicle.getBatteryCapacity();
-        return SwapTransaction.builder()
+        var newSwapTransaction = SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
                 .vehicle(vehicle)
@@ -49,6 +49,7 @@ public class SwapTransactionService {
                 .swapPrice(new Money(BigDecimal.valueOf(vehicleBatteryCount * TRANSACTION_FEE)))
                 .notes(notes)
                 .build();
+        return saveSwapTransaction(newSwapTransaction);
     }
 
     public SwapTransaction createWalkInTransaction(User driver,
@@ -73,7 +74,9 @@ public class SwapTransactionService {
     }
 
     public SwapTransaction getLatestCompletedVehicleTransaction(Vehicle vehicle) {
-        return swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle).getFirst();
+        var swapTransactions =  swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle, TransactionStatus.COMPLETED);
+        if (swapTransactions.isEmpty()) return null;
+        return swapTransactions.getFirst();
     }
 
     public Set<BatteryTransaction> getBatteryTransactionFromTransaction(SwapTransaction transaction) {

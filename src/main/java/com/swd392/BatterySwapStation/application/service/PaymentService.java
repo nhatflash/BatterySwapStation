@@ -80,8 +80,8 @@ public class PaymentService {
     private Map<String, String> getVnpParams(HttpServletRequest request, UUID transactionId) {
         final String vnpVersion = "2.1.0";
         final String vnpCommand = "pay";
-        final String vnpReturnUrl = "https://localhost:8080/vnpay-return";
-        final String vnpIpnUrl = "https://localhost:8080/vnpay-ipn";
+        final String vnpReturnUrl = "https://czf23bx8-8080.asse.devtunnels.ms/vnpay-return";
+        final String vnpIpnUrl = "https://czf23bx8-8080.asse.devtunnels.ms/vnpay-ipn";
 
         String remoteIpAddress = request.getHeader("X-Forwarded-For");
         if (remoteIpAddress == null) {

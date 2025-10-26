@@ -12,6 +12,7 @@ import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -35,6 +36,7 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
     }
 
     @Override
+    @Transactional
     public SwapTransaction execute(ConfirmScheduledSwapCommand request) {
         var staff = getValidStaff(request.getStaffId());
         var transaction = getValidSwapTransaction(request.getTransactionId());
@@ -86,6 +88,7 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
         if (oldTransaction == null) return null;
         var oldBatteryTransactions = oldTransaction.getBatteryTransactions();
         List<Battery> oldBatteries = new ArrayList<>();
+        if (oldBatteryTransactions == null || oldBatteryTransactions.isEmpty()) return oldBatteries;
         for (var oldBatteryTransaction : oldBatteryTransactions) {
             if (oldBatteryTransaction.getOldBattery() == null) continue;
             oldBatteries.add(oldBatteryTransaction.getOldBattery());
@@ -107,20 +110,21 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
         transaction.setConfirmedBy(staff);
 
         int vehicleBatteryCount = transaction.getVehicle().getBatteryCapacity();
-        if (batteryIds.size() != vehicleBatteryCount || oldBatteries.size() != vehicleBatteryCount) {
+        Set<BatteryTransaction> batteryTransactions = transaction.getBatteryTransactions();
+
+        if (batteryIds.size() != vehicleBatteryCount) {
             throw new IllegalArgumentException("Number of batteries in request does not match the vehicle's capacity.");
         }
-        Set<BatteryTransaction> batteryTransactions = new HashSet<>();
+
         for (int i = 0; i < vehicleBatteryCount; i++) {
             var newBattery = getValidBattery(batteryIds.get(i), station.getId());
-            var oldBattery = oldBatteries.get(i);
             var newBatteryTransaction = BatteryTransaction.builder()
-                    .oldBattery(oldBattery)
                     .newBattery(newBattery)
                     .swapTransaction(transaction)
                     .build();
             batteryTransactions.add(newBatteryTransaction);
         }
+
         transaction.setBatteryTransactions(batteryTransactions);
         transaction.setStatus(TransactionStatus.CONFIRMED);
         return swapTransactionService.saveSwapTransaction(transaction);

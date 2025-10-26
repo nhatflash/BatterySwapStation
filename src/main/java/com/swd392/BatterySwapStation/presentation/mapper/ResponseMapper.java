@@ -44,6 +44,7 @@ public class ResponseMapper {
                 .year(vehicle.getYear())
                 .licensePlate(vehicle.getLicensePlate())
                 .batteryType(vehicle.getBatteryType().getValue())
+                .batteryCapacity(vehicle.getBatteryCapacity())
                 .driverId(vehicle.getDriver().getId())
                 .build();
     }
@@ -159,7 +160,9 @@ public class ResponseMapper {
         if (transaction.getBatteryTransactions() != null) {
             responses = new ArrayList<>();
             for (var btr : transaction.getBatteryTransactions()) {
-                responses.add(new BatteryTransactionResponse(btr.getOldBattery().getId(), btr.getNewBattery().getId()));
+                responses.add(new BatteryTransactionResponse(
+                        btr.getOldBattery() == null ? null : btr.getOldBattery().getId(),
+                        btr.getNewBattery().getId()));
             }
         }
         return SwapTransactionResponse.builder()

@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class ViewBatteryInventoryUseCase implements IUseCase<ViewBatteryInventor
     }
 
     @Override
+    @Transactional
     public List<Battery> execute(ViewBatteryInventoryCommand request) {
         var station = getStaffStation(request.getStaffId());
         return batteryService.getByCurrentStationAndStatus(station, request.getBatteryStatus(), request.getPageIndex());
