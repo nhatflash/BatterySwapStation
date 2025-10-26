@@ -13,6 +13,8 @@ import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverRes
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+
 @Service
 public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, User> {
 
@@ -55,10 +57,18 @@ public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, Us
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .identityNumber(request.getIdentityNumber())
-                .dateOfBirth(DateStringMapper.getLocalDate(request.getDateOfBirth()))
+                .dateOfBirth(getValidDateOfBirth(request.getDateOfBirth()))
                 .status(UserStatus.ACTIVE)
                 .role(UserRole.DRIVER)
                 .build();
         return userService.saveUser(user);
+    }
+
+    private LocalDate getValidDateOfBirth(String dateOfBirthStr) {
+        LocalDate dateOfBirth = DateStringMapper.getLocalDate(dateOfBirthStr);
+        if (!userService.isEnoughAge(dateOfBirth)) {
+            throw new IllegalArgumentException("You must be at least 18 years old to register as a driver!");
+        }
+        return dateOfBirth;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,5 +72,9 @@ public class UserService {
 
     public boolean isCorrectRole(User user, UserRole role) {
         return user.getRole().equals(role);
+    }
+
+    public boolean isEnoughAge(LocalDate birthDate) {
+        return birthDate.isBefore(LocalDate.now().minusYears(18));
     }
 }
