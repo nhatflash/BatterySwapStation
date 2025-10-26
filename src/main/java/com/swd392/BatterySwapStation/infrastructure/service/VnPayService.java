@@ -35,6 +35,9 @@ public class VnPayService {
     @Value("${vnPay.vnp_Url}")
     private String vnpUrl;
 
+    @Value("${vnPay.vnp_BaseUrl}")
+    private String vnpBaseUrl;
+
     private final SwapTransactionRepository swapTransactionRepository;
     private final PaymentRepository paymentRepository;
 
@@ -67,7 +70,7 @@ public class VnPayService {
     public Map<String, String> getVnpParams(HttpServletRequest request, SwapTransaction transaction) {
         final String vnpVersion = "2.1.0";
         final String vnpCommand = "pay";
-        final String vnpReturnUrl = "https://czf23bx8-8080.asse.devtunnels.ms/vnpay-return";
+        final String vnpReturnUrl = vnpBaseUrl + "/vnpay-return";
 
         String remoteIpAddress = request.getHeader("X-Forwarded-For");
         if (remoteIpAddress == null) {
