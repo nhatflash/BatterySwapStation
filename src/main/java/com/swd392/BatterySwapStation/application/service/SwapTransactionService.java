@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.application.service;
 
+import com.swd392.BatterySwapStation.application.common.shared.PriceCalculator;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.SwapType;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
@@ -24,8 +25,6 @@ public class SwapTransactionService {
     private final SwapTransactionRepository swapTransactionRepository;
     private final BatteryTransactionRepository batteryTransactionRepository;
 
-    private static final double TRANSACTION_FEE = 100000.0;
-
     public SwapTransactionService(SwapTransactionRepository swapTransactionRepository,
                                   BatteryTransactionRepository batteryTransactionRepository) {
         this.swapTransactionRepository = swapTransactionRepository;
@@ -37,16 +36,16 @@ public class SwapTransactionService {
                                                       Station station,
                                                       LocalDateTime scheduledTime,
                                                       String notes) {
-        int vehicleBatteryCount = vehicle.getBatteryCapacity();
         var newSwapTransaction = SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
                 .vehicle(vehicle)
                 .station(station)
                 .scheduledTime(scheduledTime)
+                .expiredTime(scheduledTime.plusDays(3))
                 .status(TransactionStatus.SCHEDULED)
                 .type(SwapType.SCHEDULED)
-                .swapPrice(new Money(BigDecimal.valueOf(vehicleBatteryCount * TRANSACTION_FEE)))
+                .swapPrice(new Money(BigDecimal.valueOf(vehicle.getBatteryCapacity() * PriceCalculator.SWAP_PRICE)))
                 .notes(notes)
                 .build();
         return saveSwapTransaction(newSwapTransaction);
@@ -55,14 +54,13 @@ public class SwapTransactionService {
     public SwapTransaction createWalkInTransaction(User driver,
                                                    Vehicle vehicle,
                                                    Station station) {
-        int vehicleBatteryCount = vehicle.getBatteryCapacity();
         return SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
                 .vehicle(vehicle)
                 .station(station)
                 .status(TransactionStatus.CONFIRMED)
-                .swapPrice(new Money(BigDecimal.valueOf(vehicleBatteryCount * TRANSACTION_FEE)))
+                .swapPrice(new Money(BigDecimal.valueOf(vehicle.getBatteryCapacity() * PriceCalculator.SWAP_PRICE)))
                 .type(SwapType.WALK_IN)
                 .build();
     }
@@ -74,9 +72,16 @@ public class SwapTransactionService {
     }
 
     public SwapTransaction getLatestCompletedVehicleTransaction(Vehicle vehicle) {
-        var swapTransactions =  swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle, TransactionStatus.COMPLETED);
-        if (swapTransactions.isEmpty()) return null;
+        var swapTransactions = swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle, TransactionStatus.COMPLETED);
+        if (swapTransactions.isEmpty()) {
+            return null;
+        }
         return swapTransactions.getFirst();
+    }
+
+    public boolean isVehicleFirstSwap(Vehicle vehicle) {
+        SwapTransaction latestVehicleTransaction = getLatestCompletedVehicleTransaction(vehicle);
+        return latestVehicleTransaction == null;
     }
 
     public Set<BatteryTransaction> getBatteryTransactionFromTransaction(SwapTransaction transaction) {

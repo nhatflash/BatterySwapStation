@@ -7,7 +7,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -33,7 +35,7 @@ public class SwapTransaction extends BaseEntity {
     private Vehicle vehicle;
 
     @OneToMany(mappedBy = "swapTransaction", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BatteryTransaction> batteryTransactions = new HashSet<>();
+    private List<BatteryTransaction> batteryTransactions = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "station_id", nullable = false)
@@ -44,9 +46,14 @@ public class SwapTransaction extends BaseEntity {
     private User confirmedBy;
 
     private LocalDateTime scheduledTime;
+
     private LocalDateTime arrivalTime;
+
     private LocalDateTime swapStartTime;
+
     private LocalDateTime swapEndTime;
+
+    private LocalDateTime expiredTime;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -69,5 +76,34 @@ public class SwapTransaction extends BaseEntity {
 
     @Column(length = 1000)
     private String driverFeedback;
+
+
+    public boolean isTransactionScheduled() {
+        return status == TransactionStatus.SCHEDULED;
+    }
+
+    public boolean isTransactionCompleted() {
+        return status == TransactionStatus.COMPLETED;
+    }
+
+    public boolean isTransactionConfirmed() {
+        return status == TransactionStatus.CONFIRMED;
+    }
+
+    public boolean isTransactionInProgress() {
+        return status == TransactionStatus.IN_PROGRESS;
+    }
+
+    public boolean isTransactionCanceled() {
+        return status == TransactionStatus.CANCELED;
+    }
+
+    public boolean isTransactionExpired() {
+        return expiredTime != null && expiredTime.isBefore(LocalDateTime.now());
+    }
+
+    public boolean isTransactionNotConfirmedBy() {
+        return confirmedBy == null;
+    }
 
 }

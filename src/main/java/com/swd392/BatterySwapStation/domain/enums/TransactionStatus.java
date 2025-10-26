@@ -5,5 +5,5 @@ public enum TransactionStatus {
     CONFIRMED,
     IN_PROGRESS,
     COMPLETED,
-    CANCELLED
+    CANCELED
 }

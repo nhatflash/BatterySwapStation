@@ -1,14 +1,20 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
+import com.swd392.BatterySwapStation.application.common.shared.PriceCalculator;
 import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
 import com.swd392.BatterySwapStation.application.service.*;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
+import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -33,19 +39,42 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
     }
 
     @Override
+    @Transactional
     public SwapTransaction execute(CreateScheduledBatterySwapCommand request) {
-        var driver = getValidDriver(request.getDriverId());
-        var vehicle = getValidVehicle(request.getVehicleId(), driver);
-        var requestedBatteryType = vehicle.getBatteryType();
-        int batteryCount = vehicle.getBatteryCapacity();
-        var station = getValidStation(request.getStationId(), requestedBatteryType, batteryCount);
-        return swapTransactionService.createScheduledTransaction(
-                driver,
-                vehicle,
+        User requestDriver = getValidDriver(request.getDriverId());
+        Vehicle requestedVehicle = getValidVehicle(request.getVehicleId(), requestDriver);
+        BatteryType requestedBatteryType = requestedVehicle.getBatteryType();
+        Station station = getValidStation(request.getStationId(),
+                requestedBatteryType,
+                requestedVehicle.getBatteryCapacity());
+        SwapTransaction newScheduledTransaction = swapTransactionService.createScheduledTransaction(
+                requestDriver,
+                requestedVehicle,
                 station,
                 DateStringMapper.getLocalDateTime(request.getScheduledTime()),
                 request.getNotes()
         );
+        if (swapTransactionService.isVehicleFirstSwap(requestedVehicle)) {
+            newScheduledTransaction.setSwapPrice(
+                    new Money(BigDecimal.valueOf(PriceCalculator.FIRST_SWAP_PRICE * requestedVehicle.getBatteryCapacity())));
+        }
+        addOldBatteryTransactionIfExists(requestedVehicle, newScheduledTransaction);
+        return swapTransactionService.saveSwapTransaction(newScheduledTransaction);
+    }
+
+    private void addOldBatteryTransactionIfExists(Vehicle vehicle, SwapTransaction swapTransaction) {
+        List<Battery> oldVehicleBatteries = getOldBatteryInVehicle(vehicle);
+        if (!oldVehicleBatteries.isEmpty()) {
+            List<BatteryTransaction> batteryTransactions = swapTransaction.getBatteryTransactions();
+            for (Battery oldBattery : oldVehicleBatteries) {
+                batteryTransactions.add(
+                        BatteryTransaction.builder()
+                                .oldBattery(oldBattery)
+                                .swapTransaction(swapTransaction)
+                                .build()
+                );
+            }
+        }
     }
 
 
@@ -65,20 +94,39 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
         return vehicle;
     }
 
-    private Station getValidStation(UUID stationId, BatteryType batteryType, int batteryQuantity) {
+    private Station getValidStation(UUID stationId, BatteryType batteryType, int vehicleBatteryCapacity) {
         Station station = stationService.getByStationID(stationId);
         if (!stationService.isStationOperational(station)) {
             throw new IllegalArgumentException("This station is not operating.");
         }
-        if (!isStationHasEnoughBatteryType(station, batteryType, batteryQuantity)) {
+        if (!isStationHasEnoughBatteryType(station, batteryType, vehicleBatteryCapacity)) {
             throw new IllegalArgumentException("This station does not have enough this battery type.");
         }
         return station;
     }
 
-    private boolean isStationHasEnoughBatteryType(Station station, BatteryType batteryType, int batteryQuantity) {
+    private boolean isStationHasEnoughBatteryType(Station station, BatteryType batteryType, int vehicleBatteryCapacity) {
         int currentCapacity = batteryService.countByCurrentStationAndModel(station.getId(), batteryType.getValue());
-        return currentCapacity >= batteryQuantity;
+        return currentCapacity >= vehicleBatteryCapacity;
+    }
+
+    private List<Battery> getOldBatteryInVehicle(Vehicle vehicle) {
+        SwapTransaction latestCompletedTransaction = swapTransactionService.getLatestCompletedVehicleTransaction(vehicle);
+        if (latestCompletedTransaction == null) {
+            return new ArrayList<>();
+        }
+        var latestCompletedBatteryTransactions = latestCompletedTransaction.getBatteryTransactions();
+        if (latestCompletedBatteryTransactions == null || latestCompletedBatteryTransactions.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Battery> oldBatteriesInVehicle = new ArrayList<>();
+        for (var latestCompletedBatteryTransaction : latestCompletedBatteryTransactions) {
+            if (latestCompletedBatteryTransaction.getOldBattery() == null) {
+                continue;
+            }
+            oldBatteriesInVehicle.add(latestCompletedBatteryTransaction.getOldBattery());
+        }
+        return oldBatteriesInVehicle;
     }
 
 

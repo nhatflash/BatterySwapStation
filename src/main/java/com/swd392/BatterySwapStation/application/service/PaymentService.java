@@ -69,4 +69,8 @@ public class PaymentService {
         return paymentRepository.save(payment);
     }
 
+    public List<Payment> findAllWithOrderDescByTransactionId(SwapTransaction transaction) {
+        return paymentRepository.findBySwapTransactionOrderByIdDesc(transaction);
+    }
+
 }

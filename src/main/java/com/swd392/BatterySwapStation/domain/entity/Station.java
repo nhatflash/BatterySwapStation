@@ -56,4 +56,16 @@ public class Station extends BaseEntity {
 
     @Column(length = 500)
     private String imageUrl;
+
+    public boolean isCurrentCapacityEmpty() {
+        return currentCapacity <= 0;
+    }
+
+    public boolean isOnWorkingTime() {
+        return openingTime.isBefore(LocalTime.now()) && closingTime.isAfter(LocalTime.now());
+    }
+
+    public boolean isOperational() {
+        return status == StationStatus.OPERATIONAL;
+    }
 }

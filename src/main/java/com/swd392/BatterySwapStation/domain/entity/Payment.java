@@ -44,4 +44,8 @@ public class Payment {
     private LocalDateTime paymentDate;
 
     private String notes;
+
+    public boolean isPaymentCompleted() {
+        return status == PaymentStatus.COMPLETED;
+    }
 }

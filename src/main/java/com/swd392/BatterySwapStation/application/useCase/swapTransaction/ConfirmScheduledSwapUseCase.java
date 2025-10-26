@@ -1,13 +1,9 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.model.ConfirmScheduledSwapCommand;
-import com.swd392.BatterySwapStation.application.service.BatteryService;
-import com.swd392.BatterySwapStation.application.service.StationStaffService;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.application.service.*;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
-import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
@@ -24,34 +20,36 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
     private final UserService userService;
     private final StationStaffService stationStaffService;
     private final BatteryService batteryService;
+    private final PaymentService paymentService;
 
     public ConfirmScheduledSwapUseCase(SwapTransactionService swapTransactionService,
                                        UserService userService,
                                        StationStaffService stationStaffService,
-                                       BatteryService batteryService) {
+                                       BatteryService batteryService,
+                                       PaymentService paymentService) {
         this.swapTransactionService = swapTransactionService;
         this.userService = userService;
         this.stationStaffService = stationStaffService;
         this.batteryService = batteryService;
+        this.paymentService = paymentService;
     }
 
     @Override
     @Transactional
     public SwapTransaction execute(ConfirmScheduledSwapCommand request) {
-        var staff = getValidStaff(request.getStaffId());
-        var transaction = getValidSwapTransaction(request.getTransactionId());
-        var vehicle = transaction.getVehicle();
-        var oldBatteries = getOldBatteryInVehicle(vehicle);
+        User staff = getValidStaff(request.getStaffId());
+        SwapTransaction transaction = getValidSwapTransaction(request.getTransactionId());
+        Vehicle vehicle = transaction.getVehicle();
         var station = getValidStation(request.getStaffId());
-
-        return confirmTransaction(transaction, staff, station, request.getBatteryIds(), oldBatteries);
+        List<Battery> requestedNewBatteries = getRequestedNewBatteries(request.getBatteryIds(),
+                station.getId(),
+                vehicle.getBatteryType().getValue());
+        return confirmTransaction(transaction, staff, requestedNewBatteries);
     }
 
     private SwapTransaction getValidSwapTransaction(UUID transactionId) {
         var transaction = swapTransactionService.getTransactionById(transactionId);
-        if (transaction.getConfirmedBy() != null || !transaction.getStatus().equals(TransactionStatus.SCHEDULED)) {
-            throw new IllegalArgumentException("Transaction has already been confirmed or it is not scheduled.");
-        }
+        checkValidTransactionForSwapping(transaction);
         return transaction;
     }
 
@@ -66,67 +64,86 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
     private Station getValidStation(UUID staffId) {
         var stationStaff = stationStaffService.getStationStaffById(staffId);
         var station = stationStaff.getStation();
-        if (station.getCurrentCapacity() == 0) {
-            throw new IllegalArgumentException("Station has no battery.");
-        }
-        if (station.getStatus() != StationStatus.OPERATIONAL) {
-            throw new IllegalArgumentException("Station is not operational.");
-        }
+        checkValidStation(station);
         return station;
     }
 
-    private Battery getValidBattery(UUID batteryId, UUID stationId) {
-        var battery = batteryService.findByBatteryId(batteryId);
-        if (battery.getCurrentStation() == null || battery.getCurrentStation().getId() != stationId) {
-            throw new IllegalArgumentException("Battery is not assigned to this station.");
+    private List<Battery> getRequestedNewBatteries(List<UUID> newBatteryIds, UUID stationId, String vehicleBatteryType) {
+        if (newBatteryIds == null || newBatteryIds.isEmpty()) {
+            throw new IllegalArgumentException("New batteries for swapping needs to be specified.");
         }
+        List<Battery> newBatteries = new ArrayList<>();
+        for (var newBatteryId : newBatteryIds) {
+            newBatteries.add(getValidNewBatteryForSwapping(newBatteryId, stationId, vehicleBatteryType));
+        }
+        return newBatteries;
+    }
+
+    private Battery getValidNewBatteryForSwapping(UUID batteryId, UUID stationId, String vehicleBatteryType) {
+        Battery battery = batteryService.findByBatteryId(batteryId);
+        checkValidRequestBatterySwapping(battery, stationId, vehicleBatteryType);
         return battery;
     }
 
-    private List<Battery> getOldBatteryInVehicle(Vehicle vehicle) {
-        var oldTransaction = swapTransactionService.getLatestCompletedVehicleTransaction(vehicle);
-        if (oldTransaction == null) return null;
-        var oldBatteryTransactions = oldTransaction.getBatteryTransactions();
-        List<Battery> oldBatteries = new ArrayList<>();
-        if (oldBatteryTransactions == null || oldBatteryTransactions.isEmpty()) return oldBatteries;
-        for (var oldBatteryTransaction : oldBatteryTransactions) {
-            if (oldBatteryTransaction.getOldBattery() == null) continue;
-            oldBatteries.add(oldBatteryTransaction.getOldBattery());
-        }
-        return oldBatteries;
-    }
-
-    private List<UUID> getOldBatteryIdsInVehicle(Vehicle vehicle) {
-        var oldBatteries = getOldBatteryInVehicle(vehicle);
-        if (oldBatteries == null || oldBatteries.isEmpty()) return null;
-        List<UUID> oldBatteryIds = new ArrayList<>();
-        for (var battery : oldBatteries) {
-            oldBatteryIds.add(battery.getId());
-        }
-        return oldBatteryIds;
-    }
-
-    private SwapTransaction confirmTransaction(SwapTransaction transaction, User staff, Station station, List<UUID> batteryIds, List<Battery> oldBatteries) {
+    private SwapTransaction confirmTransaction(SwapTransaction transaction,
+                                               User staff,
+                                               List<Battery> requestedNewBatteries) {
         transaction.setConfirmedBy(staff);
-
-        int vehicleBatteryCount = transaction.getVehicle().getBatteryCapacity();
-        Set<BatteryTransaction> batteryTransactions = transaction.getBatteryTransactions();
-
-        if (batteryIds.size() != vehicleBatteryCount) {
+        int vehicleBatteryCapacity = transaction.getVehicle().getBatteryCapacity();
+        if (!isRequestBatteryCountMatchVehicleBatteryCapacity(vehicleBatteryCapacity, requestedNewBatteries.size())) {
             throw new IllegalArgumentException("Number of batteries in request does not match the vehicle's capacity.");
         }
-
-        for (int i = 0; i < vehicleBatteryCount; i++) {
-            var newBattery = getValidBattery(batteryIds.get(i), station.getId());
-            var newBatteryTransaction = BatteryTransaction.builder()
-                    .newBattery(newBattery)
-                    .swapTransaction(transaction)
-                    .build();
-            batteryTransactions.add(newBatteryTransaction);
+        List<BatteryTransaction> batteryTransactions = transaction.getBatteryTransactions();
+        for (int i = 0; i < requestedNewBatteries.size(); i++) {
+            batteryTransactions.get(i).setNewBattery(requestedNewBatteries.get(i));
         }
-
-        transaction.setBatteryTransactions(batteryTransactions);
         transaction.setStatus(TransactionStatus.CONFIRMED);
         return swapTransactionService.saveSwapTransaction(transaction);
+    }
+
+
+    private void checkValidStation(Station station) {
+        if (station.isCurrentCapacityEmpty()) {
+            throw new IllegalArgumentException("Station currently has no battery.");
+        }
+        if (!station.isOperational()) {
+            throw new IllegalArgumentException("This station is not operational.");
+        }
+        if (!station.isOnWorkingTime()) {
+            throw new IllegalArgumentException("This station is not on working time.");
+        }
+    }
+
+
+    private void checkValidRequestBatterySwapping(Battery battery, UUID stationId, String vehicleBatteryType) {
+        if (!battery.isOnStation(stationId)) {
+            throw new IllegalArgumentException("Battery is not assigned to this station: " + battery.getId());
+        }
+        if (!battery.isBatteryFull()) {
+            throw new IllegalArgumentException("Battery is not full: " + battery.getId());
+        }
+        if (!battery.isMatchType(vehicleBatteryType)) {
+            throw new IllegalArgumentException("Battery is not match the type for the request vehicle: " + battery.getId());
+        }
+    }
+
+    private void checkValidTransactionForSwapping(SwapTransaction transaction) {
+        if (!transaction.isTransactionNotConfirmedBy() || !transaction.isTransactionScheduled()) {
+            throw new IllegalArgumentException("Transaction has already been confirmed or it is not scheduled.");
+        }
+        if (transaction.isTransactionExpired()) {
+            throw new IllegalArgumentException("Transaction has expired.");
+        }
+        List<Payment> payments = paymentService.findAllWithOrderDescByTransactionId(transaction);
+        if (payments != null && !payments.isEmpty()) {
+            Payment latestPayment = payments.getFirst();
+            if (latestPayment.isPaymentCompleted()) {
+                throw new IllegalArgumentException("Payment has already been completed.");
+            }
+        }
+    }
+
+    private boolean isRequestBatteryCountMatchVehicleBatteryCapacity(int vehicleBatteryCapacity, int requestedBatteryCount) {
+        return vehicleBatteryCapacity == requestedBatteryCount;
     }
 }

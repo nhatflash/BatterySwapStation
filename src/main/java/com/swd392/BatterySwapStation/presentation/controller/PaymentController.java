@@ -43,4 +43,15 @@ public class PaymentController {
         var response = vnPayService.processIPN(request);
         return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", response));
     }
+
+
+    @GetMapping("/vnpay-return")
+    public ResponseEntity<ApiResponse<String>> VnPayRedirect(HttpServletRequest request) {
+        String responseCode = request.getParameter("vnp_ResponseCode");
+        if ("00".equals(responseCode)) {
+            return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", "Payment success."));
+        } else {
+            return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", "Payment failed."));
+        }
+    }
 }
