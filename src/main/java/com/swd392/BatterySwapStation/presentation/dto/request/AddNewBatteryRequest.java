@@ -1,8 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,6 +23,7 @@ public class AddNewBatteryRequest {
     private String type;
 
     @NotNull(message = "Battery capacity is required.")
+    @Min(value = 0, message = "Battery capacity cannot be lower than 0.")
     private Integer capacityKwh;
 
     @NotBlank(message = "Battery manufacture date is required.")

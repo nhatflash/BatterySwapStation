@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -51,7 +52,7 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
                 requestDriver,
                 requestedVehicle,
                 station,
-                DateStringMapper.getLocalDateTime(request.getScheduledTime()),
+                getValidScheduledDateTime(request.getScheduledTime()),
                 request.getNotes()
         );
         if (swapTransactionService.isVehicleFirstSwap(requestedVehicle)) {
@@ -132,5 +133,12 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
         return oldBatteriesInVehicle;
     }
 
+    private LocalDateTime getValidScheduledDateTime(String scheduledTime) {
+        LocalDateTime scheduledDateTime = DateStringMapper.getLocalDateTime(scheduledTime);
+        if (scheduledDateTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("The scheduled date cannot be in the past.");
+        }
+        return scheduledDateTime;
+    }
 
 }
