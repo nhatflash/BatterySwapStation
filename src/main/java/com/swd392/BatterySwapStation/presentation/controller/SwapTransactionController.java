@@ -3,12 +3,15 @@ package com.swd392.BatterySwapStation.presentation.controller;
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.ConfirmScheduledSwapCommand;
 import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
+import com.swd392.BatterySwapStation.application.model.CreateWalkInSwapCommand;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.ConfirmScheduledSwapUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.CreateScheduledBatterySwapUseCase;
+import com.swd392.BatterySwapStation.application.useCase.swapTransaction.CreateWalkInSwapUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.GetAllUnconfirmedSwapsUseCase;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
+import com.swd392.BatterySwapStation.presentation.dto.request.CreateWalkInSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -29,13 +32,16 @@ public class SwapTransactionController {
     private final CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase;
     private final ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase;
     private final GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase;
+    private final CreateWalkInSwapUseCase createWalkInSwapUseCase;
 
     public SwapTransactionController(CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase,
                                      ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase,
-                                     GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase) {
+                                     GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase,
+                                     CreateWalkInSwapUseCase createWalkInSwapUseCase) {
         this.createScheduledBatterySwapUseCase = createScheduledBatterySwapUseCase;
         this.confirmScheduledSwapUseCase = confirmScheduledSwapUseCase;
         this.getAllUnconfirmedSwapsUseCase = getAllUnconfirmedSwapsUseCase;
+        this.createWalkInSwapUseCase = createWalkInSwapUseCase;
     }
 
     @PostMapping("/scheduled")
@@ -84,5 +90,24 @@ public class SwapTransactionController {
         var transactions = getAllUnconfirmedSwapsUseCase.execute(userDetails.getUserId());
         var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
         return ResponseEntity.ok(new ApiResponse<>("Get all unconfirmed swaps successfully.", response));
+    }
+
+
+    @PostMapping("/walkIn")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> createWalkInSwap(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                 @Valid @RequestBody CreateWalkInSwapRequest request) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = CreateWalkInSwapCommand.builder()
+                .staffId(userDetails.getUserId())
+                .driverId(request.getDriverId())
+                .vehicleId(request.getVehicleId())
+                .batteryIds(request.getBatteryIds())
+                .build();
+        var transactions = createWalkInSwapUseCase.execute(command);
+        var response = ResponseMapper.mapToSwapTransactionResponse(transactions);
+        return ResponseEntity.ok(new ApiResponse<>("Create walk-in swap successfully.", response));
     }
 }

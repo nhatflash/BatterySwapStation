@@ -49,7 +49,13 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
         }
         List<BatteryTransaction> batteryTransactions = transaction.getBatteryTransactions();
         for (int i = 0; i < requestedNewBatteries.size(); i++) {
-            batteryTransactions.get(i).setNewBattery(requestedNewBatteries.get(i));
+            if (batteryTransactions.isEmpty()) {
+                batteryTransactions.add(BatteryTransaction.builder()
+                        .newBattery(requestedNewBatteries.get(i))
+                        .build());
+            } else {
+                batteryTransactions.get(i).setNewBattery(requestedNewBatteries.get(i));
+            }
         }
         transaction.setStatus(TransactionStatus.CONFIRMED);
         return swapTransactionService.saveSwapTransaction(transaction);
