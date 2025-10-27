@@ -42,8 +42,8 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
     @Override
     @Transactional
     public SwapTransaction execute(CreateScheduledBatterySwapCommand request) {
-        User requestDriver = getValidDriver(request.getDriverId());
-        Vehicle requestedVehicle = getValidVehicle(request.getVehicleId(), requestDriver);
+        User requestDriver = swapTransactionService.getValidDriver(request.getDriverId());
+        Vehicle requestedVehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), requestDriver);
         BatteryType requestedBatteryType = requestedVehicle.getBatteryType();
         Station station = getValidStation(request.getStationId(),
                 requestedBatteryType,
@@ -59,44 +59,10 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
             newScheduledTransaction.setSwapPrice(
                     new Money(BigDecimal.valueOf(PriceCalculator.FIRST_SWAP_PRICE * requestedVehicle.getBatteryCapacity())));
         }
-        addOldBatteryTransactionIfExists(requestedVehicle, newScheduledTransaction);
+        swapTransactionService.addOldBatteryTransactionIfExists(requestedVehicle, newScheduledTransaction);
         return swapTransactionService.saveSwapTransaction(newScheduledTransaction);
     }
 
-    private void addOldBatteryTransactionIfExists(Vehicle vehicle, SwapTransaction swapTransaction) {
-        List<Battery> oldVehicleBatteries = getOldBatteryInVehicle(vehicle);
-        if (!oldVehicleBatteries.isEmpty()) {
-            List<BatteryTransaction> batteryTransactions = swapTransaction.getBatteryTransactions();
-            for (Battery oldBattery : oldVehicleBatteries) {
-                batteryTransactions.add(
-                        BatteryTransaction.builder()
-                                .oldBattery(oldBattery)
-                                .swapTransaction(swapTransaction)
-                                .build()
-                );
-            }
-            swapTransaction.setInitialSwap(false);
-            return;
-        }
-        swapTransaction.setInitialSwap(true);
-    }
-
-
-    private User getValidDriver(UUID driverId) {
-        User driver = userService.getUserById(driverId);
-        if (!userService.isCorrectRole(driver, UserRole.DRIVER)) {
-            throw new IllegalArgumentException("Only driver can perform this operation.");
-        }
-        return driver;
-    }
-
-    private Vehicle getValidVehicle(UUID vehicleId, User driver) {
-        Vehicle vehicle = vehicleService.getVehicleById(vehicleId);
-        if (!vehicle.getDriver().equals(driver)) {
-            throw new IllegalArgumentException("This vehicle is not assigned to this driver.");
-        }
-        return vehicle;
-    }
 
     private Station getValidStation(UUID stationId, BatteryType batteryType, int vehicleBatteryCapacity) {
         Station station = stationService.getByStationID(stationId);
@@ -114,24 +80,7 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
         return currentCapacity >= vehicleBatteryCapacity;
     }
 
-    private List<Battery> getOldBatteryInVehicle(Vehicle vehicle) {
-        SwapTransaction latestCompletedTransaction = swapTransactionService.getLatestCompletedVehicleTransaction(vehicle);
-        if (latestCompletedTransaction == null) {
-            return new ArrayList<>();
-        }
-        var latestCompletedBatteryTransactions = latestCompletedTransaction.getBatteryTransactions();
-        if (latestCompletedBatteryTransactions == null || latestCompletedBatteryTransactions.isEmpty()) {
-            return new ArrayList<>();
-        }
-        List<Battery> oldBatteriesInVehicle = new ArrayList<>();
-        for (var latestCompletedBatteryTransaction : latestCompletedBatteryTransactions) {
-            if (latestCompletedBatteryTransaction.getOldBattery() == null) {
-                continue;
-            }
-            oldBatteriesInVehicle.add(latestCompletedBatteryTransaction.getOldBattery());
-        }
-        return oldBatteriesInVehicle;
-    }
+
 
     private LocalDateTime getValidScheduledDateTime(String scheduledTime) {
         LocalDateTime scheduledDateTime = DateStringMapper.getLocalDateTime(scheduledTime);
