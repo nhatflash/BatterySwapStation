@@ -23,7 +23,7 @@ public class CreateStationUseCase implements IUseCase<CreateStationCommand, Stat
 
         Station newStation = Station.builder()
                 .name(request.getName())
-                .idleSwapBays(0)
+                .idleSwapBays(request.getTotalSwapBays())
                 .currentCapacity(0)
                 .address(request.getAddress())
                 .totalCapacity(request.getTotalCapacity())
