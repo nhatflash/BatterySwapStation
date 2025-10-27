@@ -5,15 +5,13 @@ import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.domain.repository.BatteryModelRepository;
-import com.swd392.BatterySwapStation.domain.repository.BatteryRepository;
-import com.swd392.BatterySwapStation.domain.repository.StationRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.BatteryModelRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.BatteryRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.StationRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;

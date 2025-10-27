@@ -2,15 +2,10 @@ package com.swd392.BatterySwapStation.application.service;
 
 
 import com.swd392.BatterySwapStation.domain.entity.Station;
-import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.domain.repository.StationRepository;
-import lombok.AccessLevel;
+import com.swd392.BatterySwapStation.infrastructure.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

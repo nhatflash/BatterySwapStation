@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.domain.repository;
+package com.swd392.BatterySwapStation.infrastructure.repository;
 
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;

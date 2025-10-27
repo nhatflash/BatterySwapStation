@@ -6,23 +6,12 @@ import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
 import com.swd392.BatterySwapStation.domain.enums.PaymentStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.domain.repository.PaymentRepository;
-import com.swd392.BatterySwapStation.domain.repository.SwapTransactionRepository;
-import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import com.swd392.BatterySwapStation.infrastructure.repository.PaymentRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.infrastructure.service.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 
 

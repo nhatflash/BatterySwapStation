@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.domain.repository;
+package com.swd392.BatterySwapStation.infrastructure.repository;
 
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.Station;
@@ -18,4 +18,6 @@ public interface SwapTransactionRepository extends JpaRepository<SwapTransaction
     List<SwapTransaction> findAllByStation(Station station);
 
     boolean existsSwapTransactionById(UUID transactionId);
+
+    List<SwapTransaction> findAllByVehicle(Vehicle vehicle);
 }

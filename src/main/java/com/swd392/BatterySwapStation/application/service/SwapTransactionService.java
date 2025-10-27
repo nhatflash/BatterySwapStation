@@ -7,10 +7,9 @@ import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.domain.repository.BatteryTransactionRepository;
-import com.swd392.BatterySwapStation.domain.repository.SwapTransactionRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.BatteryTransactionRepository;
+import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
-import org.hibernate.annotations.NotFound;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -203,6 +202,10 @@ public class SwapTransactionService {
         return oldBatteriesInVehicle;
     }
 
+    public List<SwapTransaction> getAllSwapForVehicle(Vehicle vehicle) {
+        return swapTransactionRepository.findAllByVehicle(vehicle);
+    }
+
     private void checkValidStation(Station station) {
         if (station.isCurrentCapacityEmpty()) {
             throw new IllegalArgumentException("Station currently has no battery.");
@@ -247,6 +250,7 @@ public class SwapTransactionService {
     private boolean isRequestBatteryCountMatchVehicleBatteryCapacity(int vehicleBatteryCapacity, int requestedBatteryCount) {
         return vehicleBatteryCapacity == requestedBatteryCount;
     }
+
 
     private String generateTransactionCode() {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
