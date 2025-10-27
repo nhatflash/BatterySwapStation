@@ -133,7 +133,7 @@ public class StationController {
 
     //============================ Get Station Detail ============================
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get station by ID", description = "Retrieve a station's details by its ID")
     public ResponseEntity<ApiResponse<Station>> getStationById(@PathVariable("id") UUID id) {
         var station = getStationDetailUseCase.execute(id);
