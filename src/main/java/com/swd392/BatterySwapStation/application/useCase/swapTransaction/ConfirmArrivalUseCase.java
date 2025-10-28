@@ -47,6 +47,9 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
         if (completedPayments.isEmpty()) {
             throw new IllegalArgumentException("No completed payments found for this transaction.");
         }
+        if (transaction.getArrivalTime() != null) {
+            throw new IllegalArgumentException("Transaction arrival time has already been set.");
+        }
         return transaction;
     }
 
