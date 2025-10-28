@@ -6,9 +6,12 @@ import com.swd392.BatterySwapStation.application.service.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
+import com.swd392.BatterySwapStation.domain.valueObject.Rating;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @Slf4j
@@ -35,6 +38,7 @@ public class CreateStationUseCase implements IUseCase<CreateStationCommand, Stat
                 .contactEmail(request.getContactEmail())
                 .description(request.getDescription())
                 .imageUrl(request.getImageUrl())
+                .averageRating(new Rating(BigDecimal.ZERO))
                 .build();
         if (stationService.existsByName(request.getName())) {
             throw new IllegalArgumentException("Station with name " + request.getName() + " already exists.");
