@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.application.model.UpdateBatteryModelCommand
 import com.swd392.BatterySwapStation.application.model.ViewBatteryInventoryCommand;
 import com.swd392.BatterySwapStation.application.service.BatteryService;
 import com.swd392.BatterySwapStation.application.useCase.battery.*;
+import com.swd392.BatterySwapStation.application.useCase.feedback.CreateFeedbackUseCase;
 import com.swd392.BatterySwapStation.application.useCase.stationStaff.ViewBatteryInventoryUseCase;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
@@ -19,6 +20,7 @@ import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import jakarta.validation.executable.ValidateOnExecution;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/battery")
 @SecurityRequirement(name = "bearerAuth")
@@ -41,21 +44,6 @@ public class BatteryController {
     private final RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase;
     private final ViewBatteryInventoryUseCase viewBatteryInventoryUseCase;
 
-    public BatteryController(DefineBatteryModelUseCase defineBatteryModelUseCase,
-                             RetrieveAllModelsUseCase retrieveAllModelsUseCase,
-                             UpdateBatteryModelUseCase updateBatteryModelUseCase,
-                             AddNewBatteryUseCase addNewBatteryUseCase,
-                             RetrieveBatteryDetailsUseCase retrieveBatteryDetailsUseCase,
-                             RetrieveAllBatteriesUseCase retrieveAllBatteriesUseCase,
-                             ViewBatteryInventoryUseCase viewBatteryInventoryUseCase) {
-        this.defineBatteryModelUseCase = defineBatteryModelUseCase;
-        this.retrieveAllModelsUseCase = retrieveAllModelsUseCase;
-        this.updateBatteryModelUseCase = updateBatteryModelUseCase;
-        this.addNewBatteryUseCase = addNewBatteryUseCase;
-        this.retrieveBatteryDetailsUseCase = retrieveBatteryDetailsUseCase;
-        this.retrieveAllBatteriesUseCase = retrieveAllBatteriesUseCase;
-        this.viewBatteryInventoryUseCase = viewBatteryInventoryUseCase;
-    }
 
     @PostMapping("/model")
     @PreAuthorize("hasRole('ADMIN')")
@@ -68,6 +56,7 @@ public class BatteryController {
                 .warrantyMonths(request.getWarrantyMonths())
                 .maxChargePowerKwh(request.getMaxChargePowerKwh())
                 .minSohThreshold(request.getMinSohThreshold())
+                .compatibleVehicles(request.getCompatibleVehicles())
                 .build();
         var definedModel = defineBatteryModelUseCase.execute(command);
         var response = ResponseMapper.toBatteryModelResponse(definedModel);
@@ -152,5 +141,6 @@ public class BatteryController {
         var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
         return ResponseEntity.ok(new ApiResponse<>("Batteries with status " + status.name() + " retrieved successfully", response));
     }
+
 
 }

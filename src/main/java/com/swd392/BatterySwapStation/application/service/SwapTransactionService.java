@@ -163,6 +163,7 @@ public class SwapTransactionService {
         return vehicle;
     }
 
+
     public List<Battery> getOldBatteryInVehicle(Vehicle vehicle) {
         SwapTransaction latestCompletedTransaction = getLatestCompletedVehicleTransaction(vehicle);
         if (latestCompletedTransaction == null) {
@@ -184,6 +185,14 @@ public class SwapTransactionService {
 
     public List<SwapTransaction> getAllSwapForVehicle(Vehicle vehicle) {
         return swapTransactionRepository.findAllByVehicle(vehicle);
+    }
+
+    public int countByStationAndSwapEndTimeIsNotNull(Station station) {
+        return swapTransactionRepository.countByStationAndSwapEndTimeIsNotNull(station);
+    }
+
+    public List<SwapTransaction> findByStationAndSwapEndTimeIsNotNull(Station station) {
+        return swapTransactionRepository.findByStationAndSwapEndTimeIsNotNull(station);
     }
 
 

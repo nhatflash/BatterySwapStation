@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDeta
 import com.swd392.BatterySwapStation.infrastructure.service.BatterySSEService;
 import com.swd392.BatterySwapStation.infrastructure.service.BatterySimulatorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/battery-monitoring")
 @SecurityRequirement(name = "bearerAuth")
@@ -30,12 +32,6 @@ public class BatteryMonitoringController {
     private final BatterySSEService batterySSEService;
     private final BatterySimulatorService batterySimulatorService;
     private final BatteryService batteryService;
-
-    public BatteryMonitoringController(BatterySSEService batterySSEService, BatterySimulatorService batterySimulatorService, BatteryService batteryService) {
-        this.batterySSEService = batterySSEService;
-        this.batterySimulatorService = batterySimulatorService;
-        this.batteryService = batteryService;
-    }
 
     @GetMapping(value = "/stream/{stationId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")

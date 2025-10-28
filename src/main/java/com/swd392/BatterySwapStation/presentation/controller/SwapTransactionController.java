@@ -2,9 +2,11 @@ package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.*;
+import com.swd392.BatterySwapStation.application.useCase.feedback.CreateFeedbackUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
+import com.swd392.BatterySwapStation.presentation.dto.request.CreateFeedbackRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateWalkInSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.SwapTransactionResponse;
@@ -35,7 +37,7 @@ public class SwapTransactionController {
     private final ConfirmArrivalUseCase confirmArrivalUseCase;
     private final ProcessSwappingUseCase processSwappingUseCase;
     private final ViewSwapTransactionDetailsUseCase viewSwapTransactionDetailsUseCase;
-    private final View view;
+    private final CreateFeedbackUseCase createFeedbackUseCase;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -146,5 +148,24 @@ public class SwapTransactionController {
         var transaction = viewSwapTransactionDetailsUseCase.execute(transactionId);
         var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
         return ResponseEntity.ok(new ApiResponse<>("Get swap transaction successfully.", response));
+    }
+
+    @PostMapping("/{transactionId}/feedback")
+    @PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> createFeedbackForSwapTransaction(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                                 @PathVariable UUID transactionId,
+                                                                                                 @Valid @RequestBody CreateFeedbackRequest request) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = CreateFeedbackCommand.builder()
+                .transactionId(transactionId)
+                .driverId(userDetails.getUserId())
+                .feedback(request.getFeedback())
+                .rating(request.getRating())
+                .build();
+        var transaction = createFeedbackUseCase.execute(command);
+        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        return ResponseEntity.ok(new ApiResponse<>("Create feedback successfully.", response));
     }
 }

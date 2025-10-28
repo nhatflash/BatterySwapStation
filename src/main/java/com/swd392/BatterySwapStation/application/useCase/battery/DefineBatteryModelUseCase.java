@@ -34,6 +34,7 @@ public class DefineBatteryModelUseCase implements IUseCase<DefineBatteryModelCom
                 .warrantyMonths(request.getWarrantyMonths())
                 .maxChargePowerKwh(request.getMaxChargePowerKwh())
                 .minSohThreshold(request.getMinSohThreshold())
+                .compatibleVehicles(request.getCompatibleVehicles())
                 .build();
         return batteryService.saveBatteryModel(newModel);
     }
