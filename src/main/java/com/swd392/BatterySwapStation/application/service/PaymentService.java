@@ -10,25 +10,20 @@ import com.swd392.BatterySwapStation.infrastructure.repository.PaymentRepository
 import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.infrastructure.service.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 
 @Service
+@RequiredArgsConstructor
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final SwapTransactionRepository swapTransactionRepository;
     private final VnPayService vnPayService;
 
-    public PaymentService(PaymentRepository paymentRepository,
-                          SwapTransactionRepository swapTransactionRepository,
-                          VnPayService vnPayService) {
-        this.paymentRepository = paymentRepository;
-        this.swapTransactionRepository = swapTransactionRepository;
-        this.vnPayService = vnPayService;
-    }
 
     public String processCashPayment(UUID transactionId) {
         var transaction = getValidSwapTransaction(transactionId);
@@ -60,6 +55,10 @@ public class PaymentService {
 
     public List<Payment> findAllWithOrderDescByTransactionId(SwapTransaction transaction) {
         return paymentRepository.findBySwapTransactionOrderByIdDesc(transaction);
+    }
+
+    public List<Payment> findCompletedPaymentsWithTransaction(SwapTransaction transaction) {
+        return paymentRepository.findByStatusAndSwapTransaction(PaymentStatus.COMPLETED, transaction);
     }
 
 }

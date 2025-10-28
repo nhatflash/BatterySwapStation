@@ -1,13 +1,11 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.model.ConfirmArrivalCommand;
 import com.swd392.BatterySwapStation.application.model.ConfirmScheduledSwapCommand;
 import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
 import com.swd392.BatterySwapStation.application.model.CreateWalkInSwapCommand;
-import com.swd392.BatterySwapStation.application.useCase.swapTransaction.ConfirmScheduledSwapUseCase;
-import com.swd392.BatterySwapStation.application.useCase.swapTransaction.CreateScheduledBatterySwapUseCase;
-import com.swd392.BatterySwapStation.application.useCase.swapTransaction.CreateWalkInSwapUseCase;
-import com.swd392.BatterySwapStation.application.useCase.swapTransaction.GetAllUnconfirmedSwapsUseCase;
+import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
@@ -16,6 +14,7 @@ import com.swd392.BatterySwapStation.presentation.dto.response.SwapTransactionRe
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,7 +22,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/swap")
 @SecurityRequirement(name = "bearerAuth")
@@ -33,16 +34,7 @@ public class SwapTransactionController {
     private final ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase;
     private final GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase;
     private final CreateWalkInSwapUseCase createWalkInSwapUseCase;
-
-    public SwapTransactionController(CreateScheduledBatterySwapUseCase createScheduledBatterySwapUseCase,
-                                     ConfirmScheduledSwapUseCase confirmScheduledSwapUseCase,
-                                     GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase,
-                                     CreateWalkInSwapUseCase createWalkInSwapUseCase) {
-        this.createScheduledBatterySwapUseCase = createScheduledBatterySwapUseCase;
-        this.confirmScheduledSwapUseCase = confirmScheduledSwapUseCase;
-        this.getAllUnconfirmedSwapsUseCase = getAllUnconfirmedSwapsUseCase;
-        this.createWalkInSwapUseCase = createWalkInSwapUseCase;
-    }
+    private final ConfirmArrivalUseCase confirmArrivalUseCase;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -109,5 +101,21 @@ public class SwapTransactionController {
         var transactions = createWalkInSwapUseCase.execute(command);
         var response = ResponseMapper.mapToSwapTransactionResponse(transactions);
         return ResponseEntity.ok(new ApiResponse<>("Create walk-in swap successfully.", response));
+    }
+
+    @PostMapping("/{transactionId}/confirmArrival")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> confirmArrival(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                               @PathVariable UUID transactionId) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = ConfirmArrivalCommand.builder()
+                .transactionId(transactionId)
+                .staffId(userDetails.getUserId())
+                .build();
+        var confirmedTransaction = confirmArrivalUseCase.execute(command);
+        var response = ResponseMapper.mapToSwapTransactionResponse(confirmedTransaction);
+        return ResponseEntity.ok(new ApiResponse<>("Confirm arrival successfully.", response));
     }
 }

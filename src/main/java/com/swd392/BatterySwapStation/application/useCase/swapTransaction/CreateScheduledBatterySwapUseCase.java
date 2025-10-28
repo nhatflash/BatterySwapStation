@@ -9,6 +9,7 @@ import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateScheduledBatterySwapCommand, SwapTransaction> {
 
     private final SwapTransactionService swapTransactionService;
@@ -27,17 +29,6 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
     private final UserService userService;
     private final VehicleService vehicleService;
 
-    public CreateScheduledBatterySwapUseCase(SwapTransactionService swapTransactionService,
-                                             BatteryService batteryService,
-                                             StationService stationService,
-                                             UserService userService,
-                                             VehicleService vehicleService) {
-        this.swapTransactionService = swapTransactionService;
-        this.batteryService = batteryService;
-        this.stationService = stationService;
-        this.userService = userService;
-        this.vehicleService = vehicleService;
-    }
 
     @Override
     @Transactional

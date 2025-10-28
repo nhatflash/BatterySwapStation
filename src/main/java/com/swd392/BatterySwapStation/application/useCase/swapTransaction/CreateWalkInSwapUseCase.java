@@ -2,16 +2,12 @@ package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.model.CreateWalkInSwapCommand;
 import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
-import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
-import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 @Service
@@ -29,7 +25,7 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
         User staff = swapTransactionService.getValidStaff(request.getStaffId());
         User driver = swapTransactionService.getValidDriver(request.getDriverId());
         Vehicle vehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), driver);
-        Station station = swapTransactionService.getValidStation(request.getStaffId());
+        Station station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
         List<Battery> vehicleOldBatteries = swapTransactionService.getOldBatteryInVehicle(vehicle);
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),

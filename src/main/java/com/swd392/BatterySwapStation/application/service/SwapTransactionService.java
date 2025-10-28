@@ -10,6 +10,7 @@ import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.infrastructure.repository.BatteryTransactionRepository;
 import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class SwapTransactionService {
 
     private final SwapTransactionRepository swapTransactionRepository;
@@ -27,23 +29,6 @@ public class SwapTransactionService {
     private final BatteryService batteryService;
     private final PaymentService paymentService;
     private final VehicleService vehicleService;
-
-    public SwapTransactionService(SwapTransactionRepository swapTransactionRepository,
-                                  BatteryTransactionRepository batteryTransactionRepository,
-                                  UserService userService,
-                                  StationStaffService stationStaffService,
-                                  BatteryService batteryService,
-                                  PaymentService paymentService,
-                                  VehicleService vehicleService) {
-        this.swapTransactionRepository = swapTransactionRepository;
-        this.batteryTransactionRepository = batteryTransactionRepository;
-        this.userService = userService;
-        this.stationStaffService = stationStaffService;
-        this.batteryService = batteryService;
-        this.paymentService = paymentService;
-        this.vehicleService = vehicleService;
-
-    }
 
     public SwapTransaction createScheduledTransaction(User driver,
                                                       Vehicle vehicle,
@@ -111,11 +96,6 @@ public class SwapTransactionService {
         return swapTransactionRepository.save(swapTransaction);
     }
 
-    public SwapTransaction getValidSwapTransaction(UUID transactionId) {
-        var transaction = getTransactionById(transactionId);
-        checkValidTransactionForSwapping(transaction);
-        return transaction;
-    }
 
     public User getValidStaff(UUID staffId) {
         var staff = userService.getUserById(staffId);
@@ -125,7 +105,7 @@ public class SwapTransactionService {
         return staff;
     }
 
-    public Station getValidStation(UUID staffId) {
+    public Station getValidStationFromStaffId(UUID staffId) {
         var stationStaff = stationStaffService.getStationStaffById(staffId);
         var station = stationStaff.getStation();
         checkValidStation(station);
@@ -231,21 +211,7 @@ public class SwapTransactionService {
         }
     }
 
-    private void checkValidTransactionForSwapping(SwapTransaction transaction) {
-        if (!transaction.isTransactionNotConfirmedBy() || !transaction.isTransactionScheduled()) {
-            throw new IllegalArgumentException("Transaction has already been confirmed or it is not scheduled.");
-        }
-        if (transaction.isTransactionExpired()) {
-            throw new IllegalArgumentException("Transaction has expired.");
-        }
-        List<Payment> payments = paymentService.findAllWithOrderDescByTransactionId(transaction);
-        if (payments != null && !payments.isEmpty()) {
-            Payment latestPayment = payments.getFirst();
-            if (latestPayment.isPaymentCompleted()) {
-                throw new IllegalArgumentException("Payment has already been completed.");
-            }
-        }
-    }
+
 
     private boolean isRequestBatteryCountMatchVehicleBatteryCapacity(int vehicleBatteryCapacity, int requestedBatteryCount) {
         return vehicleBatteryCapacity == requestedBatteryCount;

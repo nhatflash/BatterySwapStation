@@ -5,8 +5,6 @@ import com.swd392.BatterySwapStation.application.service.*;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
-import com.swd392.BatterySwapStation.domain.enums.UserRole;
-import com.swd392.BatterySwapStation.domain.enums.UserStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +27,9 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
     @Transactional
     public SwapTransaction execute(ConfirmScheduledSwapCommand request) {
         User staff = swapTransactionService.getValidStaff(request.getStaffId());
-        SwapTransaction transaction = swapTransactionService.getValidSwapTransaction(request.getTransactionId());
+        SwapTransaction transaction = getValidSwapTransactionForConfirmation(request.getTransactionId());
         Vehicle vehicle = transaction.getVehicle();
-        var station = swapTransactionService.getValidStation(request.getStaffId());
+        var station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),
                 vehicle.getBatteryType().getValue());
@@ -65,5 +63,27 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
 
     private boolean isRequestBatteryCountMatchVehicleBatteryCapacity(int vehicleBatteryCapacity, int requestedBatteryCount) {
         return vehicleBatteryCapacity == requestedBatteryCount;
+    }
+
+    private SwapTransaction getValidSwapTransactionForConfirmation(UUID transactionId) {
+        var transaction = swapTransactionService.getTransactionById(transactionId);
+        checkValidTransactionForConfirmingSwapping(transaction);
+        return transaction;
+    }
+
+    private void checkValidTransactionForConfirmingSwapping(SwapTransaction transaction) {
+        if (!transaction.isTransactionNotConfirmedBy() || !transaction.isTransactionScheduled()) {
+            throw new IllegalArgumentException("Transaction has already been confirmed or it is not scheduled.");
+        }
+        if (transaction.isTransactionExpired()) {
+            throw new IllegalArgumentException("Transaction has expired.");
+        }
+        List<Payment> payments = paymentService.findAllWithOrderDescByTransactionId(transaction);
+        if (payments != null && !payments.isEmpty()) {
+            Payment latestPayment = payments.getFirst();
+            if (latestPayment.isPaymentCompleted()) {
+                throw new IllegalArgumentException("Payment has already been completed.");
+            }
+        }
     }
 }
