@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,6 +34,8 @@ public class SwapTransactionController {
     private final CreateWalkInSwapUseCase createWalkInSwapUseCase;
     private final ConfirmArrivalUseCase confirmArrivalUseCase;
     private final ProcessSwappingUseCase processSwappingUseCase;
+    private final ViewSwapTransactionDetailsUseCase viewSwapTransactionDetailsUseCase;
+    private final View view;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -136,5 +139,12 @@ public class SwapTransactionController {
         var processedTransaction = processSwappingUseCase.execute(command);
         var response = ResponseMapper.mapToSwapTransactionResponse(processedTransaction);
         return ResponseEntity.ok(new ApiResponse<>("Process swap successfully.", response));
+    }
+
+    @GetMapping("/{transactionId}")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> getSwapTransaction(@PathVariable UUID transactionId) {
+        var transaction = viewSwapTransactionDetailsUseCase.execute(transactionId);
+        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        return ResponseEntity.ok(new ApiResponse<>("Get swap transaction successfully.", response));
     }
 }
