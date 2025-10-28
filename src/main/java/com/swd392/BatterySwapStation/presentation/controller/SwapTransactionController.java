@@ -1,10 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.ConfirmArrivalCommand;
-import com.swd392.BatterySwapStation.application.model.ConfirmScheduledSwapCommand;
-import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
-import com.swd392.BatterySwapStation.application.model.CreateWalkInSwapCommand;
+import com.swd392.BatterySwapStation.application.model.*;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
@@ -35,6 +32,7 @@ public class SwapTransactionController {
     private final GetAllUnconfirmedSwapsUseCase getAllUnconfirmedSwapsUseCase;
     private final CreateWalkInSwapUseCase createWalkInSwapUseCase;
     private final ConfirmArrivalUseCase confirmArrivalUseCase;
+    private final ProcessSwappingUseCase processSwappingUseCase;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -117,5 +115,26 @@ public class SwapTransactionController {
         var confirmedTransaction = confirmArrivalUseCase.execute(command);
         var response = ResponseMapper.mapToSwapTransactionResponse(confirmedTransaction);
         return ResponseEntity.ok(new ApiResponse<>("Confirm arrival successfully.", response));
+    }
+
+    @PostMapping("/{transactionId}/swapping")
+    @PreAuthorize("hasRole('STAFF')")
+    public ResponseEntity<ApiResponse<SwapTransactionResponse>> processSwapping(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                @PathVariable UUID transactionId,
+                                                                                @RequestParam Boolean isProcessing) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        if (isProcessing == null) {
+            throw new IllegalArgumentException("Processing state is required.");
+        }
+        var command = ProcessSwappingCommand.builder()
+                .transactionId(transactionId)
+                .staffId(userDetails.getUserId())
+                .isProcessing(isProcessing)
+                .build();
+        var processedTransaction = processSwappingUseCase.execute(command);
+        var response = ResponseMapper.mapToSwapTransactionResponse(processedTransaction);
+        return ResponseEntity.ok(new ApiResponse<>("Process swap successfully.", response));
     }
 }

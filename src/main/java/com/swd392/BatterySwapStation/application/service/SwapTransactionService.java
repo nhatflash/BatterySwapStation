@@ -186,6 +186,7 @@ public class SwapTransactionService {
         return swapTransactionRepository.findAllByVehicle(vehicle);
     }
 
+
     private void checkValidStation(Station station) {
         if (station.isCurrentCapacityEmpty()) {
             throw new IllegalArgumentException("Station currently has no battery.");

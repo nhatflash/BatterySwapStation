@@ -1,9 +1,11 @@
 package com.swd392.BatterySwapStation.domain.entity;
 
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
+import com.swd392.BatterySwapStation.domain.valueObject.Rating;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Entity
@@ -56,6 +58,12 @@ public class Station extends BaseEntity {
 
     @Column(length = 500)
     private String imageUrl;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "rate", column = @Column(name = "average_rating", precision = 2, scale = 1, nullable = false))
+    })
+    private Rating averageRating;
 
     public boolean isCurrentCapacityEmpty() {
         return currentCapacity <= 0;
