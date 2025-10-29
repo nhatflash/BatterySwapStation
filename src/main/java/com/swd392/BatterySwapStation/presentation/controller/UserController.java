@@ -75,7 +75,7 @@ public class UserController {
 
 
     @GetMapping("/user/all")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers(@RequestParam Integer page) {
         var users = retrieveAllUsersUseCase.execute(page);
         var response = users.stream()
