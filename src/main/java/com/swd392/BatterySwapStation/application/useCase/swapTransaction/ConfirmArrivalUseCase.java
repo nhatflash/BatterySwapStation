@@ -50,6 +50,9 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
         if (transaction.getArrivalTime() != null) {
             throw new IllegalArgumentException("Transaction arrival time has already been set.");
         }
+        if (transaction.isTransactionScheduled() && transaction.getScheduledTime().isAfter(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Transaction has been scheduled and is not ready for arrival yet.");
+        }
         return transaction;
     }
 
