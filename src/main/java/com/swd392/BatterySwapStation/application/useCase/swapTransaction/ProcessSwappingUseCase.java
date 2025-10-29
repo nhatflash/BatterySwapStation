@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,9 @@ public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, 
         if (transaction.getSwapEndTime() != null) {
             throw new IllegalArgumentException("This transaction has ended swapping.");
         }
+        if (!transaction.isTransactionInProgress()) {
+            throw new IllegalArgumentException("This transaction is not in progress.");
+        }
         return transaction;
     }
 
@@ -74,11 +78,13 @@ public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, 
             station.setIdleSwapBays(station.getIdleSwapBays() - 1);
         }
         stationService.saveStation(station);
+        transaction.setStatus(TransactionStatus.IN_PROGRESS);
         return swapTransactionService.saveSwapTransaction(transaction);
     }
 
     private SwapTransaction processEndSwappingTransaction(SwapTransaction transaction, Station station) {
         transaction.setSwapEndTime(LocalDateTime.now());
+        transaction.setStatus(TransactionStatus.COMPLETED);
         station.setIdleSwapBays(station.getIdleSwapBays() + 1);
         stationService.saveStation(station);
         return swapTransactionService.saveSwapTransaction(transaction);

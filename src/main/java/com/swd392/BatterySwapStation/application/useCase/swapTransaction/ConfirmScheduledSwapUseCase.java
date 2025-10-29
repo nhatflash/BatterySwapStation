@@ -50,6 +50,7 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
             if (batteryTransactions.isEmpty()) {
                 batteryTransactions.add(BatteryTransaction.builder()
                         .newBattery(requestedNewBatteries.get(i))
+                        .swapTransaction(transaction)
                         .build());
             } else {
                 batteryTransactions.get(i).setNewBattery(requestedNewBatteries.get(i));

@@ -1,9 +1,6 @@
 package com.swd392.BatterySwapStation.infrastructure.repository;
 
-import com.swd392.BatterySwapStation.domain.entity.Battery;
-import com.swd392.BatterySwapStation.domain.entity.Station;
-import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
-import com.swd392.BatterySwapStation.domain.entity.Vehicle;
+import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +21,6 @@ public interface SwapTransactionRepository extends JpaRepository<SwapTransaction
     int countByStationAndSwapEndTimeIsNotNull(Station station);
 
     List<SwapTransaction> findByStationAndSwapEndTimeIsNotNull(Station station);
+
+    List<SwapTransaction> findByDriverAndStatus(User driver, TransactionStatus status);
 }

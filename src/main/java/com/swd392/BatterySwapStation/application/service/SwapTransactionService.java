@@ -10,6 +10,7 @@ import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.infrastructure.repository.BatteryTransactionRepository;
 import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -193,6 +194,10 @@ public class SwapTransactionService {
 
     public List<SwapTransaction> findByStationAndSwapEndTimeIsNotNull(Station station) {
         return swapTransactionRepository.findByStationAndSwapEndTimeIsNotNull(station);
+    }
+
+    public List<SwapTransaction> findByDriverAndStatus(User driver, TransactionStatus status) {
+        return swapTransactionRepository.findByDriverAndStatus(driver, status);
     }
 
 

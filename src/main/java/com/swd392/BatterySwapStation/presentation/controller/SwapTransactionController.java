@@ -2,8 +2,10 @@ package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.*;
+import com.swd392.BatterySwapStation.application.useCase.driver.ViewHistorySwapUseCase;
 import com.swd392.BatterySwapStation.application.useCase.feedback.CreateFeedbackUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
+import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateFeedbackRequest;
@@ -14,6 +16,7 @@ import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Transaction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,6 +41,7 @@ public class SwapTransactionController {
     private final ProcessSwappingUseCase processSwappingUseCase;
     private final ViewSwapTransactionDetailsUseCase viewSwapTransactionDetailsUseCase;
     private final CreateFeedbackUseCase createFeedbackUseCase;
+    private final ViewHistorySwapUseCase viewHistorySwapUseCase;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -168,5 +172,22 @@ public class SwapTransactionController {
         var transaction = createFeedbackUseCase.execute(command);
         var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
         return ResponseEntity.ok(new ApiResponse<>("Create feedback successfully.", response));
+    }
+
+
+    @GetMapping("/history")
+    @PreAuthorize("hasRole('DRIVER')")
+    public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> viewHistorySwap(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                      @RequestParam TransactionStatus status) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = ViewHistorySwapCommand.builder()
+                .driverId(userDetails.getUserId())
+                .status(status)
+                .build();
+        var transactions = viewHistorySwapUseCase.execute(command);
+        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        return ResponseEntity.ok(new ApiResponse<>("View history swap successfully.", response));
     }
 }
