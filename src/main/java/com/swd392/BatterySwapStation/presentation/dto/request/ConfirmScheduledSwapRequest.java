@@ -14,8 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConfirmScheduledSwapRequest {
-    @NotNull(message = "Transaction Id is required.")
-    private UUID transactionId;
 
     @NotNull(message = "Battery Ids are required.")
     private List<UUID> batteryIds;

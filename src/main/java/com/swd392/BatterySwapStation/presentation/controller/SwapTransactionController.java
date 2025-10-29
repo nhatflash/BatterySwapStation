@@ -59,15 +59,16 @@ public class SwapTransactionController {
     }
 
 
-    @PostMapping("/scheduled/confirm")
+    @PostMapping("/scheduled/{transactionId}/confirm")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<ApiResponse<SwapTransactionResponse>> confirmScheduledSwap(@Valid @RequestBody ConfirmScheduledSwapRequest request,
-                                                                                     @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                                                                     @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                     @PathVariable UUID transactionId) {
         if (userDetails == null) {
             throw new UsernameNotFoundException("User not found");
         }
         var command = ConfirmScheduledSwapCommand.builder()
-                .transactionId(request.getTransactionId())
+                .transactionId(transactionId)
                 .staffId(userDetails.getUserId())
                 .batteryIds(request.getBatteryIds())
                 .build();
