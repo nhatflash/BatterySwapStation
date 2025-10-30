@@ -221,8 +221,10 @@ public class SwapTransactionService {
         BatteryTransaction oldTransaction = findLatestBatteryTransactionWithOldBattery(battery);
         if (newTransaction != null && oldTransaction != null) {
             if (newTransaction.getId() > oldTransaction.getId()) {
-                throw new IllegalArgumentException("The battery " + battery.getId() + " is already on another swap or on another vehicle.");
+                throw new IllegalArgumentException("The battery " + battery.getId() + " is already on another swap or is on another vehicle.");
             }
+        } else if (oldTransaction == null && newTransaction != null) {
+            throw new IllegalArgumentException("The battery " + battery.getId() + " is already on another swap or is on another vehicle..");
         }
     }
 
