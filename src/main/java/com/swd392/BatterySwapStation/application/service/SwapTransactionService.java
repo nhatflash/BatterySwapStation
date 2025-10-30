@@ -84,7 +84,7 @@ public class SwapTransactionService {
         return latestVehicleTransaction == null;
     }
 
-    public Set<BatteryTransaction> getBatteryTransactionFromTransaction(SwapTransaction transaction) {
+    public List<BatteryTransaction> getBatteryTransactionFromTransaction(SwapTransaction transaction) {
         return batteryTransactionRepository.findAllBySwapTransaction(transaction);
     }
 
@@ -198,6 +198,32 @@ public class SwapTransactionService {
 
     public List<SwapTransaction> findByDriverAndStatus(User driver, TransactionStatus status) {
         return swapTransactionRepository.findByDriverAndStatus(driver, status);
+    }
+
+    public BatteryTransaction findLatestBatteryTransactionWithNewBattery(Battery newBattery) {
+        List<BatteryTransaction> batteryTransactions = batteryTransactionRepository.findByNewBatteryOrderByIdDesc(newBattery);
+        if (batteryTransactions.isEmpty()) {
+            return null;
+        }
+        return batteryTransactions.getFirst();
+    }
+
+    public BatteryTransaction findLatestBatteryTransactionWithOldBattery(Battery oldBattery) {
+        List<BatteryTransaction> batteryTransactions = batteryTransactionRepository.findByOldBatteryOrderByIdDesc(oldBattery);
+        if (batteryTransactions.isEmpty()) {
+            return null;
+        }
+        return batteryTransactions.getFirst();
+    }
+
+    public void checkBatteryIsReadyForSwapping(Battery battery) {
+        BatteryTransaction newTransaction = findLatestBatteryTransactionWithNewBattery(battery);
+        BatteryTransaction oldTransaction = findLatestBatteryTransactionWithOldBattery(battery);
+        if (newTransaction != null && oldTransaction != null) {
+            if (newTransaction.getId() > oldTransaction.getId()) {
+                throw new IllegalArgumentException("The battery " + battery.getId() + " is already on another swap or on another vehicle.");
+            }
+        }
     }
 
 

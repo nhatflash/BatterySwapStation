@@ -62,6 +62,7 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
                                                                       SwapTransaction transaction,
                                                                       List<Battery> requestedNewBatteries) {
         for (Battery requestedNewBattery : requestedNewBatteries) {
+            swapTransactionService.checkBatteryIsReadyForSwapping(requestedNewBattery);
             batteryTransactions.add(
                     BatteryTransaction.builder()
                             .swapTransaction(transaction)
@@ -76,6 +77,7 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
                                                                       List<Battery> requestedNewBatteries,
                                                                       List<Battery> oldVehicleBatteries) {
         for (int i = 0; i < oldVehicleBatteries.size(); i++) {
+            swapTransactionService.checkBatteryIsReadyForSwapping(requestedNewBatteries.get(i));
             batteryTransactions.add(
                     BatteryTransaction.builder()
                             .swapTransaction(transaction)
