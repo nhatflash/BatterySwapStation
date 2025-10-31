@@ -37,7 +37,7 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
 
     private SwapTransaction getValidTransactionForConfirmingArrival(UUID transactionId) {
         SwapTransaction transaction = swapTransactionService.getTransactionById(transactionId);
-        if (!transaction.isTransactionNotConfirmedBy()) {
+        if (transaction.isTransactionNotConfirmedBy()) {
             throw new IllegalArgumentException("Transaction has not been confirmed yet. Cannot perform arrival confirmation.");
         }
         if (transaction.isTransactionExpired()) {
