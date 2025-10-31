@@ -82,7 +82,7 @@ public class SwapTransactionController {
     }
 
     @GetMapping("/scheduled/all")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> getAllUnconfirmedSwaps(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new UsernameNotFoundException("User not found");

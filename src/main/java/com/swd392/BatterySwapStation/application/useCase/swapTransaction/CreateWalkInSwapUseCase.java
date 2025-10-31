@@ -7,6 +7,7 @@ import com.swd392.BatterySwapStation.domain.entity.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,7 +46,7 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
         if (vehicleBatteryCapacity != requestedNewBatteries.size()) {
             throw new IllegalArgumentException("Number of batteries in request does not match the vehicle's capacity.");
         }
-        List<BatteryTransaction> batteryTransactions = walkInTransaction.getBatteryTransactions();
+        List<BatteryTransaction> batteryTransactions = new ArrayList<>();
         if (oldVehicleBatteries != null && !oldVehicleBatteries.isEmpty()) {
             if (oldVehicleBatteries.size() != requestedNewBatteries.size()) {
                 throw new IllegalArgumentException("The old vehicle battery capacity does not match the requested new battery capacity.");
