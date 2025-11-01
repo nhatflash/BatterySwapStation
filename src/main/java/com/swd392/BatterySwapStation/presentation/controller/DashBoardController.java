@@ -42,7 +42,7 @@ public class DashBoardController {
 
         List<Payment> payments = dashBoardSwapPriceUseCase.execute(command);
 
-        // ✅ Truyền thẳng List<Payment> vào ResponseMapper
+        //Truyền thẳng List<Payment> vào ResponseMapper
         var response = ResponseMapper.mapToDashBoardSwapPriceResponse(
                 command.getType().name(),
                 payments
