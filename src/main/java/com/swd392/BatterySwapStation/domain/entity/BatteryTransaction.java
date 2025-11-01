@@ -26,7 +26,7 @@ public class BatteryTransaction {
     private Battery oldBattery;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "new_battery_id", nullable = false)
+    @JoinColumn(name = "new_battery_id")
     private Battery newBattery;
 
 }

@@ -223,7 +223,6 @@ public class VnPayService {
                 .notes("Payment with VnPay.")
                 .build();
         var savedPayment = paymentRepository.save(payment);
-        transaction.setStatus(TransactionStatus.COMPLETED);
         swapTransactionRepository.save(transaction);
         return savedPayment;
     }
