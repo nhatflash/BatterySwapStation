@@ -10,7 +10,6 @@ import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import com.swd392.BatterySwapStation.infrastructure.repository.BatteryTransactionRepository;
 import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -72,11 +71,11 @@ public class SwapTransactionService {
     }
 
     public SwapTransaction getLatestCompletedVehicleTransaction(Vehicle vehicle) {
-        var swapTransactions = swapTransactionRepository.findAllByVehicleOrderByIdDesc(vehicle, TransactionStatus.COMPLETED);
+        var swapTransactions = swapTransactionRepository.findAllByVehicle(vehicle, TransactionStatus.COMPLETED);
         if (swapTransactions.isEmpty()) {
             return null;
         }
-        return swapTransactions.getFirst();
+        return swapTransactions.getLast();
     }
 
     public boolean isVehicleFirstSwap(Vehicle vehicle) {

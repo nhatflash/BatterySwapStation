@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface SwapTransactionRepository extends JpaRepository<SwapTransaction, UUID> {
-    @Query("SELECT s FROM SwapTransaction s WHERE s.vehicle = ?1 AND s.status = ?2 ORDER BY s.id DESC")
-    List<SwapTransaction> findAllByVehicleOrderByIdDesc(Vehicle vehicle, TransactionStatus status);
+    @Query("SELECT s FROM SwapTransaction s WHERE s.vehicle = ?1 AND s.status = ?2")
+    List<SwapTransaction> findAllByVehicle(Vehicle vehicle, TransactionStatus status);
 
     List<SwapTransaction> findAllByStation(Station station);
 
