@@ -35,7 +35,7 @@ public class SwapTransactionService {
                                                       Station station,
                                                       LocalDateTime scheduledTime,
                                                       String notes) {
-        var newSwapTransaction = SwapTransaction.builder()
+        return SwapTransaction.builder()
                 .code(generateTransactionCode())
                 .driver(driver)
                 .vehicle(vehicle)
@@ -47,7 +47,7 @@ public class SwapTransactionService {
                 .swapPrice(new Money(BigDecimal.valueOf(vehicle.getBatteryCapacity() * PriceCalculator.SWAP_PRICE)))
                 .notes(notes)
                 .build();
-        return saveSwapTransaction(newSwapTransaction);
+
     }
 
     public SwapTransaction createWalkInTransaction(User driver,
@@ -132,7 +132,7 @@ public class SwapTransactionService {
     public void addOldBatteryTransactionIfExists(Vehicle vehicle, SwapTransaction swapTransaction) {
         List<Battery> oldVehicleBatteries = getOldBatteryInVehicle(vehicle);
         if (!oldVehicleBatteries.isEmpty()) {
-            List<BatteryTransaction> batteryTransactions = swapTransaction.getBatteryTransactions();
+            List<BatteryTransaction> batteryTransactions = new ArrayList<>();
             for (Battery oldBattery : oldVehicleBatteries) {
                 batteryTransactions.add(
                         BatteryTransaction.builder()
@@ -141,6 +141,7 @@ public class SwapTransactionService {
                                 .build()
                 );
             }
+            swapTransaction.setBatteryTransactions(batteryTransactions);
             swapTransaction.setInitialSwap(false);
             return;
         }
