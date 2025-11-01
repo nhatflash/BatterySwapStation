@@ -50,12 +50,14 @@ public class CreateFeedbackUseCase implements IUseCase<CreateFeedbackCommand, Sw
 
     private void updateStationAverageRating(SwapTransaction transaction) {
         Station station = stationService.getByStationID(transaction.getStation().getId());
-        int numberOfEndedTransactions = swapTransactionService.countByStationAndSwapEndTimeIsNotNull(station);
         List<SwapTransaction> stationTransactions = swapTransactionService.findByStationAndSwapEndTimeIsNotNull(station);
         if (stationTransactions.isEmpty()) return;
+        int numberOfEndedTransactions = 0;
         int totalRating = 0;
         for (SwapTransaction stationTransaction : stationTransactions) {
+            if (stationTransaction.getDriverRating() == null) continue;
             totalRating += stationTransaction.getDriverRating();
+            numberOfEndedTransactions++;
         }
         BigDecimal averageRating = BigDecimal.valueOf(totalRating / numberOfEndedTransactions);
         station.setAverageRating(new Rating(averageRating));

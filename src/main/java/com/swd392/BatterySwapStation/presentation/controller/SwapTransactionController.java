@@ -42,6 +42,7 @@ public class SwapTransactionController {
     private final ViewSwapTransactionDetailsUseCase viewSwapTransactionDetailsUseCase;
     private final CreateFeedbackUseCase createFeedbackUseCase;
     private final ViewHistorySwapUseCase viewHistorySwapUseCase;
+    private final ViewUnconfirmedSwapByAdminUseCase viewUnconfirmedSwapByAdminUseCase;
 
     @PostMapping("/scheduled")
     @PreAuthorize("hasRole('DRIVER')")
@@ -82,7 +83,7 @@ public class SwapTransactionController {
     }
 
     @GetMapping("/scheduled/all")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> getAllUnconfirmedSwaps(@AuthenticationPrincipal CustomUserDetails userDetails) {
         if (userDetails == null) {
             throw new UsernameNotFoundException("User not found");
@@ -189,5 +190,21 @@ public class SwapTransactionController {
         var transactions = viewHistorySwapUseCase.execute(command);
         var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
         return ResponseEntity.ok(new ApiResponse<>("View history swap successfully.", response));
+    }
+
+    @GetMapping("/{stationId}/unconfirmed")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> viewUnconfirmedSwapByAdmin(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                                                 @PathVariable UUID stationId) {
+        if (userDetails == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        var command = ViewUnconfirmedSwapByAdminCommand.builder()
+                .adminId(userDetails.getUserId())
+                .stationId(stationId)
+                .build();
+        var transactions = viewUnconfirmedSwapByAdminUseCase.execute(command);
+        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        return ResponseEntity.ok(new ApiResponse<>("View unconfirmed swap by admin successfully.", response));
     }
 }
