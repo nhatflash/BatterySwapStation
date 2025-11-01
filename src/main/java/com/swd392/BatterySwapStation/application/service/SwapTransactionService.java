@@ -176,10 +176,7 @@ public class SwapTransactionService {
         }
         List<Battery> oldBatteriesInVehicle = new ArrayList<>();
         for (var latestCompletedBatteryTransaction : latestCompletedBatteryTransactions) {
-            if (latestCompletedBatteryTransaction.getOldBattery() == null) {
-                continue;
-            }
-            oldBatteriesInVehicle.add(latestCompletedBatteryTransaction.getOldBattery());
+            oldBatteriesInVehicle.add(latestCompletedBatteryTransaction.getNewBattery());
         }
         return oldBatteriesInVehicle;
     }
