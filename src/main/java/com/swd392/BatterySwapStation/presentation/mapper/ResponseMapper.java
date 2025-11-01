@@ -166,10 +166,10 @@ public class ResponseMapper {
             for (var btr : transaction.getBatteryTransactions()) {
                 responses.add(new BatteryTransactionResponse(
                         btr.getOldBattery() == null ? null : btr.getOldBattery().getId(),
-                        btr.getNewBattery().getId()));
+                        btr.getNewBattery() == null ? null : btr.getNewBattery().getId()));
             }
         }
-        return SwapTransactionResponse.builder()
+        return SwapTransactionResponse.builder()g
                 .transactionId(transaction.getId())
                 .code(transaction.getCode())
                 .driverId(transaction.getDriver().getId())
