@@ -5,6 +5,7 @@ import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,4 +24,6 @@ public interface SwapTransactionRepository extends JpaRepository<SwapTransaction
     List<SwapTransaction> findByStationAndSwapEndTimeIsNotNull(Station station);
 
     List<SwapTransaction> findByDriverAndStatus(User driver, TransactionStatus status);
+
+    List<SwapTransaction> findBySwapStartTimeBetween(LocalDateTime start, LocalDateTime end);
 }

@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
-import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.presentation.dto.response.*;
 import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
@@ -8,10 +7,14 @@ import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ResponseMapper {
@@ -81,6 +84,7 @@ public class ResponseMapper {
                 .imageUrl(station.getImageUrl())
                 .build();
     }
+
     public static UpdateStationResponse mapToUpdateStationResponse(Station station) {
         return UpdateStationResponse.builder()
                 .stationId(station.getId().toString())
@@ -105,7 +109,7 @@ public class ResponseMapper {
                 .build();
     }
 
-    public  static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
+    public static StationStaffResponse mapToStationStaffResponse(StationStaff staff) {
 
         return StationStaffResponse.builder()
                 .staffId(staff.getStaff().getId())
@@ -184,5 +188,98 @@ public class ResponseMapper {
                 .driverRating(transaction.getDriverRating())
                 .driverFeedback(transaction.getDriverFeedback())
                 .build();
+    }
+
+    // ============================ DASH BOARD =======================================
+
+    public static DashBoardSwapPriceResponse mapToDashBoardSwapPriceResponse(
+            String period, List<Payment> payments) {
+
+        long totalTransactions = payments.size();
+        long completedTransactions = payments.stream()
+                .filter(Payment::isPaymentCompleted)
+                .count();
+
+        double totalRevenue = payments.stream()
+                .filter(p -> p.getAmount() != null)
+                .mapToDouble(p -> p.getAmount().getAmount().doubleValue())
+                .sum();
+
+        List<DashBoardDetailResponse> details = groupPaymentsByPeriod(period, payments);
+
+        return DashBoardSwapPriceResponse.builder()
+                .period(period)
+                .totalTransactions(totalTransactions)
+                .completedTransactions(completedTransactions)
+                .totalRevenue(totalRevenue)
+                .details(details)
+                .build();
+    }
+
+    private static List<DashBoardDetailResponse> groupPaymentsByPeriod(
+            String period, List<Payment> payments) {
+
+        DateTimeFormatter dayFmt = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter monthFmt = DateTimeFormatter.ofPattern("yyyy-MM");
+        DateTimeFormatter yearFmt = DateTimeFormatter.ofPattern("yyyy");
+
+        Map<String, List<Payment>> grouped = switch (period.toUpperCase()) {
+            case "DAY" -> payments.stream()
+                    .collect(Collectors.groupingBy(p -> p.getPaymentDate().format(dayFmt)));
+            case "MONTH" -> payments.stream()
+                    .collect(Collectors.groupingBy(p -> p.getPaymentDate().format(monthFmt)));
+            case "YEAR" -> payments.stream()
+                    .collect(Collectors.groupingBy(p -> p.getPaymentDate().format(yearFmt)));
+            default -> throw new IllegalArgumentException("Invalid dashboard type");
+        };
+
+        // DAY → chỉ hôm nay
+        if (period.equalsIgnoreCase("DAY")) {
+            LocalDate today = LocalDate.now();
+            String key = today.format(dayFmt);
+            grouped.putIfAbsent(key, new ArrayList<>());
+        }
+
+        //  MONTH → đủ 12 tháng
+        if (period.equalsIgnoreCase("MONTH")) {
+            int year = payments.isEmpty()
+                    ? LocalDate.now().getYear()
+                    : payments.get(0).getPaymentDate().getYear();
+
+            for (int month = 1; month <= 12; month++) {
+                String key = String.format("%d-%02d", year, month);
+                grouped.putIfAbsent(key, new ArrayList<>());
+            }
+        }
+
+        //  YEAR → đủ các năm có dữ liệu
+        if (period.equalsIgnoreCase("YEAR") && !payments.isEmpty()) {
+            int minYear = payments.stream()
+                    .mapToInt(p -> p.getPaymentDate().getYear())
+                    .min().orElse(LocalDate.now().getYear());
+            int maxYear = payments.stream()
+                    .mapToInt(p -> p.getPaymentDate().getYear())
+                    .max().orElse(LocalDate.now().getYear());
+            for (int y = minYear; y <= maxYear; y++) {
+                String key = String.format("%d", y);
+                grouped.putIfAbsent(key, new ArrayList<>());
+            }
+        }
+
+        return grouped.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .map(entry -> {
+                    var list = entry.getValue();
+                    double revenue = list.stream()
+                            .filter(p -> p.getAmount() != null)
+                            .mapToDouble(p -> p.getAmount().getAmount().doubleValue())
+                            .sum();
+                    return DashBoardDetailResponse.builder()
+                            .label(entry.getKey())
+                            .transactions(list.size())
+                            .revenue(revenue)
+                            .build();
+                })
+                .toList();
     }
 }
