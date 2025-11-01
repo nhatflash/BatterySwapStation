@@ -27,14 +27,14 @@ public class PaymentController {
     }
 
     @GetMapping("/api/payment/process")
-    public ResponseEntity<ApiResponse<String>> processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
+    public String processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
         var command = ProcessPaymentCommand.builder()
                 .transactionId(transactionId)
                 .method(method)
                 .servletRequest(request)
                 .build();
         var response = processPaymentUseCase.execute(command);
-        return ResponseEntity.ok(new ApiResponse<>("Payment process successfully", response));
+        return "redirect:http://localhost:5173/payment/return";
     }
 
 
@@ -46,12 +46,8 @@ public class PaymentController {
 
 
     @GetMapping("/vnpay-return")
-    public ResponseEntity<ApiResponse<String>> VnPayRedirect(HttpServletRequest request) {
+    public String VnPayRedirect(HttpServletRequest request) {
         String responseCode = request.getParameter("vnp_ResponseCode");
-        if ("00".equals(responseCode)) {
-            return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", "Payment success."));
-        } else {
-            return ResponseEntity.ok(new ApiResponse<>("Payment done processing.", "Payment failed."));
-        }
+        return "redirect:http://localhost:5173/payment/return";
     }
 }
