@@ -169,7 +169,7 @@ public class ResponseMapper {
                         btr.getNewBattery() == null ? null : btr.getNewBattery().getId()));
             }
         }
-        return SwapTransactionResponse.builder()g
+        return SwapTransactionResponse.builder()
                 .transactionId(transaction.getId())
                 .code(transaction.getCode())
                 .driverId(transaction.getDriver().getId())

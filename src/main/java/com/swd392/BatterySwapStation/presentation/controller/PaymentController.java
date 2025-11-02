@@ -27,14 +27,14 @@ public class PaymentController {
     }
 
     @GetMapping("/api/payment/process")
-    public String processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<String>> processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
         var command = ProcessPaymentCommand.builder()
                 .transactionId(transactionId)
                 .method(method)
                 .servletRequest(request)
                 .build();
         var response = processPaymentUseCase.execute(command);
-        return "redirect:http://localhost:5173/payment/return";
+        return ResponseEntity.ok(new ApiResponse<>("Payment processes successfully", response));
     }
 
 
