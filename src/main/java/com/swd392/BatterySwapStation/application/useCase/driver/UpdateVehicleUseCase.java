@@ -11,6 +11,7 @@ import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, Vehi
     }
 
     @Override
+    @Transactional
     public Vehicle execute(UpdateVehicleCommand request) {
         Vehicle vehicle = vehicleService.getVehicleById(request.getVehicleId());
         checkValidFromRequest(request, vehicle);

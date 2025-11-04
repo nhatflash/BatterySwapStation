@@ -3,11 +3,9 @@ package com.swd392.BatterySwapStation.application.useCase.payment;
 import com.swd392.BatterySwapStation.application.model.ProcessPaymentCommand;
 import com.swd392.BatterySwapStation.application.service.PaymentService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
-import com.swd392.BatterySwapStation.domain.entity.Payment;
 import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProcessPaymentUseCase implements IUseCase<ProcessPaymentCommand, String> {
@@ -19,6 +17,7 @@ public class ProcessPaymentUseCase implements IUseCase<ProcessPaymentCommand, St
     }
 
     @Override
+    @Transactional
     public String execute(ProcessPaymentCommand request) {
         String response = "";
         switch (request.getMethod()) {

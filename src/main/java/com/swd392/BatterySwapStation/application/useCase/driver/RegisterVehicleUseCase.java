@@ -9,6 +9,7 @@ import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -24,6 +25,7 @@ public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, 
     }
 
     @Override
+    @Transactional
     public Vehicle execute(RegisterVehicleCommand request) {
         checkValidFromRequest(request);
         User driver = userService.getUserById(request.getUserId());

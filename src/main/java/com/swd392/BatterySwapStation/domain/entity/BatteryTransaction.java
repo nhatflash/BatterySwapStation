@@ -3,8 +3,6 @@ package com.swd392.BatterySwapStation.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
-
 @Entity
 @Getter
 @Setter

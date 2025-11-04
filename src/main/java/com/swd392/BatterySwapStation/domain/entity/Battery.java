@@ -1,7 +1,6 @@
 package com.swd392.BatterySwapStation.domain.entity;
 
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
-import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import jakarta.persistence.*;
@@ -10,7 +9,6 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity

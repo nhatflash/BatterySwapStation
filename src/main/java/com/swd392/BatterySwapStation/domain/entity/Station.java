@@ -5,7 +5,6 @@ import com.swd392.BatterySwapStation.domain.valueObject.Rating;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Entity

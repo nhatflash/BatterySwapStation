@@ -6,6 +6,7 @@ import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UpdateBatteryModelUseCase implements IUseCase<UpdateBatteryModelCommand, BatteryModel> {
@@ -17,6 +18,7 @@ public class UpdateBatteryModelUseCase implements IUseCase<UpdateBatteryModelCom
     }
 
     @Override
+    @Transactional
     public BatteryModel execute(UpdateBatteryModelCommand request) {
         BatteryModel model = batteryService.findByModelId(request.getModelId());
         checkValidRequest(request, model);

@@ -5,7 +5,6 @@ import com.swd392.BatterySwapStation.application.service.VehicleService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
-import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

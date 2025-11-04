@@ -6,6 +6,7 @@ import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,6 +23,7 @@ public class GetDriverVehiclesUseCase implements IUseCase<UUID, List<Vehicle>> {
     }
 
     @Override
+    @Transactional
     public List<Vehicle> execute(UUID driverId) {
         User driver = userService.getUserById(driverId);
 

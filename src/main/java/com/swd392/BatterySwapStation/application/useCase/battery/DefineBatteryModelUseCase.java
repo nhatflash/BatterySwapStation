@@ -6,6 +6,7 @@ import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class DefineBatteryModelUseCase implements IUseCase<DefineBatteryModelCommand, BatteryModel> {
@@ -17,6 +18,7 @@ public class DefineBatteryModelUseCase implements IUseCase<DefineBatteryModelCom
     }
 
     @Override
+    @Transactional
     public BatteryModel execute(DefineBatteryModelCommand request) {
         if (batteryService.existsByBatteryType(request.getType())) {
             throw new IllegalArgumentException("Battery type already exists");

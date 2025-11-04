@@ -2,7 +2,6 @@ package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
 import com.swd392.BatterySwapStation.application.service.StationStaffService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
-import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -6,6 +6,7 @@ import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -19,6 +20,7 @@ public class UpdateProfileUseCase implements IUseCase<UpdateProfileCommand, User
     }
 
     @Override
+    @Transactional
     public User execute(UpdateProfileCommand request) {
         User user = userService.getUserById(request.getUserId());
         updateProfile(request, user);

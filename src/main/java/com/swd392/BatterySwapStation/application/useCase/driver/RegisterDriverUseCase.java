@@ -2,16 +2,14 @@ package com.swd392.BatterySwapStation.application.useCase.driver;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.model.RegisterDriverCommand;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.service.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.domain.enums.UserStatus;
-import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequest;
-import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -28,6 +26,7 @@ public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, Us
     }
 
     @Override
+    @Transactional
     public User execute(RegisterDriverCommand request) {
         checkValidRequest(request);
         return createDriver(request);
