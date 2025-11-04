@@ -29,10 +29,11 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
         User staff = swapTransactionService.getValidStaff(request.getStaffId());
         SwapTransaction transaction = getValidSwapTransactionForConfirmation(request.getTransactionId());
         Vehicle vehicle = transaction.getVehicle();
-        var station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
+        Station station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
+        List<Battery> vehicleOldBatteries = swapTransactionService.getOldBatteryInVehicle(vehicle);
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),
-                vehicle.getBatteryType().getValue());
+                vehicle.getBatteryType().getValue(), vehicleOldBatteries);
         return confirmTransaction(transaction, staff, requestedNewBatteries);
     }
 

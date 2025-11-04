@@ -27,7 +27,6 @@ public class SwapTransactionService {
     private final UserService userService;
     private final StationStaffService stationStaffService;
     private final BatteryService batteryService;
-    private final PaymentService paymentService;
     private final VehicleService vehicleService;
 
     public SwapTransaction createScheduledTransaction(User driver,
@@ -112,15 +111,31 @@ public class SwapTransactionService {
         return station;
     }
 
-    public List<Battery> getRequestedNewBatteries(List<UUID> newBatteryIds, UUID stationId, String vehicleBatteryType) {
+    public List<Battery> getRequestedNewBatteries(List<UUID> newBatteryIds, UUID stationId, String vehicleBatteryType, List<Battery> oldBatteries) {
         if (newBatteryIds == null || newBatteryIds.isEmpty()) {
             throw new IllegalArgumentException("New batteries for swapping needs to be specified.");
         }
         List<Battery> newBatteries = new ArrayList<>();
         for (var newBatteryId : newBatteryIds) {
+            for (var oldBattery : oldBatteries) {
+                if (newBatteryId.equals(oldBattery.getId())) {
+                    throw new IllegalArgumentException("The chosen battery is already in used: " + newBatteryId);
+                }
+            }
             newBatteries.add(getValidNewBatteryForSwapping(newBatteryId, stationId, vehicleBatteryType));
         }
         return newBatteries;
+    }
+
+    public void checkVehicleIsAllowedForSwap(Vehicle vehicle) {
+        List<SwapTransaction> vehicleTransactions = getAllSwapForVehicle(vehicle);
+        if (vehicleTransactions.isEmpty()) {
+            return;
+        }
+        SwapTransaction latestVehicleTransaction = vehicleTransactions.getLast();
+        if (!latestVehicleTransaction.isTransactionCompleted() && !latestVehicleTransaction.isTransactionExpired() && !latestVehicleTransaction.isTransactionCanceled()) {
+            throw new IllegalArgumentException("This vehicle has already contained an unsuccessful swap transaction. Cannot make another swap transaction.");
+        }
     }
 
     public Battery getValidNewBatteryForSwapping(UUID batteryId, UUID stationId, String vehicleBatteryType) {

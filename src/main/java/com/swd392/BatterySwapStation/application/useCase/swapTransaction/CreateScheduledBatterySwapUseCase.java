@@ -35,6 +35,7 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
     public SwapTransaction execute(CreateScheduledBatterySwapCommand request) {
         User requestDriver = swapTransactionService.getValidDriver(request.getDriverId());
         Vehicle requestedVehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), requestDriver);
+        swapTransactionService.checkVehicleIsAllowedForSwap(requestedVehicle);
         BatteryType requestedBatteryType = requestedVehicle.getBatteryType();
         Station station = getValidStation(request.getStationId(),
                 requestedBatteryType,

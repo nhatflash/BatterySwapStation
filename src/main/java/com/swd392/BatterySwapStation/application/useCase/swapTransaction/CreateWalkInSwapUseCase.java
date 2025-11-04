@@ -26,11 +26,12 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
         User staff = swapTransactionService.getValidStaff(request.getStaffId());
         User driver = swapTransactionService.getValidDriver(request.getDriverId());
         Vehicle vehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), driver);
+        swapTransactionService.checkVehicleIsAllowedForSwap(vehicle);
         Station station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
         List<Battery> vehicleOldBatteries = swapTransactionService.getOldBatteryInVehicle(vehicle);
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),
-                vehicle.getBatteryType().getValue());
+                vehicle.getBatteryType().getValue(), vehicleOldBatteries);
         return createWalkInTransaction(staff, vehicle, requestedNewBatteries, vehicleOldBatteries, driver, station);
     }
 
