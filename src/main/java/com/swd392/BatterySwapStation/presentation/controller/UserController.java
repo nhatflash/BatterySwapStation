@@ -12,9 +12,9 @@ import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDeta
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateProfileRequest;
 import com.swd392.BatterySwapStation.presentation.dto.response.UserResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,27 +22,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class UserController {
 
     private final RetrieveProfileDetailsUseCase retrieveProfileDetailsUseCase;
     private final UpdateProfileUseCase updateProfileUseCase;
     private final RetrieveAllUsersUseCase retrieveAllUsersUseCase;
     private final RetrieveUsersByRoleUseCase retrieveUsersByRoleUseCase;
-
-    public UserController(RetrieveProfileDetailsUseCase retrieveProfileDetailsUseCase,
-                          UpdateProfileUseCase updateProfileUseCase,
-                          RetrieveAllUsersUseCase retrieveAllUsersUseCase,
-                          RetrieveUsersByRoleUseCase retrieveUsersByRoleUseCase) {
-        this.retrieveProfileDetailsUseCase = retrieveProfileDetailsUseCase;
-        this.updateProfileUseCase = updateProfileUseCase;
-        this.retrieveAllUsersUseCase = retrieveAllUsersUseCase;
-        this.retrieveUsersByRoleUseCase = retrieveUsersByRoleUseCase;
-    }
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<UserResponse>> retrieveProfileDetails(@AuthenticationPrincipal CustomUserDetails userDetails) {

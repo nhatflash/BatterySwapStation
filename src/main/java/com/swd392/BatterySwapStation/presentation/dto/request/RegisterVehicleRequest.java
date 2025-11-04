@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
-import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

@@ -2,7 +2,7 @@ package com.swd392.BatterySwapStation.application.service;
 
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
-import com.swd392.BatterySwapStation.infrastructure.repository.UserRepository;
+import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

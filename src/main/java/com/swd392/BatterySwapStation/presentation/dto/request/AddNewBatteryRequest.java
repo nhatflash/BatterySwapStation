@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
-import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @Builder

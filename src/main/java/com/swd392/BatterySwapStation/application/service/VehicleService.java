@@ -3,7 +3,7 @@ package com.swd392.BatterySwapStation.application.service;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.infrastructure.repository.VehicleRepository;
+import com.swd392.BatterySwapStation.domain.repository.VehicleRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
 import org.springframework.stereotype.Service;

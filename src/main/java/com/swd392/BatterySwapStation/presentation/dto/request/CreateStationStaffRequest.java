@@ -1,6 +1,5 @@
 package com.swd392.BatterySwapStation.presentation.dto.request;
 
-import com.swd392.BatterySwapStation.domain.enums.EmploymentStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

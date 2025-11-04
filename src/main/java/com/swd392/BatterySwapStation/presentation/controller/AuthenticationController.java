@@ -19,6 +19,7 @@ import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
 
     private final RegisterDriverUseCase registerDriverUseCase;
@@ -35,18 +37,6 @@ public class AuthenticationController {
     private final TokenService tokenService;
     private final LogoutUseCase logoutUseCase;
     private final LogoutAllUseCase logoutAllUseCase;
-
-    public AuthenticationController(RegisterDriverUseCase registerDriverUseCase,
-                                    LoginUseCase loginUseCase,
-                                    TokenService tokenService,
-                                    LogoutUseCase logoutUseCase,
-                                    LogoutAllUseCase logoutAllUseCase) {
-        this.registerDriverUseCase = registerDriverUseCase;
-        this.loginUseCase = loginUseCase;
-        this.tokenService = tokenService;
-        this.logoutUseCase = logoutUseCase;
-        this.logoutAllUseCase = logoutAllUseCase;
-    }
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<RegisterDriverResponse>> registerDriver(@RequestBody @Valid RegisterDriverRequest request) {

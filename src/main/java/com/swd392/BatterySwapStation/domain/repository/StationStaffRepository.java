@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.infrastructure.repository;
+package com.swd392.BatterySwapStation.domain.repository;
 
 import com.swd392.BatterySwapStation.domain.entity.StationStaff;
 import org.springframework.data.jpa.repository.JpaRepository;

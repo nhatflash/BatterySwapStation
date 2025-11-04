@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.infrastructure.repository;
+package com.swd392.BatterySwapStation.domain.repository;
 
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;

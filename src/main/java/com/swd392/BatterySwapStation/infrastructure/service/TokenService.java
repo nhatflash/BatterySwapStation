@@ -2,7 +2,7 @@ package com.swd392.BatterySwapStation.infrastructure.service;
 
 
 import com.swd392.BatterySwapStation.domain.entity.User;
-import com.swd392.BatterySwapStation.infrastructure.repository.UserRepository;
+import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
 import org.springframework.stereotype.Service;
 

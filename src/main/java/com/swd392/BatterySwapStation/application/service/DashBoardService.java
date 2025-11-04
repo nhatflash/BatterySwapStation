@@ -3,8 +3,8 @@ package com.swd392.BatterySwapStation.application.service;
 
 import com.swd392.BatterySwapStation.domain.entity.Payment;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
-import com.swd392.BatterySwapStation.infrastructure.repository.PaymentRepository;
-import com.swd392.BatterySwapStation.infrastructure.repository.SwapTransactionRepository;
+import com.swd392.BatterySwapStation.domain.repository.PaymentRepository;
+import com.swd392.BatterySwapStation.domain.repository.SwapTransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

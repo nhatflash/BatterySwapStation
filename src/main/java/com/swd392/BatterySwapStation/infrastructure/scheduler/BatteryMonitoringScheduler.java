@@ -3,7 +3,7 @@ package com.swd392.BatterySwapStation.infrastructure.scheduler;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.model.BatteryState;
-import com.swd392.BatterySwapStation.infrastructure.repository.BatteryRepository;
+import com.swd392.BatterySwapStation.domain.repository.BatteryRepository;
 import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import com.swd392.BatterySwapStation.infrastructure.service.BatterySSEService;
 import com.swd392.BatterySwapStation.infrastructure.service.BatterySimulatorService;

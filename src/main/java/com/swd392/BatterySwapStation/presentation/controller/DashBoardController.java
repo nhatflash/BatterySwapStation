@@ -5,7 +5,6 @@ import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
 import com.swd392.BatterySwapStation.application.model.DashBoardCommand;
 import com.swd392.BatterySwapStation.application.useCase.dashBoard.DashBoardSwapPriceUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Payment;
-import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.enums.DashBoard;
 import com.swd392.BatterySwapStation.presentation.dto.response.DashBoardSwapPriceResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;

@@ -4,7 +4,7 @@ package com.swd392.BatterySwapStation.application.service;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import com.swd392.BatterySwapStation.domain.exception.NotFoundException;
-import com.swd392.BatterySwapStation.infrastructure.repository.StationRepository;
+import com.swd392.BatterySwapStation.domain.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
