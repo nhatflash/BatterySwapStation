@@ -49,6 +49,10 @@ public class PaymentController {
     @GetMapping("/vnpay-return")
     public RedirectView VnPayRedirect(HttpServletRequest request) {
         String responseCode = request.getParameter("vnp_ResponseCode");
-        return new RedirectView("https://swd-392-topic3-fe.vercel.app/payment/return");
+        if ("00".equals(responseCode)) {
+            return new RedirectView("https://swd-392-topic3-fe.vercel.app/payment/success");
+        } else {
+            return new RedirectView("https://swd-392-topic3-fe.vercel.app/payment/failure");
+        }
     }
 }
