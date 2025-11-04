@@ -45,8 +45,13 @@ public class PaymentService {
     }
 
     public SwapTransaction getValidSwapTransaction(UUID transactionId) {
-        return swapTransactionRepository.findById(transactionId)
+        SwapTransaction transaction = swapTransactionRepository.findById(transactionId)
                 .orElseThrow(() -> new NotFoundException("Transaction not found."));
+        List<Payment> completedPayments = findCompletedPaymentsWithTransaction(transaction);
+        if (!completedPayments.isEmpty()) {
+            throw new IllegalArgumentException("This transaction has been paid successfully. Cannot perform another payment process.");
+        }
+        return transaction;
     }
 
     public Payment savePayment(Payment payment) {
