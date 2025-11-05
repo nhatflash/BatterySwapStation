@@ -1,13 +1,15 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
-import com.swd392.BatterySwapStation.application.model.ProcessSwappingCommand;
-import com.swd392.BatterySwapStation.application.service.StationService;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
+import com.swd392.BatterySwapStation.application.model.command.ProcessSwappingCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +23,13 @@ public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, 
 
     private final SwapTransactionService swapTransactionService;
     private final StationService stationService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
     @Override
     @Transactional
     public SwapTransaction execute(ProcessSwappingCommand request) {
-        User staff = swapTransactionService.getValidStaff(request.getStaffId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         SwapTransaction swapTransaction;
         Station station;
         if (request.isProcessing()) {

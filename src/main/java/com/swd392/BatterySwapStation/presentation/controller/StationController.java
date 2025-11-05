@@ -2,17 +2,17 @@ package com.swd392.BatterySwapStation.presentation.controller;
 
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.ChangeStatusStationCommand;
-import com.swd392.BatterySwapStation.application.model.CreateStationCommand;
-import com.swd392.BatterySwapStation.application.model.UpdateStationCommand;
+import com.swd392.BatterySwapStation.application.model.command.ChangeStatusStationCommand;
+import com.swd392.BatterySwapStation.application.model.command.CreateStationCommand;
+import com.swd392.BatterySwapStation.application.model.command.UpdateStationCommand;
 import com.swd392.BatterySwapStation.application.useCase.station.*;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateStationRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateStationRequest;
-import com.swd392.BatterySwapStation.presentation.dto.response.ChangeStationStatusResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.CreateStationResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.UpdateStationResponse;
+import com.swd392.BatterySwapStation.application.model.response.ChangeStationStatusResponse;
+import com.swd392.BatterySwapStation.application.model.response.CreateStationResponse;
+import com.swd392.BatterySwapStation.application.model.response.UpdateStationResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

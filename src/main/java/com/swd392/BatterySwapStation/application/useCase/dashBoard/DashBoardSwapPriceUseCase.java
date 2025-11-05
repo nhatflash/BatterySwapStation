@@ -1,7 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.dashBoard;
 
-import com.swd392.BatterySwapStation.application.model.DashBoardCommand;
-import com.swd392.BatterySwapStation.application.service.DashBoardService;
+import com.swd392.BatterySwapStation.application.model.command.DashBoardCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.DashBoardService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Payment;
 import com.swd392.BatterySwapStation.domain.enums.DashBoard;

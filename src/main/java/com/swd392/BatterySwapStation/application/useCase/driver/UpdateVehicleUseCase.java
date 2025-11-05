@@ -1,34 +1,32 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
-import com.swd392.BatterySwapStation.application.model.UpdateVehicleCommand;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
-import com.swd392.BatterySwapStation.application.service.UserService;
-import com.swd392.BatterySwapStation.application.service.VehicleService;
+import com.swd392.BatterySwapStation.application.model.command.UpdateVehicleCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.VehicleService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, Vehicle> {
 
     private final VehicleService vehicleService;
     private final UserService userService;
     private final SwapTransactionService swapTransactionService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public UpdateVehicleUseCase(VehicleService vehicleService,
-                                UserService userService,
-                                SwapTransactionService swapTransactionService) {
-        this.vehicleService = vehicleService;
-        this.userService = userService;
-        this.swapTransactionService = swapTransactionService;
-    }
 
     @Override
     @Transactional
@@ -64,7 +62,8 @@ public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, Vehi
     }
 
     private void checkValidFromRequest(UpdateVehicleCommand request, Vehicle vehicle) {
-        User driver = userService.getUserById(request.getDriverId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User driver = userService.getUserById(authenticatedUser.getUserId());
         if (!vehicle.getDriver().equals(driver)) {
             throw new IllegalArgumentException("This vehicle is not assigned to this driver.");
         }

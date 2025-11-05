@@ -1,34 +1,35 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
-import com.swd392.BatterySwapStation.application.model.RegisterVehicleCommand;
-import com.swd392.BatterySwapStation.application.service.UserService;
-import com.swd392.BatterySwapStation.application.service.VehicleService;
+import com.swd392.BatterySwapStation.application.model.command.RegisterVehicleCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.VehicleService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.entity.Vehicle;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.VIN;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, Vehicle> {
 
     private final VehicleService vehicleService;
     private final UserService userService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public RegisterVehicleUseCase(VehicleService vehicleService,
-                                  UserService userService) {
-        this.vehicleService = vehicleService;
-        this.userService = userService;
-    }
 
     @Override
     @Transactional
     public Vehicle execute(RegisterVehicleCommand request) {
         checkValidFromRequest(request);
-        User driver = userService.getUserById(request.getUserId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User driver = userService.getUserById(authenticatedUser.getUserId());
         return registerVehicle(request, driver);
     }
 

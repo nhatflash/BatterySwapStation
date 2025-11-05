@@ -1,8 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.station;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
-import com.swd392.BatterySwapStation.application.model.UpdateStationCommand;
-import com.swd392.BatterySwapStation.application.service.StationService;
+import com.swd392.BatterySwapStation.application.model.command.UpdateStationCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import org.springframework.beans.factory.annotation.Autowired;

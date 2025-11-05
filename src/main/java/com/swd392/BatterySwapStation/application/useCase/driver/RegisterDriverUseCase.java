@@ -1,8 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
-import com.swd392.BatterySwapStation.application.model.RegisterDriverCommand;
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.application.model.command.RegisterDriverCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;

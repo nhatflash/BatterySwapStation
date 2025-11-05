@@ -1,23 +1,25 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
-import com.swd392.BatterySwapStation.application.model.LogoutCommand;
+import com.swd392.BatterySwapStation.application.model.command.LogoutCommand;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
-import com.swd392.BatterySwapStation.infrastructure.service.RedisSessionService;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.service.internal.RedisSessionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class LogoutUseCase implements IUseCase<LogoutCommand, Void> {
 
     private final RedisSessionService redisSessionService;
-
-    public LogoutUseCase(RedisSessionService redisSessionService) {
-        this.redisSessionService = redisSessionService;
-    }
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
     @Override
     public Void execute(LogoutCommand request) {
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         redisSessionService.invalidateSession(request.getAccessToken());
-        redisSessionService.invalidateRefreshToken(request.getUserId());
+        redisSessionService.invalidateRefreshToken(authenticatedUser.getUserId());
         return null;
     }
 }

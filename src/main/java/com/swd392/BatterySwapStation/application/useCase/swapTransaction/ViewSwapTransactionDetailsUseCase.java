@@ -1,6 +1,6 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import lombok.RequiredArgsConstructor;

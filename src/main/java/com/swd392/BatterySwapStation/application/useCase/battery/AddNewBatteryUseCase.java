@@ -1,9 +1,9 @@
 package com.swd392.BatterySwapStation.application.useCase.battery;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
-import com.swd392.BatterySwapStation.application.model.AddNewBatteryCommand;
-import com.swd392.BatterySwapStation.application.service.BatteryService;
-import com.swd392.BatterySwapStation.application.service.StationService;
+import com.swd392.BatterySwapStation.application.model.command.AddNewBatteryCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;

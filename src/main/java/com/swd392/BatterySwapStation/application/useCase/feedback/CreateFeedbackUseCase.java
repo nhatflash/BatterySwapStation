@@ -1,13 +1,15 @@
 package com.swd392.BatterySwapStation.application.useCase.feedback;
 
-import com.swd392.BatterySwapStation.application.model.CreateFeedbackCommand;
-import com.swd392.BatterySwapStation.application.service.StationService;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
+import com.swd392.BatterySwapStation.application.model.command.CreateFeedbackCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.valueObject.Rating;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,11 +23,13 @@ public class CreateFeedbackUseCase implements IUseCase<CreateFeedbackCommand, Sw
 
     private final SwapTransactionService swapTransactionService;
     private final StationService stationService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
     @Override
     @Transactional
     public SwapTransaction execute(CreateFeedbackCommand request) {
-        User driver = swapTransactionService.getValidDriver(request.getDriverId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User driver = swapTransactionService.getValidDriver(authenticatedUser.getUserId());
         SwapTransaction transaction = swapTransactionService.getTransactionById(request.getTransactionId());
         checkSwapTransactionReadyForFeedback(transaction, driver);
         return processSwapTransactionFeedback(transaction, request);

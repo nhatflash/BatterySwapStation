@@ -1,23 +1,24 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
-import com.swd392.BatterySwapStation.infrastructure.service.RedisSessionService;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.service.internal.RedisSessionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
-public class LogoutAllUseCase implements IUseCase<UUID, Void> {
+@RequiredArgsConstructor
+public class LogoutAllUseCase implements IUseCase<String, Void> {
 
     private final RedisSessionService redisSessionService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public LogoutAllUseCase(RedisSessionService redisSessionService) {
-        this.redisSessionService = redisSessionService;
-    }
 
     @Override
-    public Void execute(UUID userId) {
-        redisSessionService.invalidAllUserSessions(userId);
+    public Void execute(String request) {
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        redisSessionService.invalidAllUserSessions(authenticatedUser.getUserId());
         return null;
     }
 }

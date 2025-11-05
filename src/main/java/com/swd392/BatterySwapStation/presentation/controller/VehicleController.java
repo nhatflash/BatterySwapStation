@@ -1,23 +1,21 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.RegisterVehicleCommand;
-import com.swd392.BatterySwapStation.application.model.UpdateVehicleCommand;
+import com.swd392.BatterySwapStation.application.model.command.RegisterVehicleCommand;
+import com.swd392.BatterySwapStation.application.model.command.UpdateVehicleCommand;
 import com.swd392.BatterySwapStation.application.useCase.driver.GetDriverVehiclesUseCase;
 import com.swd392.BatterySwapStation.application.useCase.driver.RegisterVehicleUseCase;
 import com.swd392.BatterySwapStation.application.useCase.driver.UpdateVehicleUseCase;
 import com.swd392.BatterySwapStation.application.useCase.vehicle.RetrieveUserVehiclesUseCase;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.RegisterVehicleRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateVehicleRequest;
-import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
+import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,10 +34,8 @@ public class VehicleController {
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<ApiResponse<VehicleResponse>> registerVehicle(@RequestBody @Valid RegisterVehicleRequest request,
-                                                                        @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public ResponseEntity<ApiResponse<VehicleResponse>> registerVehicle(@RequestBody @Valid RegisterVehicleRequest request) {
         var command = RegisterVehicleCommand.builder()
-                .userId(userDetails.getUserId())
                 .vin(request.getVin())
                 .make(request.getMake())
                 .model(request.getModel())
@@ -56,8 +52,8 @@ public class VehicleController {
 
     @GetMapping
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<ApiResponse<List<VehicleResponse>>> retrieveUserVehicles(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        var userVehicles = getDriverVehiclesUseCase.execute(userDetails.getUserId());
+    public ResponseEntity<ApiResponse<List<VehicleResponse>>> retrieveUserVehicles() {
+        var userVehicles = getDriverVehiclesUseCase.execute(null);
         var response = userVehicles.stream()
                 .map(ResponseMapper::toVehicleResponse)
                 .toList();
@@ -66,11 +62,9 @@ public class VehicleController {
 
     @PatchMapping("/{vehicleId}")
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<ApiResponse<VehicleResponse>> updateVehicle(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                                       @Valid @RequestBody UpdateVehicleRequest request,
+    public ResponseEntity<ApiResponse<VehicleResponse>> updateVehicle(@Valid @RequestBody UpdateVehicleRequest request,
                                                                       @PathVariable UUID vehicleId) {
         var command = UpdateVehicleCommand.builder()
-                .driverId(userDetails.getUserId())
                 .vehicleId(vehicleId)
                 .vin(request.getVin())
                 .make(request.getMake())

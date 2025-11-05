@@ -1,11 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.mapper;
 
+import com.swd392.BatterySwapStation.application.model.response.*;
 import com.swd392.BatterySwapStation.domain.entity.*;
-import com.swd392.BatterySwapStation.presentation.dto.response.*;
-import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.LoginResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.RegisterDriverResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.VehicleResponse;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;

@@ -1,28 +1,31 @@
 package com.swd392.BatterySwapStation.application.useCase.profile;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
-import com.swd392.BatterySwapStation.application.model.UpdateProfileCommand;
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.application.model.command.UpdateProfileCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
 @Service
+@RequiredArgsConstructor
 public class UpdateProfileUseCase implements IUseCase<UpdateProfileCommand, User> {
 
     private final UserService userService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public UpdateProfileUseCase(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     @Transactional
     public User execute(UpdateProfileCommand request) {
-        User user = userService.getUserById(request.getUserId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User user = userService.getUserById(authenticatedUser.getUserId());
         updateProfile(request, user);
         return userService.saveUser(user);
     }

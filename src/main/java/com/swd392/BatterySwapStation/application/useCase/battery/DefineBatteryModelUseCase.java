@@ -1,7 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.battery;
 
-import com.swd392.BatterySwapStation.application.model.DefineBatteryModelCommand;
-import com.swd392.BatterySwapStation.application.service.BatteryService;
+import com.swd392.BatterySwapStation.application.model.command.DefineBatteryModelCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.BatteryModel;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;

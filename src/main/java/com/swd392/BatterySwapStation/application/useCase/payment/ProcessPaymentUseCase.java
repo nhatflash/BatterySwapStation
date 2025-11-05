@@ -1,7 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.payment;
 
-import com.swd392.BatterySwapStation.application.model.ProcessPaymentCommand;
-import com.swd392.BatterySwapStation.application.service.PaymentService;
+import com.swd392.BatterySwapStation.application.model.command.ProcessPaymentCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.PaymentService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
 import org.springframework.stereotype.Service;

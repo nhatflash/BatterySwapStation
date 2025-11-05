@@ -2,11 +2,11 @@ package com.swd392.BatterySwapStation.presentation.controller;
 
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.DashBoardCommand;
+import com.swd392.BatterySwapStation.application.model.command.DashBoardCommand;
 import com.swd392.BatterySwapStation.application.useCase.dashBoard.DashBoardSwapPriceUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Payment;
 import com.swd392.BatterySwapStation.domain.enums.DashBoard;
-import com.swd392.BatterySwapStation.presentation.dto.response.DashBoardSwapPriceResponse;
+import com.swd392.BatterySwapStation.application.model.response.DashBoardSwapPriceResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;

@@ -1,9 +1,12 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
-import com.swd392.BatterySwapStation.application.model.CreateWalkInSwapCommand;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
+import com.swd392.BatterySwapStation.application.model.command.CreateWalkInSwapCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,22 +15,22 @@ import java.util.List;
 
 
 @Service
+@RequiredArgsConstructor
 public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand, SwapTransaction> {
 
     private final SwapTransactionService swapTransactionService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public CreateWalkInSwapUseCase(SwapTransactionService swapTransactionService) {
-        this.swapTransactionService = swapTransactionService;
-    }
 
     @Override
     @Transactional
     public SwapTransaction execute(CreateWalkInSwapCommand request) {
-        User staff = swapTransactionService.getValidStaff(request.getStaffId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         User driver = swapTransactionService.getValidDriver(request.getDriverId());
         Vehicle vehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), driver);
         swapTransactionService.checkVehicleIsAllowedForSwap(vehicle);
-        Station station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
+        Station station = swapTransactionService.getValidStationFromStaffId(authenticatedUser.getUserId());
         List<Battery> vehicleOldBatteries = swapTransactionService.getOldBatteryInVehicle(vehicle);
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),

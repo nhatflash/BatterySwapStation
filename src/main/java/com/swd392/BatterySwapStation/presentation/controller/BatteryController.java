@@ -1,27 +1,24 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.AddNewBatteryCommand;
-import com.swd392.BatterySwapStation.application.model.DefineBatteryModelCommand;
-import com.swd392.BatterySwapStation.application.model.UpdateBatteryModelCommand;
-import com.swd392.BatterySwapStation.application.model.ViewBatteryInventoryCommand;
+import com.swd392.BatterySwapStation.application.model.command.AddNewBatteryCommand;
+import com.swd392.BatterySwapStation.application.model.command.DefineBatteryModelCommand;
+import com.swd392.BatterySwapStation.application.model.command.UpdateBatteryModelCommand;
+import com.swd392.BatterySwapStation.application.model.command.ViewBatteryInventoryCommand;
 import com.swd392.BatterySwapStation.application.useCase.battery.*;
 import com.swd392.BatterySwapStation.application.useCase.stationStaff.ViewBatteryInventoryUseCase;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
 import com.swd392.BatterySwapStation.presentation.dto.request.AddNewBatteryRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.DefineBatteryModelRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateBatteryModelRequest;
-import com.swd392.BatterySwapStation.presentation.dto.response.BatteryModelResponse;
-import com.swd392.BatterySwapStation.presentation.dto.response.BatteryResponse;
+import com.swd392.BatterySwapStation.application.model.response.BatteryModelResponse;
+import com.swd392.BatterySwapStation.application.model.response.BatteryResponse;
 import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -121,16 +118,10 @@ public class BatteryController {
         return ResponseEntity.ok(new ApiResponse<>("Batteries retrieved successfully", response));
     }
 
-    @GetMapping("/station/{currentStationId}/status")
-    public ResponseEntity<ApiResponse<List<BatteryResponse>>> viewBatteryInventory(@PathVariable UUID currentStationId,
-                                                                                   @RequestParam BatteryStatus status,
-                                                                                   @RequestParam Integer page,
-                                                                                   @AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            throw new UsernameNotFoundException("User not found");
-        }
+    @GetMapping("/station/status")
+    public ResponseEntity<ApiResponse<List<BatteryResponse>>> viewBatteryInventory(@RequestParam BatteryStatus status,
+                                                                                   @RequestParam Integer page) {
         var command = ViewBatteryInventoryCommand.builder()
-                .staffId(userDetails.getUserId())
                 .batteryStatus(status)
                 .pageIndex(page)
                 .build();

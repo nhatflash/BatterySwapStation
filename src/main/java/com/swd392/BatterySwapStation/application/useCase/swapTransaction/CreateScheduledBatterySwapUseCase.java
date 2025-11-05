@@ -2,12 +2,16 @@ package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.common.shared.PriceCalculator;
-import com.swd392.BatterySwapStation.application.model.CreateScheduledBatterySwapCommand;
-import com.swd392.BatterySwapStation.application.service.*;
+import com.swd392.BatterySwapStation.application.model.command.CreateScheduledBatterySwapCommand;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,14 +27,14 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
     private final SwapTransactionService swapTransactionService;
     private final BatteryService batteryService;
     private final StationService stationService;
-    private final UserService userService;
-    private final VehicleService vehicleService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
 
     @Override
     @Transactional
     public SwapTransaction execute(CreateScheduledBatterySwapCommand request) {
-        User requestDriver = swapTransactionService.getValidDriver(request.getDriverId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User requestDriver = swapTransactionService.getValidDriver(authenticatedUser.getUserId());
         Vehicle requestedVehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), requestDriver);
         swapTransactionService.checkVehicleIsAllowedForSwap(requestedVehicle);
         BatteryType requestedBatteryType = requestedVehicle.getBatteryType();

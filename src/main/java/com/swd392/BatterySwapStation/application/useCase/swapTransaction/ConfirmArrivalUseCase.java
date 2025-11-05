@@ -1,13 +1,15 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
-import com.swd392.BatterySwapStation.application.model.ConfirmArrivalCommand;
-import com.swd392.BatterySwapStation.application.service.PaymentService;
-import com.swd392.BatterySwapStation.application.service.SwapTransactionService;
+import com.swd392.BatterySwapStation.application.model.command.ConfirmArrivalCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.PaymentService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Payment;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,13 +24,15 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
 
     private final SwapTransactionService swapTransactionService;
     private final PaymentService paymentService;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
     @Override
     @Transactional
     public SwapTransaction execute(ConfirmArrivalCommand request) {
-        User staff = swapTransactionService.getValidStaff(request.getStaffId());
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         SwapTransaction transaction = getValidTransactionForConfirmingArrival(request.getTransactionId());
-        Station station = swapTransactionService.getValidStationFromStaffId(request.getStaffId());
+        Station station = swapTransactionService.getValidStationFromStaffId(authenticatedUser.getUserId());
         if (!station.getId().equals(transaction.getStation().getId())) {
             throw new IllegalArgumentException("Transaction does not belong to this station.");
         }

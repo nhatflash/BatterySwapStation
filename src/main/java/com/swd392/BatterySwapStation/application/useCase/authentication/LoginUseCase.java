@@ -1,11 +1,11 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
-import com.swd392.BatterySwapStation.application.model.LoginCommand;
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.application.model.command.LoginCommand;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
-import com.swd392.BatterySwapStation.infrastructure.service.RedisSessionService;
+import com.swd392.BatterySwapStation.infrastructure.service.internal.RedisSessionService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

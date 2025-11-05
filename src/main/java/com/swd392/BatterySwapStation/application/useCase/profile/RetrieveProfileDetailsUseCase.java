@@ -1,23 +1,23 @@
 package com.swd392.BatterySwapStation.application.useCase.profile;
 
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
+import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
+import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
-public class RetrieveProfileDetailsUseCase implements IUseCase<UUID, User> {
+@RequiredArgsConstructor
+public class RetrieveProfileDetailsUseCase implements IUseCase<String, User> {
 
     private final UserService userService;
-
-    public RetrieveProfileDetailsUseCase(UserService userService) {
-        this.userService = userService;
-    }
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
     @Override
-    public User execute(UUID userId) {
-        return userService.getUserById(userId);
+    public User execute(String userId) {
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        return userService.getUserById(authenticatedUser.getUserId());
     }
 }

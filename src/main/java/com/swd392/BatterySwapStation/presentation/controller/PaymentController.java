@@ -1,10 +1,10 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.application.model.ProcessPaymentCommand;
+import com.swd392.BatterySwapStation.application.model.command.ProcessPaymentCommand;
 import com.swd392.BatterySwapStation.application.useCase.payment.ProcessPaymentUseCase;
 import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
-import com.swd392.BatterySwapStation.infrastructure.service.VnPayService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

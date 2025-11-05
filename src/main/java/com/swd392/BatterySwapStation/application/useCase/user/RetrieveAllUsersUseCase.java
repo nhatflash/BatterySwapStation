@@ -1,6 +1,6 @@
 package com.swd392.BatterySwapStation.application.useCase.user;
 
-import com.swd392.BatterySwapStation.application.service.UserService;
+import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import org.springframework.stereotype.Service;
