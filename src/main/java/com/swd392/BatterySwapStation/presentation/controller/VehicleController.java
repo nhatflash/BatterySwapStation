@@ -10,7 +10,7 @@ import com.swd392.BatterySwapStation.application.useCase.vehicle.RetrieveUserVeh
 import com.swd392.BatterySwapStation.presentation.dto.request.RegisterVehicleRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateVehicleRequest;
 import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

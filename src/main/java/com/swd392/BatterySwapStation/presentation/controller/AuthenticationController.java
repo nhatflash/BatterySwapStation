@@ -14,7 +14,7 @@ import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequ
 import com.swd392.BatterySwapStation.presentation.dto.request.TokenRequest;
 import com.swd392.BatterySwapStation.application.model.response.LoginResponse;
 import com.swd392.BatterySwapStation.application.model.response.RegisterDriverResponse;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -47,8 +47,7 @@ public class AuthenticationController {
                 .dateOfBirth(request.getDateOfBirth())
                 .identityNumber(request.getIdentityNumber())
                 .build();
-        var driver = registerDriverUseCase.execute(command);
-        var response = ResponseMapper.toRegisterDriverResponse(driver);
+        var response = registerDriverUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Driver registered successfully.", response));
     }
 
@@ -58,10 +57,7 @@ public class AuthenticationController {
                 .email(request.getEmail())
                 .password(request.getPassword())
                 .build();
-        var tokens = loginUseCase.execute(command);
-        String accessToken = tokens.get("accessToken");
-        String refreshToken = tokens.get("refreshToken");
-        var response = ResponseMapper.toLoginResponse(accessToken, refreshToken);
+        var response = loginUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Login successfully.", response));
     }
 

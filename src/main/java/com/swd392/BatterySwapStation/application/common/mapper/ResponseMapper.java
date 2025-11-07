@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.presentation.mapper;
+package com.swd392.BatterySwapStation.application.common.mapper;
 
 import com.swd392.BatterySwapStation.application.model.response.*;
 import com.swd392.BatterySwapStation.domain.entity.*;

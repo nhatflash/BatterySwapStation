@@ -13,7 +13,7 @@ import com.swd392.BatterySwapStation.presentation.dto.request.UpdateStationReque
 import com.swd392.BatterySwapStation.application.model.response.ChangeStationStatusResponse;
 import com.swd392.BatterySwapStation.application.model.response.CreateStationResponse;
 import com.swd392.BatterySwapStation.application.model.response.UpdateStationResponse;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

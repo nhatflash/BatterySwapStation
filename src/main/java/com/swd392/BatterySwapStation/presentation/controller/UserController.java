@@ -10,7 +10,7 @@ import com.swd392.BatterySwapStation.application.useCase.user.RetrieveUsersByRol
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.presentation.dto.request.UpdateProfileRequest;
 import com.swd392.BatterySwapStation.application.model.response.UserResponse;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,10 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.RegisterDriverCommand;
+import com.swd392.BatterySwapStation.application.model.response.RegisterDriverResponse;
+import com.swd392.BatterySwapStation.application.model.response.UserResponse;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
@@ -16,7 +19,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, User> {
+public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, RegisterDriverResponse> {
 
     private final IUserService userService;
     private final PasswordEncoder passwordEncoder;
@@ -24,9 +27,10 @@ public class RegisterDriverUseCase implements IUseCase<RegisterDriverCommand, Us
 
     @Override
     @Transactional
-    public User execute(RegisterDriverCommand request) {
+    public RegisterDriverResponse execute(RegisterDriverCommand request) {
         checkValidRequest(request);
-        return createDriver(request);
+        User newDriver = createDriver(request);
+        return ResponseMapper.toRegisterDriverResponse(newDriver);
     }
 
     private void checkValidRequest(RegisterDriverCommand request) {

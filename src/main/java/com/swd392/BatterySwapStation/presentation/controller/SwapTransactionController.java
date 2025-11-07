@@ -11,7 +11,7 @@ import com.swd392.BatterySwapStation.presentation.dto.request.CreateFeedbackRequ
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.request.CreateWalkInSwapRequest;
 import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
-import com.swd392.BatterySwapStation.presentation.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

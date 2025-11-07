@@ -1,11 +1,14 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.LoginCommand;
+import com.swd392.BatterySwapStation.application.model.response.LoginResponse;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
 import com.swd392.BatterySwapStation.infrastructure.service.internal.RedisSessionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,7 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class LoginUseCase implements IUseCase<LoginCommand, Map<String, String>> {
+@RequiredArgsConstructor
+public class LoginUseCase implements IUseCase<LoginCommand, LoginResponse> {
 
     private final AuthenticationManager authenticationManager;
 
@@ -26,18 +30,9 @@ public class LoginUseCase implements IUseCase<LoginCommand, Map<String, String>>
 
     private final UserService userService;
 
-    public LoginUseCase(AuthenticationManager authenticationManager,
-                        JwtUtil jwtUtil,
-                        RedisSessionService redisSessionService,
-                        UserService userService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
-        this.redisSessionService = redisSessionService;
-        this.userService = userService;
-    }
 
     @Override
-    public Map<String, String> execute(LoginCommand request) {
+    public LoginResponse execute(LoginCommand request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(),
                         request.getPassword())
@@ -47,13 +42,7 @@ public class LoginUseCase implements IUseCase<LoginCommand, Map<String, String>>
         String accessToken = jwtUtil.generateAccessToken(user.getId(), user.getEmail(), user.getRole().toString());
         String refreshToken = jwtUtil.generateRefreshToken(user.getId());
         storeUserSession(accessToken, refreshToken, user);
-
-        return new HashMap<>() {
-            {
-                put("accessToken", accessToken);
-                put("refreshToken", refreshToken);
-            }
-        };
+        return ResponseMapper.toLoginResponse(accessToken, refreshToken);
     }
 
     private User retrieveUserFromLogin(LoginCommand request) {
