@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.presentation.dto.request;
+package com.swd392.BatterySwapStation.presentation.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

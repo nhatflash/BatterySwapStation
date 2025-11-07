@@ -1,7 +1,9 @@
 package com.swd392.BatterySwapStation.application.useCase.battery;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.AddNewBatteryCommand;
+import com.swd392.BatterySwapStation.application.model.response.BatteryResponse;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
@@ -22,7 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Battery> {
+public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, BatteryResponse> {
 
     private final IStationService stationService;
     private final IBatteryService batteryService;
@@ -30,14 +32,14 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
 
     @Override
     @Transactional
-    public Battery execute(AddNewBatteryCommand request) {
+    public BatteryResponse execute(AddNewBatteryCommand request) {
         Station currentStation = getValidStationForBatteryAdding(request.getCurrentStationId());
         BatteryModel model = batteryService.findByBatteryType(request.getType());
 
-        var newBattery =  addNewBattery(currentStation, model, request);
+        Battery newBattery =  addNewBattery(currentStation, model, request);
         currentStation.setCurrentCapacity(currentStation.getCurrentCapacity() + 1);
         stationService.saveStation(currentStation);
-        return newBattery;
+        return ResponseMapper.mapToBatteryResponse(newBattery);
     }
 
     private Station getValidStationForBatteryAdding(UUID stationId) {
@@ -45,7 +47,6 @@ public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Batt
         if (station.getCurrentCapacity() >= station.getTotalCapacity()) {
             throw new IllegalArgumentException("Battery capacity exceeded on this station. Cannot add more battery now.");
         }
-        // later will be added like capacity checking
         return station;
     }
 

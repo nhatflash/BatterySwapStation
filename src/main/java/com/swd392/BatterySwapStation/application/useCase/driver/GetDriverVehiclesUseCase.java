@@ -1,5 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.application.service.business.IVehicleService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GetDriverVehiclesUseCase implements IUseCase<String, List<Vehicle>> {
+public class GetDriverVehiclesUseCase implements IUseCase<String, List<VehicleResponse>> {
 
     private final IVehicleService vehicleService;
     private final IUserService userService;
@@ -26,9 +28,10 @@ public class GetDriverVehiclesUseCase implements IUseCase<String, List<Vehicle>>
 
     @Override
     @Transactional
-    public List<Vehicle> execute(String driverId) {
+    public List<VehicleResponse> execute(String driverId) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User driver = userService.getUserById(authenticatedUser.getUserId());
-        return vehicleService.retrieveUserVehicles(driver);
+        List<Vehicle> driverVehicles = vehicleService.retrieveUserVehicles(driver);
+        return driverVehicles.stream().map(ResponseMapper::toVehicleResponse).toList();
     }
 }

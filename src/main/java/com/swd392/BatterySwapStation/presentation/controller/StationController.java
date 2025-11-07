@@ -8,8 +8,8 @@ import com.swd392.BatterySwapStation.application.model.command.UpdateStationComm
 import com.swd392.BatterySwapStation.application.useCase.station.*;
 import com.swd392.BatterySwapStation.domain.entity.Station;
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
-import com.swd392.BatterySwapStation.presentation.dto.request.CreateStationRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.UpdateStationRequest;
+import com.swd392.BatterySwapStation.presentation.dto.CreateStationRequest;
+import com.swd392.BatterySwapStation.presentation.dto.UpdateStationRequest;
 import com.swd392.BatterySwapStation.application.model.response.ChangeStationStatusResponse;
 import com.swd392.BatterySwapStation.application.model.response.CreateStationResponse;
 import com.swd392.BatterySwapStation.application.model.response.UpdateStationResponse;

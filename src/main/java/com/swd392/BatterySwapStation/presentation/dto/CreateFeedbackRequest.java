@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.presentation.dto.request;
+package com.swd392.BatterySwapStation.presentation.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

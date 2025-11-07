@@ -1,9 +1,12 @@
 package com.swd392.BatterySwapStation.infrastructure.service.business;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.swd392.BatterySwapStation.application.security.ICurrentAuthenticatedUser;
 import com.swd392.BatterySwapStation.application.service.business.IBatterySSEService;
+import com.swd392.BatterySwapStation.domain.model.AuthenticatedUser;
 import com.swd392.BatterySwapStation.domain.model.BatteryState;
 import com.swd392.BatterySwapStation.domain.model.SSEConnectionInfo;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,21 +22,22 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class BatterySSEService implements IBatterySSEService {
 
     private static final Logger logger = LoggerFactory.getLogger(BatterySSEService.class);
     private static final long SSE_TIMEOUT = 30 * 60 * 1000L;
 
     private final ObjectMapper objectMapper;
+    private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
-    public BatterySSEService(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     private final Map<UUID, CopyOnWriteArrayList<SSEConnectionInfo>> connectionsByStation = new ConcurrentHashMap<>();
 
 
-    public SseEmitter createEmitter(UUID stationId, UUID userId) {
+    public SseEmitter createEmitter(UUID stationId) {
+        AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
+        UUID userId = authenticatedUser.getUserId();
         SseEmitter emitter = new SseEmitter(SSE_TIMEOUT);
         SSEConnectionInfo connectionInfo = new SSEConnectionInfo(emitter, userId, LocalDateTime.now());
 

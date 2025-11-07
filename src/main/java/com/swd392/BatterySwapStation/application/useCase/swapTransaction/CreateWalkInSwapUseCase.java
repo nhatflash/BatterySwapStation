@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.CreateWalkInSwapCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -17,7 +19,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand, SwapTransaction> {
+public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final ICurrentAuthenticatedUser currentAuthenticatedUser;
@@ -25,7 +27,7 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
 
     @Override
     @Transactional
-    public SwapTransaction execute(CreateWalkInSwapCommand request) {
+    public SwapTransactionResponse execute(CreateWalkInSwapCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         User driver = swapTransactionService.getValidDriver(request.getDriverId());
@@ -36,7 +38,8 @@ public class CreateWalkInSwapUseCase implements IUseCase<CreateWalkInSwapCommand
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),
                 vehicle.getBatteryType().getValue(), vehicleOldBatteries);
-        return createWalkInTransaction(staff, vehicle, requestedNewBatteries, vehicleOldBatteries, driver, station);
+        SwapTransaction walkInTransaction = createWalkInTransaction(staff, vehicle, requestedNewBatteries, vehicleOldBatteries, driver, station);
+        return ResponseMapper.mapToSwapTransactionResponse(walkInTransaction);
     }
 
     private SwapTransaction createWalkInTransaction(User staff,

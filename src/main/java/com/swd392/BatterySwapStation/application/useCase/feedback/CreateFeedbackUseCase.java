@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.feedback;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.CreateFeedbackCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
@@ -21,7 +23,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class CreateFeedbackUseCase implements IUseCase<CreateFeedbackCommand, SwapTransaction> {
+public class CreateFeedbackUseCase implements IUseCase<CreateFeedbackCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IStationService stationService;
@@ -29,12 +31,13 @@ public class CreateFeedbackUseCase implements IUseCase<CreateFeedbackCommand, Sw
 
     @Override
     @Transactional
-    public SwapTransaction execute(CreateFeedbackCommand request) {
+    public SwapTransactionResponse execute(CreateFeedbackCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User driver = swapTransactionService.getValidDriver(authenticatedUser.getUserId());
         SwapTransaction transaction = swapTransactionService.getTransactionById(request.getTransactionId());
         checkSwapTransactionReadyForFeedback(transaction, driver);
-        return processSwapTransactionFeedback(transaction, request);
+        SwapTransaction feedbackTransaction = processSwapTransactionFeedback(transaction, request);
+        return ResponseMapper.mapToSwapTransactionResponse(feedbackTransaction);
     }
 
     private void checkSwapTransactionReadyForFeedback(SwapTransaction transaction, User driver) {

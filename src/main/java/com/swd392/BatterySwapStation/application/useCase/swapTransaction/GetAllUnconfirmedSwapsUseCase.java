@@ -1,5 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
@@ -17,7 +19,7 @@ import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
-public class GetAllUnconfirmedSwapsUseCase implements IUseCase<String, List<SwapTransaction>> {
+public class GetAllUnconfirmedSwapsUseCase implements IUseCase<String, List<SwapTransactionResponse>> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IStationStaffService stationStaffService;
@@ -25,10 +27,11 @@ public class GetAllUnconfirmedSwapsUseCase implements IUseCase<String, List<Swap
 
 
     @Override
-    public List<SwapTransaction> execute(String request) {
+    public List<SwapTransactionResponse> execute(String request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         StationStaff stationStaff = getValidStaff(authenticatedUser.getUserId());
-        return swapTransactionService.GetUnconfirmedSwapTransaction(stationStaff.getStation());
+        List<SwapTransaction> unconfirmedTransactions = swapTransactionService.GetUnconfirmedSwapTransaction(stationStaff.getStation());
+        return unconfirmedTransactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
     }
 
     private StationStaff getValidStaff(UUID staffId) {

@@ -1,5 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.vehicle;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
+import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.application.service.business.IVehicleService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
@@ -16,15 +18,16 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class RetrieveUserVehiclesUseCase implements IUseCase<UUID, List<Vehicle>> {
+public class RetrieveUserVehiclesUseCase implements IUseCase<UUID, List<VehicleResponse>> {
 
     private final IVehicleService vehicleService;
     private final IUserService userService;
 
     @Override
     @Transactional
-    public List<Vehicle> execute(UUID driverId) {
+    public List<VehicleResponse> execute(UUID driverId) {
         User driver = userService.getUserById(driverId);
-        return vehicleService.retrieveUserVehicles(driver);
+        List<Vehicle> driverVehicles = vehicleService.retrieveUserVehicles(driver);
+        return driverVehicles.stream().map(ResponseMapper::toVehicleResponse).toList();
     }
 }

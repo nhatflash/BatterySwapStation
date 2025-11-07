@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.UpdateVehicleCommand;
+import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.application.service.business.IVehicleService;
@@ -20,7 +22,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, Vehicle> {
+public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, VehicleResponse> {
 
     private final IVehicleService vehicleService;
     private final IUserService userService;
@@ -30,11 +32,12 @@ public class UpdateVehicleUseCase implements IUseCase<UpdateVehicleCommand, Vehi
 
     @Override
     @Transactional
-    public Vehicle execute(UpdateVehicleCommand request) {
+    public VehicleResponse execute(UpdateVehicleCommand request) {
         Vehicle vehicle = vehicleService.getVehicleById(request.getVehicleId());
         checkValidFromRequest(request, vehicle);
         updateVehicle(request, vehicle);
-        return vehicleService.saveVehicle(vehicle);
+        Vehicle updatedVehicle = vehicleService.saveVehicle(vehicle);
+        return ResponseMapper.toVehicleResponse(updatedVehicle);
     }
 
     private void updateVehicle(UpdateVehicleCommand request, Vehicle vehicle) {

@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.battery;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.UpdateBatteryModelCommand;
+import com.swd392.BatterySwapStation.application.model.response.BatteryModelResponse;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -12,17 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateBatteryModelUseCase implements IUseCase<UpdateBatteryModelCommand, BatteryModel> {
+public class UpdateBatteryModelUseCase implements IUseCase<UpdateBatteryModelCommand, BatteryModelResponse> {
 
     private final IBatteryService batteryService;
 
 
     @Override
     @Transactional
-    public BatteryModel execute(UpdateBatteryModelCommand request) {
+    public BatteryModelResponse execute(UpdateBatteryModelCommand request) {
         BatteryModel model = batteryService.findByModelId(request.getModelId());
         checkValidRequest(request, model);
-        return batteryService.saveBatteryModel(model);
+        BatteryModel updatedModel = batteryService.saveBatteryModel(model);
+        return ResponseMapper.toBatteryModelResponse(updatedModel);
     }
 
     private void checkValidRequest(UpdateBatteryModelCommand request, BatteryModel model) {

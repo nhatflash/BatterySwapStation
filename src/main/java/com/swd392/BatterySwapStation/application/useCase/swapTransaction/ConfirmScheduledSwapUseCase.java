@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ConfirmScheduledSwapCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IPaymentService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -19,7 +21,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwapCommand, SwapTransaction> {
+public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwapCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IPaymentService paymentService;
@@ -28,7 +30,7 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
 
     @Override
     @Transactional
-    public SwapTransaction execute(ConfirmScheduledSwapCommand request) {
+    public SwapTransactionResponse execute(ConfirmScheduledSwapCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         SwapTransaction transaction = getValidSwapTransactionForConfirmation(request.getTransactionId());
@@ -38,7 +40,8 @@ public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwa
         List<Battery> requestedNewBatteries = swapTransactionService.getRequestedNewBatteries(request.getBatteryIds(),
                 station.getId(),
                 vehicle.getBatteryType().getValue(), vehicleOldBatteries);
-        return confirmTransaction(transaction, staff, requestedNewBatteries);
+        SwapTransaction confirmedTransaction = confirmTransaction(transaction, staff, requestedNewBatteries);
+        return ResponseMapper.mapToSwapTransactionResponse(confirmedTransaction);
     }
 
 

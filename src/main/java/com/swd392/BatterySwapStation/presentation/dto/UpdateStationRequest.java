@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.presentation.dto.request;
+package com.swd392.BatterySwapStation.presentation.dto;
 
 import com.swd392.BatterySwapStation.domain.enums.StationStatus;
 import jakarta.validation.constraints.Min;

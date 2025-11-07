@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ProcessSwappingCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
@@ -21,7 +23,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, SwapTransaction> {
+public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IStationService stationService;
@@ -29,7 +31,7 @@ public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, 
 
     @Override
     @Transactional
-    public SwapTransaction execute(ProcessSwappingCommand request) {
+    public SwapTransactionResponse execute(ProcessSwappingCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         SwapTransaction swapTransaction;
@@ -37,11 +39,14 @@ public class ProcessSwappingUseCase implements IUseCase<ProcessSwappingCommand, 
         if (request.isProcessing()) {
             swapTransaction = getValidTransactionForBeginSwapping(request.getTransactionId());
             station = getValidStationForBeginSwapping(staff);
-            return processStartSwappingTransaction(swapTransaction, station);
+            SwapTransaction startedTransaction = processStartSwappingTransaction(swapTransaction, station);
+            return ResponseMapper.mapToSwapTransactionResponse(startedTransaction);
+        } else {
+            swapTransaction = getValidTransactionForEndSwapping(request.getTransactionId());
+            station = swapTransactionService.getValidStationFromStaffId(staff.getId());
+            SwapTransaction endedTransaction = processEndSwappingTransaction(swapTransaction, station);
+            return ResponseMapper.mapToSwapTransactionResponse(endedTransaction);
         }
-        swapTransaction = getValidTransactionForEndSwapping(request.getTransactionId());
-        station = swapTransactionService.getValidStationFromStaffId(staff.getId());
-        return processEndSwappingTransaction(swapTransaction, station);
     }
 
     private SwapTransaction getValidTransactionForBeginSwapping(UUID transactionId) {

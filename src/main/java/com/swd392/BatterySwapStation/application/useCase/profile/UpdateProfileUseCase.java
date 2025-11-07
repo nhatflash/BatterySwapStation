@@ -1,7 +1,9 @@
 package com.swd392.BatterySwapStation.application.useCase.profile;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.UpdateProfileCommand;
+import com.swd392.BatterySwapStation.application.model.response.UserResponse;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -16,7 +18,7 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-public class UpdateProfileUseCase implements IUseCase<UpdateProfileCommand, User> {
+public class UpdateProfileUseCase implements IUseCase<UpdateProfileCommand, UserResponse> {
 
     private final IUserService userService;
     private final ICurrentAuthenticatedUser currentAuthenticatedUser;
@@ -24,11 +26,12 @@ public class UpdateProfileUseCase implements IUseCase<UpdateProfileCommand, User
 
     @Override
     @Transactional
-    public User execute(UpdateProfileCommand request) {
+    public UserResponse execute(UpdateProfileCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User user = userService.getUserById(authenticatedUser.getUserId());
         updateProfile(request, user);
-        return userService.saveUser(user);
+        User updatedUser = userService.saveUser(user);
+        return ResponseMapper.mapToUserResponse(updatedUser);
     }
 
     private void updateProfile(UpdateProfileCommand request, User user) {

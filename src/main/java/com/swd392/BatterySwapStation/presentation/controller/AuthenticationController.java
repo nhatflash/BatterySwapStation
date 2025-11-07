@@ -9,12 +9,11 @@ import com.swd392.BatterySwapStation.application.useCase.authentication.LogoutAl
 import com.swd392.BatterySwapStation.application.useCase.authentication.LogoutUseCase;
 import com.swd392.BatterySwapStation.application.useCase.authentication.RefreshTokenUseCase;
 import com.swd392.BatterySwapStation.application.useCase.driver.RegisterDriverUseCase;
-import com.swd392.BatterySwapStation.presentation.dto.request.LoginRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.RegisterDriverRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.TokenRequest;
+import com.swd392.BatterySwapStation.presentation.dto.LoginRequest;
+import com.swd392.BatterySwapStation.presentation.dto.RegisterDriverRequest;
+import com.swd392.BatterySwapStation.presentation.dto.TokenRequest;
 import com.swd392.BatterySwapStation.application.model.response.LoginResponse;
 import com.swd392.BatterySwapStation.application.model.response.RegisterDriverResponse;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

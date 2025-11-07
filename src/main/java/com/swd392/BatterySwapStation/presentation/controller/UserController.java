@@ -8,9 +8,8 @@ import com.swd392.BatterySwapStation.application.useCase.profile.UpdateProfileUs
 import com.swd392.BatterySwapStation.application.useCase.user.RetrieveAllUsersUseCase;
 import com.swd392.BatterySwapStation.application.useCase.user.RetrieveUsersByRoleUseCase;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
-import com.swd392.BatterySwapStation.presentation.dto.request.UpdateProfileRequest;
+import com.swd392.BatterySwapStation.presentation.dto.UpdateProfileRequest;
 import com.swd392.BatterySwapStation.application.model.response.UserResponse;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +32,7 @@ public class UserController {
 
     @GetMapping("/profile")
     public ResponseEntity<ApiResponse<UserResponse>> retrieveProfileDetails() {
-        var profile = retrieveProfileDetailsUseCase.execute(null);
-        var response = ResponseMapper.mapToUserResponse(profile);
+        var response = retrieveProfileDetailsUseCase.execute(null);
         return ResponseEntity.ok(new ApiResponse<>("Profile retrieved successfully", response));
     }
 
@@ -51,8 +49,7 @@ public class UserController {
                 .gender(request.getGender())
                 .avatarUrl(request.getAvatarUrl())
                 .build();
-        var updatedProfile = updateProfileUseCase.execute(command);
-        var response = ResponseMapper.mapToUserResponse(updatedProfile);
+        var response = updateProfileUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Profile updated successfully", response));
     }
 
@@ -60,10 +57,7 @@ public class UserController {
     @GetMapping("/user/all")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers(@RequestParam Integer page) {
-        var users = retrieveAllUsersUseCase.execute(page);
-        var response = users.stream()
-                .map(ResponseMapper::mapToUserResponse)
-                .toList();
+        var response = retrieveAllUsersUseCase.execute(page);
         return ResponseEntity.ok(new ApiResponse<>("Users retrieved successfully", response));
     }
 
@@ -74,8 +68,7 @@ public class UserController {
                 .page(page)
                 .role(role)
                 .build();
-        var users =  retrieveUsersByRoleUseCase.execute(command);
-        var response = users.stream().map(ResponseMapper::mapToUserResponse).toList();
+        var response = retrieveUsersByRoleUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Users with role " + role.toString() + " retrieved successfully", response));
     }
 }

@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ViewHistorySwapCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
@@ -18,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ViewHistorySwapUseCase implements IUseCase<ViewHistorySwapCommand, List<SwapTransaction>> {
+public class ViewHistorySwapUseCase implements IUseCase<ViewHistorySwapCommand, List<SwapTransactionResponse>> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IUserService userService;
@@ -26,9 +28,10 @@ public class ViewHistorySwapUseCase implements IUseCase<ViewHistorySwapCommand, 
 
     @Override
     @Transactional
-    public List<SwapTransaction> execute(ViewHistorySwapCommand request) {
+    public List<SwapTransactionResponse> execute(ViewHistorySwapCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User driver = userService.getUserById(authenticatedUser.getUserId());
-        return swapTransactionService.findByDriverAndStatus(driver, request.getStatus());
+        List<SwapTransaction> historyTransactions = swapTransactionService.findByDriverAndStatus(driver, request.getStatus());
+        return historyTransactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
     }
 }

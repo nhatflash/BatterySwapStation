@@ -1,8 +1,10 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.common.shared.PriceCalculator;
 import com.swd392.BatterySwapStation.application.model.command.CreateScheduledBatterySwapCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
@@ -25,7 +27,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateScheduledBatterySwapCommand, SwapTransaction> {
+public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateScheduledBatterySwapCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IBatteryService batteryService;
@@ -35,7 +37,7 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
 
     @Override
     @Transactional
-    public SwapTransaction execute(CreateScheduledBatterySwapCommand request) {
+    public SwapTransactionResponse execute(CreateScheduledBatterySwapCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User requestDriver = swapTransactionService.getValidDriver(authenticatedUser.getUserId());
         Vehicle requestedVehicle = swapTransactionService.getValidVehicle(request.getVehicleId(), requestDriver);
@@ -56,7 +58,8 @@ public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateSchedul
                     new Money(BigDecimal.valueOf(PriceCalculator.FIRST_SWAP_PRICE * requestedVehicle.getBatteryCapacity())));
         }
         swapTransactionService.addOldBatteryTransactionIfExists(requestedVehicle, newScheduledTransaction);
-        return swapTransactionService.saveSwapTransaction(newScheduledTransaction);
+        SwapTransaction savedTransaction = swapTransactionService.saveSwapTransaction(newScheduledTransaction);
+        return ResponseMapper.mapToSwapTransactionResponse(savedTransaction);
     }
 
 

@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ConfirmArrivalCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IPaymentService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.PaymentService;
@@ -22,7 +24,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, SwapTransaction> {
+public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, SwapTransactionResponse> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IPaymentService paymentService;
@@ -30,7 +32,7 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
 
     @Override
     @Transactional
-    public SwapTransaction execute(ConfirmArrivalCommand request) {
+    public SwapTransactionResponse execute(ConfirmArrivalCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User staff = swapTransactionService.getValidStaff(authenticatedUser.getUserId());
         SwapTransaction transaction = getValidTransactionForConfirmingArrival(request.getTransactionId());
@@ -38,7 +40,8 @@ public class ConfirmArrivalUseCase implements IUseCase<ConfirmArrivalCommand, Sw
         if (!station.getId().equals(transaction.getStation().getId())) {
             throw new IllegalArgumentException("Transaction does not belong to this station.");
         }
-        return performConfirmingArrival(transaction);
+        SwapTransaction confirmedArrivalTransaction = performConfirmingArrival(transaction);
+        return ResponseMapper.mapToSwapTransactionResponse(confirmedArrivalTransaction);
     }
 
     private SwapTransaction getValidTransactionForConfirmingArrival(UUID transactionId) {

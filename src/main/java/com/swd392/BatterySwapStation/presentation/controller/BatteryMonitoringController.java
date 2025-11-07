@@ -1,18 +1,15 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
-import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
+import com.swd392.BatterySwapStation.application.service.business.IBatterySSEService;
+import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
+import com.swd392.BatterySwapStation.application.service.business.IBatterySimulatorService;
 import com.swd392.BatterySwapStation.domain.model.BatteryState;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
-import com.swd392.BatterySwapStation.infrastructure.service.business.BatterySSEService;
-import com.swd392.BatterySwapStation.infrastructure.service.business.BatterySimulatorService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,17 +26,14 @@ import java.util.UUID;
 @SecurityRequirement(name = "bearerAuth")
 public class BatteryMonitoringController {
 
-    private final BatterySSEService batterySSEService;
-    private final BatterySimulatorService batterySimulatorService;
-    private final BatteryService batteryService;
+    private final IBatterySSEService batterySSEService;
+    private final IBatterySimulatorService batterySimulatorService;
+    private final IBatteryService batteryService;
 
     @GetMapping(value = "/stream/{stationId}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
-    public SseEmitter streamBatteryUpdates(@PathVariable UUID stationId, @AuthenticationPrincipal CustomUserDetails userDetails) {
-        if (userDetails == null) {
-            throw new UsernameNotFoundException("User not found.");
-        }
-        return batterySSEService.createEmitter(stationId, userDetails.getUserId());
+    public SseEmitter streamBatteryUpdates(@PathVariable UUID stationId) {
+        return batterySSEService.createEmitter(stationId);
     }
 
 

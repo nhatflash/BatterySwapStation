@@ -8,12 +8,11 @@ import com.swd392.BatterySwapStation.application.model.command.ViewBatteryInvent
 import com.swd392.BatterySwapStation.application.useCase.battery.*;
 import com.swd392.BatterySwapStation.application.useCase.stationStaff.ViewBatteryInventoryUseCase;
 import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
-import com.swd392.BatterySwapStation.presentation.dto.request.AddNewBatteryRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.DefineBatteryModelRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.UpdateBatteryModelRequest;
+import com.swd392.BatterySwapStation.presentation.dto.AddNewBatteryRequest;
+import com.swd392.BatterySwapStation.presentation.dto.DefineBatteryModelRequest;
+import com.swd392.BatterySwapStation.presentation.dto.UpdateBatteryModelRequest;
 import com.swd392.BatterySwapStation.application.model.response.BatteryModelResponse;
 import com.swd392.BatterySwapStation.application.model.response.BatteryResponse;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -52,17 +51,13 @@ public class BatteryController {
                 .minSohThreshold(request.getMinSohThreshold())
                 .compatibleVehicles(request.getCompatibleVehicles())
                 .build();
-        var definedModel = defineBatteryModelUseCase.execute(command);
-        var response = ResponseMapper.toBatteryModelResponse(definedModel);
+        var response = defineBatteryModelUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Battery model created successfully", response));
     }
 
     @GetMapping("/model")
     public ResponseEntity<ApiResponse<List<BatteryModelResponse>>> retrieveAllModels(@RequestParam Integer page) {
-        var models = retrieveAllModelsUseCase.execute(page);
-        var response = models.stream()
-                .map(ResponseMapper::toBatteryModelResponse)
-                .toList();
+        var response = retrieveAllModelsUseCase.execute(page);
         return ResponseEntity.ok(new ApiResponse<>("Battery models retrieved successfully", response));
     }
 
@@ -80,8 +75,7 @@ public class BatteryController {
                 .maxChargePowerKwh(request.getMaxChargePowerKwh())
                 .minSohThreshold(request.getMinSohThreshold())
                 .build();
-        var updatedModel = updateBatteryModelUseCase.execute(command);
-        var response = ResponseMapper.toBatteryModelResponse(updatedModel);
+        var response = updateBatteryModelUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Battery model updated successfully", response));
     }
 
@@ -99,22 +93,19 @@ public class BatteryController {
                 .notes(request.getNotes())
                 .rentalPrice(request.getRentalPrice())
                 .build();
-        var newBattery = addNewBatteryUseCase.execute(command);
-        var response = ResponseMapper.mapToBatteryResponse(newBattery);
+        var response = addNewBatteryUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("New battery added successfully", response));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<BatteryResponse>> retrieveBatteryDetails(@RequestParam UUID batteryId) {
-        var battery = retrieveBatteryDetailsUseCase.execute(batteryId);
-        var response = ResponseMapper.mapToBatteryResponse(battery);
+        var response = retrieveBatteryDetailsUseCase.execute(batteryId);
         return ResponseEntity.ok(new ApiResponse<>("Battery details retrieved successfully", response));
     }
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse<List<BatteryResponse>>> retrieveAllBatteries(@RequestParam Integer page) {
-        var batteries = retrieveAllBatteriesUseCase.execute(page);
-        var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
+        var response = retrieveAllBatteriesUseCase.execute(page);
         return ResponseEntity.ok(new ApiResponse<>("Batteries retrieved successfully", response));
     }
 
@@ -125,8 +116,7 @@ public class BatteryController {
                 .batteryStatus(status)
                 .pageIndex(page)
                 .build();
-        var batteries = viewBatteryInventoryUseCase.execute(command);
-        var response = batteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
+        var response = viewBatteryInventoryUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Batteries with status " + status.name() + " retrieved successfully", response));
     }
 

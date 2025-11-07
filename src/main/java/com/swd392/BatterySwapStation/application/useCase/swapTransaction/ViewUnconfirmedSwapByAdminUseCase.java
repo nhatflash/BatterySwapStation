@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ViewUnconfirmedSwapByAdminCommand;
+import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
 import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
@@ -22,7 +24,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ViewUnconfirmedSwapByAdminUseCase implements IUseCase<ViewUnconfirmedSwapByAdminCommand, List<SwapTransaction>> {
+public class ViewUnconfirmedSwapByAdminUseCase implements IUseCase<ViewUnconfirmedSwapByAdminCommand, List<SwapTransactionResponse>> {
 
     private final ISwapTransactionService swapTransactionService;
     private final IStationService stationService;
@@ -31,13 +33,14 @@ public class ViewUnconfirmedSwapByAdminUseCase implements IUseCase<ViewUnconfirm
 
     @Override
     @Transactional
-    public List<SwapTransaction> execute(ViewUnconfirmedSwapByAdminCommand request) {
+    public List<SwapTransactionResponse> execute(ViewUnconfirmedSwapByAdminCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User admin = userService.getUserById(authenticatedUser.getUserId());
         if (admin.getRole() != UserRole.ADMIN) {
             throw new IllegalArgumentException("This user is not an admin.");
         }
         Station station = stationService.getByStationID(request.getStationId());
-        return swapTransactionService.GetUnconfirmedSwapTransaction(station);
+        List<SwapTransaction> stationUnconfirmedTransaction = swapTransactionService.GetUnconfirmedSwapTransaction(station);
+        return stationUnconfirmedTransaction.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
     }
 }

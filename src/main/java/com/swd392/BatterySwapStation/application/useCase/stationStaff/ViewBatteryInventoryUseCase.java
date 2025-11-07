@@ -1,10 +1,10 @@
 package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.ViewBatteryInventoryCommand;
+import com.swd392.BatterySwapStation.application.model.response.BatteryResponse;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
-import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
-import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Battery;
 import com.swd392.BatterySwapStation.domain.entity.Station;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ViewBatteryInventoryUseCase implements IUseCase<ViewBatteryInventoryCommand, List<Battery>> {
+public class ViewBatteryInventoryUseCase implements IUseCase<ViewBatteryInventoryCommand, List<BatteryResponse>> {
 
     private final IStationStaffService stationStaffService;
     private final IBatteryService batteryService;
@@ -28,10 +28,11 @@ public class ViewBatteryInventoryUseCase implements IUseCase<ViewBatteryInventor
 
     @Override
     @Transactional
-    public List<Battery> execute(ViewBatteryInventoryCommand request) {
+    public List<BatteryResponse> execute(ViewBatteryInventoryCommand request) {
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         var station = getStaffStation(authenticatedUser.getUserId());
-        return batteryService.getByCurrentStationAndStatus(station, request.getBatteryStatus(), request.getPageIndex());
+        List<Battery> stationBatteries =  batteryService.getByCurrentStationAndStatus(station, request.getBatteryStatus(), request.getPageIndex());
+        return stationBatteries.stream().map(ResponseMapper::mapToBatteryResponse).toList();
     }
 
     private Station getStaffStation(UUID staffId) {

@@ -7,10 +7,9 @@ import com.swd392.BatterySwapStation.application.useCase.driver.GetDriverVehicle
 import com.swd392.BatterySwapStation.application.useCase.driver.RegisterVehicleUseCase;
 import com.swd392.BatterySwapStation.application.useCase.driver.UpdateVehicleUseCase;
 import com.swd392.BatterySwapStation.application.useCase.vehicle.RetrieveUserVehiclesUseCase;
-import com.swd392.BatterySwapStation.presentation.dto.request.RegisterVehicleRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.UpdateVehicleRequest;
+import com.swd392.BatterySwapStation.presentation.dto.RegisterVehicleRequest;
+import com.swd392.BatterySwapStation.presentation.dto.UpdateVehicleRequest;
 import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +43,7 @@ public class VehicleController {
                 .batteryType(request.getBatteryType())
                 .batteryCapacity(request.getBatteryCapacity())
                 .build();
-        var registeredVehicle = registerVehicleUseCase.execute(command);
-        var response = ResponseMapper.toVehicleResponse(registeredVehicle);
+        var response = registerVehicleUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Register vehicle successfully.", response));
     }
 
@@ -53,10 +51,7 @@ public class VehicleController {
     @GetMapping
     @PreAuthorize("hasRole('DRIVER')")
     public ResponseEntity<ApiResponse<List<VehicleResponse>>> retrieveUserVehicles() {
-        var userVehicles = getDriverVehiclesUseCase.execute(null);
-        var response = userVehicles.stream()
-                .map(ResponseMapper::toVehicleResponse)
-                .toList();
+        var response = getDriverVehiclesUseCase.execute(null);
         return ResponseEntity.ok(new ApiResponse<>("Retrieve user vehicles successfully.", response));
     }
 
@@ -74,16 +69,14 @@ public class VehicleController {
                 .batteryType(request.getBatteryType())
                 .batteryCapacity(request.getBatteryCapacity())
                 .build();
-        var updatedVehicle = updateVehicleUseCase.execute(command);
-        var response = ResponseMapper.toVehicleResponse(updatedVehicle);
+        var response = updateVehicleUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Update vehicle successfully.", response));
     }
 
     @GetMapping("/all/{userId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     public ResponseEntity<ApiResponse<List<VehicleResponse>>> retrieveAllUserVehicles(@PathVariable UUID userId) {
-        var vehicles = retrieveUserVehiclesUseCase.execute(userId);
-        var response = vehicles.stream().map(ResponseMapper::toVehicleResponse).toList();
+        var response = retrieveUserVehiclesUseCase.execute(userId);
         return ResponseEntity.ok(new ApiResponse<>("Retrieve user vehicles successfully.", response));
     }
 

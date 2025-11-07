@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public interface IBatterySSEService {
-    SseEmitter createEmitter(UUID stationId, UUID userId);
+    SseEmitter createEmitter(UUID stationId);
     void broadcastBatteryUpdate(UUID stationId, BatteryState batteryState);
     void broadCastAlert(UUID stationId, String level, String message, UUID batteryId);
     int getTotalConnectionsCount();

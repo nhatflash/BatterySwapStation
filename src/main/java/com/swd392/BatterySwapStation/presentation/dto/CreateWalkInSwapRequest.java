@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.presentation.dto.request;
+package com.swd392.BatterySwapStation.presentation.dto;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,8 +13,15 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConfirmScheduledSwapRequest {
+public class CreateWalkInSwapRequest {
+    @NotNull(message = "Driver Id is required.")
+    private UUID driverId;
+
+    @NotNull(message = "Vehicle Id is required.")
+    private UUID vehicleId;
 
     @NotNull(message = "Battery Ids are required.")
     private List<UUID> batteryIds;
+
+    private String notes;
 }

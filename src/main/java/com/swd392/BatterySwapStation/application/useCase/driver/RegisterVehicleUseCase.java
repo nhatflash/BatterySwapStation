@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.driver;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.RegisterVehicleCommand;
+import com.swd392.BatterySwapStation.application.model.response.VehicleResponse;
 import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.application.service.business.IVehicleService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
@@ -19,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, Vehicle> {
+public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, VehicleResponse> {
 
     private final IVehicleService vehicleService;
     private final IUserService userService;
@@ -28,11 +30,12 @@ public class RegisterVehicleUseCase implements IUseCase<RegisterVehicleCommand, 
 
     @Override
     @Transactional
-    public Vehicle execute(RegisterVehicleCommand request) {
+    public VehicleResponse execute(RegisterVehicleCommand request) {
         checkValidFromRequest(request);
         AuthenticatedUser authenticatedUser = currentAuthenticatedUser.getCurrentAuthenticatedUser();
         User driver = userService.getUserById(authenticatedUser.getUserId());
-        return registerVehicle(request, driver);
+        Vehicle registeredVehicle = registerVehicle(request, driver);
+        return ResponseMapper.toVehicleResponse(registeredVehicle);
     }
 
     private void checkValidFromRequest(RegisterVehicleCommand request) {

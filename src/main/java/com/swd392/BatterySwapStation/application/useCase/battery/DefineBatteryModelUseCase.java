@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.application.useCase.battery;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import com.swd392.BatterySwapStation.application.model.command.DefineBatteryModelCommand;
+import com.swd392.BatterySwapStation.application.model.response.BatteryModelResponse;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -12,17 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class DefineBatteryModelUseCase implements IUseCase<DefineBatteryModelCommand, BatteryModel> {
+public class DefineBatteryModelUseCase implements IUseCase<DefineBatteryModelCommand, BatteryModelResponse> {
 
     private final IBatteryService batteryService;
 
     @Override
     @Transactional
-    public BatteryModel execute(DefineBatteryModelCommand request) {
+    public BatteryModelResponse execute(DefineBatteryModelCommand request) {
         if (batteryService.existsByBatteryType(request.getType())) {
             throw new IllegalArgumentException("Battery type already exists");
         }
-        return defineNewModel(request);
+        BatteryModel newModel = defineNewModel(request);
+        return ResponseMapper.toBatteryModelResponse(newModel);
     }
 
 

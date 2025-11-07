@@ -6,12 +6,11 @@ import com.swd392.BatterySwapStation.application.useCase.driver.ViewHistorySwapU
 import com.swd392.BatterySwapStation.application.useCase.feedback.CreateFeedbackUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
-import com.swd392.BatterySwapStation.presentation.dto.request.ConfirmScheduledSwapRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.CreateFeedbackRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.CreateScheduledBatterySwapRequest;
-import com.swd392.BatterySwapStation.presentation.dto.request.CreateWalkInSwapRequest;
+import com.swd392.BatterySwapStation.presentation.dto.ConfirmScheduledSwapRequest;
+import com.swd392.BatterySwapStation.presentation.dto.CreateFeedbackRequest;
+import com.swd392.BatterySwapStation.presentation.dto.CreateScheduledBatterySwapRequest;
+import com.swd392.BatterySwapStation.presentation.dto.CreateWalkInSwapRequest;
 import com.swd392.BatterySwapStation.application.model.response.SwapTransactionResponse;
-import com.swd392.BatterySwapStation.application.common.mapper.ResponseMapper;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -48,8 +47,7 @@ public class SwapTransactionController {
                 .scheduledTime(request.getScheduledTime())
                 .notes(request.getNotes())
                 .build();
-        var transaction = createScheduledBatterySwapUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        var response = createScheduledBatterySwapUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Create scheduled swap successfully.", response));
     }
 
@@ -62,16 +60,14 @@ public class SwapTransactionController {
                 .transactionId(transactionId)
                 .batteryIds(request.getBatteryIds())
                 .build();
-        var transaction = confirmScheduledSwapUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        var response = confirmScheduledSwapUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Confirm scheduled swap successfully.", response));
     }
 
     @GetMapping("/scheduled/all")
     @PreAuthorize("hasRole('STAFF')")
     public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> getAllUnconfirmedSwaps() {
-        var transactions = getAllUnconfirmedSwapsUseCase.execute(null);
-        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        var response = getAllUnconfirmedSwapsUseCase.execute(null);
         return ResponseEntity.ok(new ApiResponse<>("Get all unconfirmed swaps successfully.", response));
     }
 
@@ -84,8 +80,7 @@ public class SwapTransactionController {
                 .vehicleId(request.getVehicleId())
                 .batteryIds(request.getBatteryIds())
                 .build();
-        var transactions = createWalkInSwapUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(transactions);
+        var response = createWalkInSwapUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Create walk-in swap successfully.", response));
     }
 
@@ -95,8 +90,7 @@ public class SwapTransactionController {
         var command = ConfirmArrivalCommand.builder()
                 .transactionId(transactionId)
                 .build();
-        var confirmedTransaction = confirmArrivalUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(confirmedTransaction);
+        var response = confirmArrivalUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Confirm arrival successfully.", response));
     }
 
@@ -111,15 +105,13 @@ public class SwapTransactionController {
                 .transactionId(transactionId)
                 .isProcessing(isProcessing)
                 .build();
-        var processedTransaction = processSwappingUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(processedTransaction);
+        var response = processSwappingUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Process swap successfully.", response));
     }
 
     @GetMapping("/{transactionId}")
     public ResponseEntity<ApiResponse<SwapTransactionResponse>> getSwapTransaction(@PathVariable UUID transactionId) {
-        var transaction = viewSwapTransactionDetailsUseCase.execute(transactionId);
-        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        var response = viewSwapTransactionDetailsUseCase.execute(transactionId);
         return ResponseEntity.ok(new ApiResponse<>("Get swap transaction successfully.", response));
     }
 
@@ -132,8 +124,7 @@ public class SwapTransactionController {
                 .feedback(request.getFeedback())
                 .rating(request.getRating())
                 .build();
-        var transaction = createFeedbackUseCase.execute(command);
-        var response = ResponseMapper.mapToSwapTransactionResponse(transaction);
+        var response = createFeedbackUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("Create feedback successfully.", response));
     }
 
@@ -144,8 +135,7 @@ public class SwapTransactionController {
         var command = ViewHistorySwapCommand.builder()
                 .status(status)
                 .build();
-        var transactions = viewHistorySwapUseCase.execute(command);
-        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        var response = viewHistorySwapUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("View history swap successfully.", response));
     }
 
@@ -155,8 +145,7 @@ public class SwapTransactionController {
         var command = ViewUnconfirmedSwapByAdminCommand.builder()
                 .stationId(stationId)
                 .build();
-        var transactions = viewUnconfirmedSwapByAdminUseCase.execute(command);
-        var response = transactions.stream().map(ResponseMapper::mapToSwapTransactionResponse).toList();
+        var response = viewUnconfirmedSwapByAdminUseCase.execute(command);
         return ResponseEntity.ok(new ApiResponse<>("View unconfirmed swap by admin successfully.", response));
     }
 }
