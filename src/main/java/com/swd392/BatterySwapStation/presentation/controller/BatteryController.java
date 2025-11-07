@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.enums.BatteryStatusReq;
 import com.swd392.BatterySwapStation.application.model.command.AddNewBatteryCommand;
 import com.swd392.BatterySwapStation.application.model.command.DefineBatteryModelCommand;
 import com.swd392.BatterySwapStation.application.model.command.UpdateBatteryModelCommand;
@@ -110,7 +111,7 @@ public class BatteryController {
     }
 
     @GetMapping("/station/status")
-    public ResponseEntity<ApiResponse<List<BatteryResponse>>> viewBatteryInventory(@RequestParam BatteryStatus status,
+    public ResponseEntity<ApiResponse<List<BatteryResponse>>> viewBatteryInventory(@RequestParam BatteryStatusReq status,
                                                                                    @RequestParam Integer page) {
         var command = ViewBatteryInventoryCommand.builder()
                 .batteryStatus(status)

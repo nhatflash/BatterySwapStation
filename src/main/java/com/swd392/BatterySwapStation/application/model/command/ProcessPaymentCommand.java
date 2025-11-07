@@ -1,7 +1,7 @@
 package com.swd392.BatterySwapStation.application.model.command;
 
 
-import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
+import com.swd392.BatterySwapStation.application.enums.PaymentMethodReq;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +16,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ProcessPaymentCommand {
     private UUID transactionId;
-    private PaymentMethod method;
+    private PaymentMethodReq method;
     private HttpServletRequest servletRequest;
 }

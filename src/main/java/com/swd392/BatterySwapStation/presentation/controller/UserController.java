@@ -1,13 +1,13 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.enums.UserRoleReq;
 import com.swd392.BatterySwapStation.application.model.command.RetrieveUsersByRoleCommand;
 import com.swd392.BatterySwapStation.application.model.command.UpdateProfileCommand;
 import com.swd392.BatterySwapStation.application.useCase.profile.RetrieveProfileDetailsUseCase;
 import com.swd392.BatterySwapStation.application.useCase.profile.UpdateProfileUseCase;
 import com.swd392.BatterySwapStation.application.useCase.user.RetrieveAllUsersUseCase;
 import com.swd392.BatterySwapStation.application.useCase.user.RetrieveUsersByRoleUseCase;
-import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import com.swd392.BatterySwapStation.presentation.dto.UpdateProfileRequest;
 import com.swd392.BatterySwapStation.application.model.response.UserResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -63,7 +63,7 @@ public class UserController {
 
     @GetMapping("/user/role/{role}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<UserResponse>>> getUsersByRole(@PathVariable UserRole role, @RequestParam Integer page) {
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getUsersByRole(@PathVariable UserRoleReq role, @RequestParam Integer page) {
         var command = RetrieveUsersByRoleCommand.builder()
                 .page(page)
                 .role(role)

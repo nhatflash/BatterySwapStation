@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.application.model.command;
 
+import com.swd392.BatterySwapStation.application.enums.UserRoleReq;
 import com.swd392.BatterySwapStation.domain.enums.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,5 +13,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RetrieveUsersByRoleCommand {
     private int page;
-    private UserRole role;
+    private UserRoleReq role;
 }

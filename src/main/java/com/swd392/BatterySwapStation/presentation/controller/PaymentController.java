@@ -1,11 +1,12 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.enums.PaymentMethodReq;
 import com.swd392.BatterySwapStation.application.model.command.ProcessPaymentCommand;
+import com.swd392.BatterySwapStation.application.service.business.IVnPayService;
 import com.swd392.BatterySwapStation.application.useCase.payment.ProcessPaymentUseCase;
-import com.swd392.BatterySwapStation.domain.enums.PaymentMethod;
-import com.swd392.BatterySwapStation.infrastructure.service.business.VnPayService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,18 +16,14 @@ import org.springframework.web.servlet.view.RedirectView;
 import java.util.UUID;
 
 @RestController
+@RequiredArgsConstructor
 public class PaymentController {
 
     private final ProcessPaymentUseCase processPaymentUseCase;
-    private final VnPayService vnPayService;
-
-    public PaymentController(ProcessPaymentUseCase processPaymentUseCase, VnPayService vnPayService) {
-        this.processPaymentUseCase = processPaymentUseCase;
-        this.vnPayService = vnPayService;
-    }
+    private final IVnPayService vnPayService;
 
     @GetMapping("/api/payment/process")
-    public ResponseEntity<ApiResponse<String>> processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethod method, HttpServletRequest request) {
+    public ResponseEntity<ApiResponse<String>> processPayment(@RequestParam UUID transactionId, @RequestParam PaymentMethodReq method, HttpServletRequest request) {
         var command = ProcessPaymentCommand.builder()
                 .transactionId(transactionId)
                 .method(method)

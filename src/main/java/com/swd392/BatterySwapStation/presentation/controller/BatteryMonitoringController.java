@@ -1,10 +1,11 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
+import com.swd392.BatterySwapStation.application.common.mapper.ModelInterfaceMapper;
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.model.BatteryStateInterface;
 import com.swd392.BatterySwapStation.application.service.business.IBatterySSEService;
 import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
 import com.swd392.BatterySwapStation.application.service.business.IBatterySimulatorService;
-import com.swd392.BatterySwapStation.domain.model.BatteryState;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -39,21 +40,22 @@ public class BatteryMonitoringController {
 
     @GetMapping("/station/{stationId}")
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
-    public ResponseEntity<ApiResponse<List<BatteryState>>> getBatteryStates(@PathVariable UUID stationId) {
+    public ResponseEntity<ApiResponse<List<BatteryStateInterface>>> getBatteryStates(@PathVariable UUID stationId) {
         var batteries = batteryService.findByCurrentStation(stationId);
-        var response = batteries.stream()
+        var batteryStates = batteries.stream()
                 .map(batterySimulatorService::simulateBatteryState)
                 .toList();
-
+        var response = batteryStates.stream().map(ModelInterfaceMapper::mapToBatteryStateInterface).toList();
         return ResponseEntity.ok(new ApiResponse<>("Battery states retrieved successfully", response));
     }
 
 
     @GetMapping("/battery/{batteryId}")
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
-    public ResponseEntity<ApiResponse<BatteryState>> getBatteryState(@PathVariable UUID batteryId) {
+    public ResponseEntity<ApiResponse<BatteryStateInterface>> getBatteryState(@PathVariable UUID batteryId) {
         var battery = batteryService.findByBatteryId(batteryId);
-        var response = batterySimulatorService.simulateBatteryState(battery);
+        var state = batterySimulatorService.simulateBatteryState(battery);
+        var response = ModelInterfaceMapper.mapToBatteryStateInterface(state);
         return ResponseEntity.ok(new ApiResponse<>("Battery state retrieved successfully", response));
     }
 

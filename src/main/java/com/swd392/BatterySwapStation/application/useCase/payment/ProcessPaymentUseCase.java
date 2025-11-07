@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class ProcessPaymentUseCase implements IUseCase<ProcessPaymentCommand, String> {
@@ -20,10 +22,10 @@ public class ProcessPaymentUseCase implements IUseCase<ProcessPaymentCommand, St
     public String execute(ProcessPaymentCommand request) {
         String response = "";
         switch (request.getMethod()) {
-            case PaymentMethod.CASH:
+            case CASH:
                 response = paymentService.processCashPayment(request.getTransactionId());
                 break;
-            case PaymentMethod.VNPAY:
+            case VNPAY:
                 response = paymentService.generateVnPayUrl(request.getTransactionId(), request.getServletRequest());
                 break;
             default:

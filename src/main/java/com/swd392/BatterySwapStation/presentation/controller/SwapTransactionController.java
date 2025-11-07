@@ -1,11 +1,11 @@
 package com.swd392.BatterySwapStation.presentation.controller;
 
 import com.swd392.BatterySwapStation.application.common.response.ApiResponse;
+import com.swd392.BatterySwapStation.application.enums.TransactionStatusReq;
 import com.swd392.BatterySwapStation.application.model.command.*;
 import com.swd392.BatterySwapStation.application.useCase.driver.ViewHistorySwapUseCase;
 import com.swd392.BatterySwapStation.application.useCase.feedback.CreateFeedbackUseCase;
 import com.swd392.BatterySwapStation.application.useCase.swapTransaction.*;
-import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
 import com.swd392.BatterySwapStation.presentation.dto.ConfirmScheduledSwapRequest;
 import com.swd392.BatterySwapStation.presentation.dto.CreateFeedbackRequest;
 import com.swd392.BatterySwapStation.presentation.dto.CreateScheduledBatterySwapRequest;
@@ -131,7 +131,7 @@ public class SwapTransactionController {
 
     @GetMapping("/history")
     @PreAuthorize("hasRole('DRIVER')")
-    public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> viewHistorySwap(@RequestParam TransactionStatus status) {
+    public ResponseEntity<ApiResponse<List<SwapTransactionResponse>>> viewHistorySwap(@RequestParam TransactionStatusReq status) {
         var command = ViewHistorySwapCommand.builder()
                 .status(status)
                 .build();
