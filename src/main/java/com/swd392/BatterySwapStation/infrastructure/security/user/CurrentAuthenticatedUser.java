@@ -1,8 +1,7 @@
-package com.swd392.BatterySwapStation.application.security;
+package com.swd392.BatterySwapStation.infrastructure.security.user;
 
-import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
-import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
-import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.application.security.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.domain.model.AuthenticatedUser;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 

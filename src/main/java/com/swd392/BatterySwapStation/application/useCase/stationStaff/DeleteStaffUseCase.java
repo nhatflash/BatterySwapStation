@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
+import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeleteStaffUseCase implements IUseCase<UUID, Void> {
 
-    private final StationStaffService stationStaffService;
+    private final IStationStaffService stationStaffService;
 
     @Override
     public Void execute(UUID staffId) {

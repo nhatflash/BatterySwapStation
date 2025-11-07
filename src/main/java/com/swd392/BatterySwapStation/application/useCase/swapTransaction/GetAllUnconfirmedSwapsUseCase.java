@@ -1,12 +1,14 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
+import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.StationStaff;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
-import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
-import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.domain.model.AuthenticatedUser;
+import com.swd392.BatterySwapStation.application.security.ICurrentAuthenticatedUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,8 +19,8 @@ import java.util.UUID;
 @Service
 public class GetAllUnconfirmedSwapsUseCase implements IUseCase<String, List<SwapTransaction>> {
 
-    private final SwapTransactionService swapTransactionService;
-    private final StationStaffService stationStaffService;
+    private final ISwapTransactionService swapTransactionService;
+    private final IStationStaffService stationStaffService;
     private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
 

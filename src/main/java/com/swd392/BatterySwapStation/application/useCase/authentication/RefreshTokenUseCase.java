@@ -1,7 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.authentication;
 
+import com.swd392.BatterySwapStation.application.service.internal.ITokenService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
-import com.swd392.BatterySwapStation.application.service.internal.IInternalServiceProviders;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class RefreshTokenUseCase implements IUseCase<String, String> {
 
-    private final IInternalServiceProviders internalServiceProviders;
+    private final ITokenService tokenService;
 
     @Override
     public String execute(String refreshToken) {
-        return internalServiceProviders.getTokenService().refreshAccessToken(refreshToken);
+        return tokenService.refreshAccessToken(refreshToken);
     }
 }

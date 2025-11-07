@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.infrastructure.service.internal;
 
-import com.swd392.BatterySwapStation.infrastructure.security.session.SessionData;
+import com.swd392.BatterySwapStation.application.service.internal.IRedisSessionService;
+import com.swd392.BatterySwapStation.domain.model.SessionData;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +10,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class RedisSessionService {
+public class RedisSessionService implements IRedisSessionService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 

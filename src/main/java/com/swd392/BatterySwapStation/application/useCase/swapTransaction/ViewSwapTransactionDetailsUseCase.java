@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
+import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.SwapTransaction;
@@ -12,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ViewSwapTransactionDetailsUseCase implements IUseCase<UUID, SwapTransaction> {
 
-    private final SwapTransactionService swapTransactionService;
+    private final ISwapTransactionService swapTransactionService;
 
     @Override
     public SwapTransaction execute(UUID transactionId) {

@@ -1,11 +1,13 @@
 package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 
 import com.swd392.BatterySwapStation.application.model.command.ConfirmScheduledSwapCommand;
+import com.swd392.BatterySwapStation.application.service.business.IPaymentService;
+import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.enums.TransactionStatus;
-import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
-import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.domain.model.AuthenticatedUser;
+import com.swd392.BatterySwapStation.application.security.ICurrentAuthenticatedUser;
 import com.swd392.BatterySwapStation.infrastructure.service.business.PaymentService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ConfirmScheduledSwapUseCase implements IUseCase<ConfirmScheduledSwapCommand, SwapTransaction> {
 
-    private final SwapTransactionService swapTransactionService;
-    private final PaymentService paymentService;
+    private final ISwapTransactionService swapTransactionService;
+    private final IPaymentService paymentService;
     private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
 

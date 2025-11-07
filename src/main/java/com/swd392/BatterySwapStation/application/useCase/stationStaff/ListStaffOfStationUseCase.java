@@ -1,5 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
+import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
+import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -15,8 +17,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ListStaffOfStationUseCase implements IUseCase<UUID, List<StationStaffResponse>> {
 
-    private final StationStaffService stationStaffService ;
-    private final UserService userService;
+    private final IStationStaffService stationStaffService ;
+    private final IUserService userService;
 
     @Override
     public List<StationStaffResponse> execute(UUID stationId) {

@@ -1,5 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.vehicle;
 
+import com.swd392.BatterySwapStation.application.service.business.IUserService;
+import com.swd392.BatterySwapStation.application.service.business.IVehicleService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.VehicleService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -16,8 +18,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RetrieveUserVehiclesUseCase implements IUseCase<UUID, List<Vehicle>> {
 
-    private final VehicleService vehicleService;
-    private final UserService userService;
+    private final IVehicleService vehicleService;
+    private final IUserService userService;
 
     @Override
     @Transactional

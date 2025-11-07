@@ -11,4 +11,6 @@ public interface IStationService {
     Station getStationByName(String name);
     boolean existsByName(String name);
     boolean isStationOperational(Station station);
+    Station saveStation(Station station);
+    List<Station> getAllStations();
 }

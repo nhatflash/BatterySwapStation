@@ -1,6 +1,8 @@
 package com.swd392.BatterySwapStation.infrastructure.service.internal;
 
 
+import com.swd392.BatterySwapStation.application.service.internal.IRedisSessionService;
+import com.swd392.BatterySwapStation.application.service.internal.ITokenService;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import com.swd392.BatterySwapStation.infrastructure.security.jwt.JwtUtil;
@@ -9,14 +11,14 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class TokenService {
+public class TokenService implements ITokenService {
 
     private final JwtUtil jwtUtil;
-    private final RedisSessionService redisSessionService;
+    private final IRedisSessionService redisSessionService;
     private final UserRepository userRepository;
 
     public TokenService(JwtUtil jwtUtil,
-                        RedisSessionService redisSessionService,
+                        IRedisSessionService redisSessionService,
                         UserRepository userRepository) {
         this.jwtUtil = jwtUtil;
         this.redisSessionService = redisSessionService;

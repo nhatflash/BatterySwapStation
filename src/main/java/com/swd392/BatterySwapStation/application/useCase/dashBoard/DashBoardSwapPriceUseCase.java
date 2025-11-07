@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.dashBoard;
 
 import com.swd392.BatterySwapStation.application.model.command.DashBoardCommand;
+import com.swd392.BatterySwapStation.application.service.business.IDashboardService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.DashBoardService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Payment;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DashBoardSwapPriceUseCase implements IUseCase<DashBoardCommand, List<Payment>> {
 
-    private final DashBoardService dashBoardService;
+    private final IDashboardService dashBoardService;
 
     @Override
     public List<Payment> execute(DashBoardCommand command) {

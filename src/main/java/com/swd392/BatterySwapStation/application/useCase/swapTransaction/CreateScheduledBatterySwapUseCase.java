@@ -3,12 +3,15 @@ package com.swd392.BatterySwapStation.application.useCase.swapTransaction;
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.common.shared.PriceCalculator;
 import com.swd392.BatterySwapStation.application.model.command.CreateScheduledBatterySwapCommand;
+import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
+import com.swd392.BatterySwapStation.application.service.business.IStationService;
+import com.swd392.BatterySwapStation.application.service.business.ISwapTransactionService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.*;
 import com.swd392.BatterySwapStation.domain.valueObject.BatteryType;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
-import com.swd392.BatterySwapStation.infrastructure.security.user.AuthenticatedUser;
-import com.swd392.BatterySwapStation.infrastructure.security.user.ICurrentAuthenticatedUser;
+import com.swd392.BatterySwapStation.domain.model.AuthenticatedUser;
+import com.swd392.BatterySwapStation.application.security.ICurrentAuthenticatedUser;
 import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.SwapTransactionService;
@@ -24,9 +27,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreateScheduledBatterySwapUseCase implements IUseCase<CreateScheduledBatterySwapCommand, SwapTransaction> {
 
-    private final SwapTransactionService swapTransactionService;
-    private final BatteryService batteryService;
-    private final StationService stationService;
+    private final ISwapTransactionService swapTransactionService;
+    private final IBatteryService batteryService;
+    private final IStationService stationService;
     private final ICurrentAuthenticatedUser currentAuthenticatedUser;
 
 

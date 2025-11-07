@@ -3,6 +3,9 @@ package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.model.command.CreateStationStaffCommand;
+import com.swd392.BatterySwapStation.application.service.business.IStationService;
+import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
+import com.swd392.BatterySwapStation.application.service.business.IUserService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.UserService;
@@ -22,13 +25,13 @@ import org.springframework.stereotype.Service;
 public class CreateStaffUseCase implements IUseCase<CreateStationStaffCommand, StationStaff> {
 
     @Autowired
-    StationStaffService stationStaffService;
+    IStationStaffService stationStaffService;
 
     @Autowired
-    StationService stationService;
+    IStationService stationService;
 
     @Autowired
-    UserService userService;
+    IUserService userService;
 
     @Autowired
     PasswordEncoder passwordEncoder;

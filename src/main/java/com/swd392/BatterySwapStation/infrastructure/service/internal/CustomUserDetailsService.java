@@ -1,5 +1,6 @@
 package com.swd392.BatterySwapStation.infrastructure.service.internal;
 
+import com.swd392.BatterySwapStation.application.service.internal.ICustomUserDetailsService;
 import com.swd392.BatterySwapStation.domain.entity.User;
 import com.swd392.BatterySwapStation.domain.repository.UserRepository;
 import com.swd392.BatterySwapStation.infrastructure.security.user.CustomUserDetails;
@@ -10,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService, ICustomUserDetailsService {
 
     private final UserRepository userRepository;
 

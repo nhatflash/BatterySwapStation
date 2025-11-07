@@ -1,6 +1,7 @@
 package com.swd392.BatterySwapStation.application.useCase.stationStaff;
 
 import com.swd392.BatterySwapStation.application.model.command.UpdateStaffDetailCommand;
+import com.swd392.BatterySwapStation.application.service.business.IStationStaffService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationStaffService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.StationStaff;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UpdateStaffStatusUseCase implements IUseCase<UpdateStaffDetailCommand, StationStaff> {
 
-    private final StationStaffService stationStaffService;
+    private final IStationStaffService stationStaffService;
 
     @Override
     public StationStaff execute(UpdateStaffDetailCommand request) {

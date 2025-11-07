@@ -1,4 +1,4 @@
-package com.swd392.BatterySwapStation.infrastructure.security.sse;
+package com.swd392.BatterySwapStation.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

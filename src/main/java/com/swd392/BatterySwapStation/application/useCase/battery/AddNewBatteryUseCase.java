@@ -2,6 +2,8 @@ package com.swd392.BatterySwapStation.application.useCase.battery;
 
 import com.swd392.BatterySwapStation.application.common.mapper.DateStringMapper;
 import com.swd392.BatterySwapStation.application.model.command.AddNewBatteryCommand;
+import com.swd392.BatterySwapStation.application.service.business.IBatteryService;
+import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.BatteryService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
@@ -12,21 +14,19 @@ import com.swd392.BatterySwapStation.domain.enums.BatteryStatus;
 import com.swd392.BatterySwapStation.domain.valueObject.Money;
 import com.swd392.BatterySwapStation.domain.valueObject.SoH;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class AddNewBatteryUseCase implements IUseCase<AddNewBatteryCommand, Battery> {
 
-    private final StationService stationService;
-    private final BatteryService batteryService;
+    private final IStationService stationService;
+    private final IBatteryService batteryService;
 
-    public AddNewBatteryUseCase(StationService stationService, BatteryService batteryService) {
-        this.stationService = stationService;
-        this.batteryService = batteryService;
-    }
 
     @Override
     @Transactional

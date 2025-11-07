@@ -2,6 +2,7 @@ package com.swd392.BatterySwapStation.application.useCase.station;
 
 
 import com.swd392.BatterySwapStation.application.model.command.ChangeStatusStationCommand;
+import com.swd392.BatterySwapStation.application.service.business.IStationService;
 import com.swd392.BatterySwapStation.infrastructure.service.business.StationService;
 import com.swd392.BatterySwapStation.application.useCase.IUseCase;
 import com.swd392.BatterySwapStation.domain.entity.Station;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class ChangeStatusStationUseCase implements IUseCase<ChangeStatusStationCommand, Station> {
 
     @Autowired
-    StationService stationService;
+    IStationService stationService;
 
 
     @Override

@@ -2,9 +2,8 @@ package com.swd392.BatterySwapStation.infrastructure.service.business;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swd392.BatterySwapStation.application.service.business.IBatterySSEService;
-import com.swd392.BatterySwapStation.application.service.business.IBatterySimulatorService;
 import com.swd392.BatterySwapStation.domain.model.BatteryState;
-import com.swd392.BatterySwapStation.infrastructure.security.sse.SSEConnectionInfo;
+import com.swd392.BatterySwapStation.domain.model.SSEConnectionInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
