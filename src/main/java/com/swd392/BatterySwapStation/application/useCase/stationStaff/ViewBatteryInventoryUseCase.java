@@ -50,6 +50,7 @@ public class ViewBatteryInventoryUseCase implements IUseCase<ViewBatteryInventor
                     batteryService.getByCurrentStationAndStatus(station, BatteryStatus.MAINTENANCE, pageIndex);
             case FAULTY -> batteryService.getByCurrentStationAndStatus(station, BatteryStatus.FAULTY, pageIndex);
             case RETIRED -> batteryService.getByCurrentStationAndStatus(station, BatteryStatus.RETIRED, pageIndex);
+            case CHARGING -> batteryService.getByCurrentStationAndStatus(station, BatteryStatus.CHARGING, pageIndex);
             default -> throw new IllegalArgumentException("Invalid battery status request");
         };
     }
